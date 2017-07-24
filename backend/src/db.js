@@ -2,6 +2,26 @@ var MongoClient = require('mongodb').MongoClient;
 
 function DB(){
     this.db = null;
+    this.query = function(collname, pipeline = []){
+        let _this = this;
+        return new Promise( (resolve, reject) => {
+            _this.db.collection(collname,  {strict:true}, (err, collection) => {
+                if(err){
+                    reject(err);
+                }
+
+                let cursor = collection.aggregate(pipeline);
+
+                cursor.toArray( (err, docs) =>{
+                    if(err){
+                        reject(err);
+                    }else{
+                        resolve(docs);
+                    }
+                })
+            });
+        });
+    }
 }
 
 DB.prototype.connect = function(uri){
@@ -35,27 +55,6 @@ DB.prototype.close = function(){
     }
 }
 
-DB.prototype.query = function(collname, pipeline = []){
-    let _this = this;
-    return new Promise( (resolve, reject) => {
-        _this.db.collection(collname,  {strict:true}, (err, collection) => {
-            if(err){
-                reject(err);
-            }
-
-            let cursor = collection.aggregate(pipeline);
-
-            cursor.toArray( (err, docs) =>{
-                if(err){
-                    reject(err);
-                }else{
-                    resolve(docs);
-                }
-            })
-        });
-    });
-}
-
 DB.prototype.querySinopseLicitacao = function(cdIBGE = null, nrAno = null){
     let _this = this;
     let coll_name = 'sinopseLicitacao';
@@ -81,18 +80,18 @@ DB.prototype.querySinopseLicitacao = function(cdIBGE = null, nrAno = null){
 
 DB.prototype.querySinopseCriterioAvaliacaoPorModalidade = function(cdIBGE = null, nrAno = null){
     
-    let query = { "$match" : {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno}};
+    let query = { "$match" : {"cdIBGE" : cdIBGE, "nrAno" : nrAno}};
     let coll_name = "sinopseCriterioAvaliacaoPorModalidade";
 
-    return DB.query(coll_name,[query]);
+    return this.query(coll_name,[query]);
 }
 
 DB.prototype.queryRankingFornecedor = function(cdIBGE = null, nrAno = null){
     
-    let query = { "$match" : {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno}};
+    let match = { "$match" : {"cdIBGE" : cdIBGE, "nrAno" : nrAno}};
     let coll_name = "rankingFornecedor";
 
-    return DB.query(coll_name,[query]);
+    return this.query(coll_name,[match]);
 }
 
 
@@ -100,7 +99,7 @@ DB.prototype.queryLicitacao = function(idLicitacao = null){
     let query = { "$match" : {"idLicitacao" : idLicitacao}};
     let coll_name = "rawLicitacao";
 
-    return DB.query(coll_name,[query]);
+    return this.query(coll_name,[query]);
 }
 
 DB.prototype.queryLicitacoesMunicipio = function(cdIBGE = null, nrAno = null){
@@ -109,7 +108,7 @@ DB.prototype.queryLicitacoesMunicipio = function(cdIBGE = null, nrAno = null){
     let project = {};
     let coll_name = coll_name = "rawLicitacao";
 
-    return DB.query(coll_name,[query]);
+    return this.query(coll_name,[query]);
 }
 
 function log(mensagem, tipo = 0){
