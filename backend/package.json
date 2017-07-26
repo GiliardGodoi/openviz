@@ -5,7 +5,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start" : "babel-node ./src/index.js",
+    "start": "babel-node ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,6 +18,10 @@
     "consign": "^0.1.6",
     "cors": "^2.8.4",
     "express": "^4.15.3",
+    "express-query-int": "^1.0.1",
     "mongodb": "^2.2.29"
+  },
+  "babel" : {
+    "presets" : ["es2015"]
   }
 }
