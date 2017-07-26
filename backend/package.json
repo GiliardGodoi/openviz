@@ -21,7 +21,12 @@
     "express-query-int": "^1.0.1",
     "mongodb": "^2.2.29"
   },
-  "babel" : {
-    "presets" : ["es2015"]
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }
