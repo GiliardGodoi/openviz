@@ -1,6 +1,5 @@
-import DB from '../db.js'
-
-const database = new DB;
+import database from '../db.js'
+import handlerError from '../utils/apiErrorHandling'
 
 module.exports = (app) => {
     let config = app.src.libs.config;
@@ -13,47 +12,50 @@ module.exports = (app) => {
         });
     });
 
-    app.get('/licitacoesMunicipio', (req, res) => {
+    app.get('/licitacoes/:cdIBGE/:nrAno', (req, res) => {
         let resposta = {
             success : false,
-            message : 'teste',
+            message : '',
             data : []
         };
-        let {cdIBGE, nrAno} = req.query;
 
-        console.log(`\tGET /licitacoesMunicipio cdIBGE : ${cdIBGE} nrAno : ${nrAno}`);
-
+        let parametrosPesquisa = {...req.params,...req.query}
+        console.log('parametros de pesquisa\t',parametrosPesquisa);
         database.connect(config.db.uri).then( () => {
-
-            database.queryLicitacoesMunicipio(cdIBGE, nrAno)
+            database.queryLicitacoesMunicipio(parametrosPesquisa)
                 .then( (data) => {
-                    if(data){
+                    if(Array.isArray(data) && data.length > 0){
                         resposta.data = data;
                         resposta.success = true;
+                    }else{
+                        resposta.message = "Nenhum resultado para os parâmetros";
                     }
                     res.json(resposta);
                 })
-                .catch( (err) => {
+                .catch( err => {
+                    handlerError(err);        
                     res.status(500).end();
                 });
         }).catch( err => {
+            handlerError(err);
             res.status(500).end();
         });
     });
 
-    app.get('/licitacao', (req, res) => {
+    /*
+        /licitacoes/:cdIBGE/:nrAno/count
+    */
+
+    app.get('/licitacao/:idLicitacao', (req, res) => {
         let resposta = {
             success : false,
             message : '',
             data : null
         };
-
-        let {idLicitacao} = req.query;
-
-        console.log(`\tGET for idLicitacao ${idLicitacao}`);
+        let parametrosPesquisa = {...req.params,...req.query}
 
         database.connect(config.db.uri).then( () => {
-            database.queryLicitacao(idLicitacao)
+            database.queryLicitacao(parametrosPesquisa)
                 .then( (doc) => {
                     if(doc){
                         resposta.data = doc;
@@ -70,92 +72,103 @@ module.exports = (app) => {
         
     });
 
-    app.get('/rankingFornecedor', (req, res) => {
+    /* 
+        /licitacao/:idLicitacao/itens
+        /licitacao/:idLicitacao/fornecedores    
+    */
+
+    app.get('/fornecedores/:cdIBGE/:nrAno', (req, res) => {
         let resposta = {
             success : false,
             message : '',
             data : null
         };
 
-        let {cdIBGE, nrAno} = req.query;
-
-        console.log(`\tGET /rankingFornecedor cdIBGE : ${cdIBGE} nrAno : ${nrAno}`);
+        let parametrosPesquisa = {...req.params,...req.query};
 
         database.connect(config.db.uri).then( () => {
-            database.queryRankingFornecedor(cdIBGE, nrAno)
+            database.queryRankingFornecedor(parametrosPesquisa)
                 .then( (data) => {
-                    if(data){
+                    if(Array.isArray(data) && data.length > 0){
                         resposta.data = data;
                         resposta.success = true;
+                    }else{
+                        resposta.message = "Nenhum resultado para os parâmetros";
                     }
                     res.json(resposta);
                 })
                 .catch( err => {
+                    handlerError(err);
                     res.status(500).end();
                 })
         }).catch( (err) => {
-            console.log(err.message);
+            handlerError(err);
             res.status(500).end();
         })
 
     });
 
-    app.get('/sinopseLicitacao', (req, res) => {
+    app.get('/sinopses/licitacoes/:cdIBGE/:nrAno', (req, res) => {
         let resposta = {
             success : false,
             message : '',
             data : null
         };
-        let {cdIBGE, nrAno } = req.query;
+        let parametrosPesquisa = {...req.params,...req.query};
 
         console.log(`\tGET /sinopseLicitacao cdIBGE : ${cdIBGE} nrAno ${nrAno}`);
 
         database.connect(config.db.uri).then( () => {
-            database.querySinopseLicitacao(cdIBGE, nrAno)
+            database.querySinopseLicitacao(parametrosPesquisa)
                 .then( (data) =>{
-                    if(data){
+                    if(Array.isArray(data) && data.length > 0){
                         resposta.data = data;
                         resposta.success = true;
+                    }else{
+                        resposta.message = "Nenhum resultado para os parâmetros";
                     }
                     res.json(resposta);
                 })
                 .catch( (err) => {
-                    console.error(err.message);
+                    handlerError(err);
                     res.status(500).end();
                 });
         }).catch((err) => {
-            console.error(err.message);
+            handlerError(err);
             res.status(500).end();
         });
      
     });
 
-    app.get('/criterioAvaliacaoPorModalidade', (req, res) => {
+    app.get('/sinopses/modalidades/:cdIBGE/:nrAno', (req, res) => {
         let resposta = {
             success : false,
             message : '',
             data : null
         };
 
-        let {cdIBGE, nrAno} = req.query;
-
-        console.log(`\tGET /criterioAvaliacao cdIBGE : ${cdIBGE} nrAno ${nrAno}`);
+        let parametrosPesquisa = {...req.params,...req.query};
 
         database.connect(config.db.uri).then( () => {
-            database.querySinopseCriterioAvaliacaoPorModalidade(cdIBGE, nrAno)
+            database.querySinopseCriterioAvaliacaoPorModalidade(parametrosPesquisa)
                 .then ( (data) => {
-                    if(data){
+                    if(Array.isArray(data) && data.length > 0){
                         resposta.data = data;
                         resposta.success = true;
+                    }else{
+                        resposta.message = "Nenhum resultado para os parâmetros";
                     }
                     res.json(resposta);
                 })
                 .catch( err => {
+                    handlerError(err);
                     res.status(500).end();
                 });
         }).catch( err => {
+            handlerError(err);
             res.status(500).end();
         });
 
     });
+
 }

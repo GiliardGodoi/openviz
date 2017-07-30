@@ -1,8 +1,10 @@
 var MongoClient = require('mongodb').MongoClient;
+var errorMsg = require('./utils/errorsMessagens')
 
 function DB(){
     this.db = null;
-    this.query = function(collname, pipeline = []){
+
+    this.query = function(collname, pipeline = [{}]){
         let _this = this;
         return new Promise( (resolve, reject) => {
             _this.db.collection(collname,  {strict:true}, (err, collection) => {
@@ -55,7 +57,7 @@ DB.prototype.close = function(){
     }
 }
 
-DB.prototype.querySinopseLicitacao = function(cdIBGE = null, nrAno = null){
+DB.prototype.querySinopseLicitacao = function({cdIBGE,nrAno,skip, limit, sort}){
     let _this = this;
     let coll_name = 'sinopseLicitacao';
     let query = {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno};
@@ -78,37 +80,99 @@ DB.prototype.querySinopseLicitacao = function(cdIBGE = null, nrAno = null){
     });
 }
 
-DB.prototype.querySinopseCriterioAvaliacaoPorModalidade = function(cdIBGE = null, nrAno = null){
-    
-    let query = { "$match" : {"cdIBGE" : cdIBGE, "nrAno" : nrAno}};
+DB.prototype.querySinopseCriterioAvaliacaoPorModalidade = function({cdIBGE, nrAno}){
+    if(!cdIBGE & !nrAno){
+        throw TypeError(errorMsg.PARAMETROS_DEVEM_SER_DEFINIDOS('cdIBGE','nrAno'));
+    }
+    let pipeline = [{ "$match" : {"cdIBGE" : cdIBGE, "nrAno" : nrAno}}];
     let coll_name = "sinopseCriterioAvaliacaoPorModalidade";
 
-    return this.query(coll_name,[query]);
+    return this.query(coll_name,pipeline);
 }
 
-DB.prototype.queryRankingFornecedor = function(cdIBGE = null, nrAno = null){
-    
-    let match = { "$match" : {"cdIBGE" : cdIBGE, "nrAno" : nrAno}};
+DB.prototype.queryRankingFornecedor = function({cdIBGE,nrAno,skip, limit, sort}){
     let coll_name = "rankingFornecedor";
+    let pipeline = [];
+    if(cdIBGE & nrAno){
+        pipeline[pipeline.length] = { "$match" : {"cdIBGE" : cdIBGE, "nrAno" : nrAno}}; // match stage
+    }else{
+        throw TypeError(errorMsg.PARAMETROS_DEVEM_SER_DEFINIDOS('cdIBGE','nrAno'));
+    }
 
-    return this.query(coll_name,[match]);
+    if(limit) pipeline[pipeline.length] = { "$limit" : +limit};
+    if(skip) pipeline[pipeline.length] = {"$skip" : +skip};
+    //asc = 1 desc = -1
+    let sort_stage = {"$sort" : {"vlContratado" : 0 } };
+    if(sort){
+        if(sort == "asc"){
+            sort_stage.$sort.vlContratado = 1;
+        }else if(sort == "desc"){
+            sort_stage.$sort.vlContratado = -1;
+        }
+        pipeline[pipeline.length] = sort_stage;
+    }
+    
+    return this.query(coll_name,pipeline);
 }
 
+DB.prototype.queryItensLicitacao = function({cdIBGE, nrAno,skip, limit, sort}){
+    let coll_name = "rawLicitacaoVencedor"
+    let pipeline = []
 
-DB.prototype.queryLicitacao = function(idLicitacao = null){
-    let query = { "$match" : {"idLicitacao" : idLicitacao}};
+    if(cdIBGE & nrAno){
+        pipeline[pipeline.length] = { "$match" : {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno}};
+    }else{
+        throw TypeError(errorMsg.PARAMETROS_DEVEM_SER_DEFINIDOS('cdIBGE','nrAno'));
+    }
+
+    if(limit) pipeline[pipeline.length] = { "$limit" : +limit};
+    if(skip) pipeline[pipeline.length] = {"$skip" : +skip};
+
+
+    return this.query(coll_name,pipeline);
+}
+
+DB.prototype.queryLicitacao = function({idLicitacao}){
+    let pipeline = [{ "$match" : {"idLicitacao" : idLicitacao}}];
     let coll_name = "rawLicitacao";
 
-    return this.query(coll_name,[query]);
+    return this.query(coll_name,pipeline);
 }
 
-DB.prototype.queryLicitacoesMunicipio = function(cdIBGE = null, nrAno = null){
-    
-    let query = { "$match" : {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno}};
-    let project = {};
+DB.prototype.queryLicitacoesMunicipio = function({cdIBGE, nrAno,skip, limit, sort}){
     let coll_name = coll_name = "rawLicitacao";
+    let pipeline = [];
+    console.log(typeof cdIBGE);
+    console.log(typeof nrAno );
+    console.log(typeof skip );
+    console.log(typeof limit );
 
-    return this.query(coll_name,[query]);
+    let project = { $project : { cdIBGE : 1,
+                     nmMunicipio: 1,
+                     nmEntidade : 1,
+                     idLicitacao : 1,
+                     nrLicitacao : 1,
+                     dsModalidadeLicitacao : 1,
+                     nrAnoLicitacao : 1,
+                     vlLicitacao : 1,
+                     vlTotalAdquiridoLicitacao : 1,
+                     dsObjeto : 1,
+                     dtEdital : 1,
+                     dtAbertura : 1
+                    }};
+    
+
+    if(cdIBGE & nrAno){
+        pipeline[pipeline.length] = { $match : {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno}}
+        pipeline[pipeline.length] = project
+    }else{
+        throw TypeError(errorMsg.PARAMETROS_DEVEM_SER_DEFINIDOS('cdIBGE','nrAno'));
+    }
+    if(skip) pipeline[pipeline.length] = {$skip : +skip};
+
+    if(limit) pipeline[pipeline.length] = { $limit : +limit};
+
+    return this.query(coll_name,pipeline);
 }
 
 function log(mensagem, tipo = 0){
@@ -122,4 +186,4 @@ function log(mensagem, tipo = 0){
     }
 }
 
-module.exports = DB;
+module.exports = new DB;
