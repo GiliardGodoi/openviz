@@ -20,7 +20,7 @@ module.exports = (app) => {
         };
 
         let parametrosPesquisa = {...req.params,...req.query}
-        console.log('parametros de pesquisa\t',parametrosPesquisa);
+        
         database.connect(config.db.uri).then( () => {
             database.queryLicitacoesMunicipio(parametrosPesquisa)
                 .then( (data) => {
@@ -45,6 +45,34 @@ module.exports = (app) => {
     /*
         /licitacoes/:cdIBGE/:nrAno/count
     */
+
+    app.get('/licitacoes/:cdIBGE/:nrAno/itens', (req, res) => {
+        let resposta = {
+            success : false,
+            message : '',
+            data : []
+        };
+        let parametrosPesquisa = {...req.params,...req.query}
+        database.connect(config.db.uri).then( () =>{
+            database.queryItensLicitacao(parametrosPesquisa)
+                .then( data => {
+                    if(Array.isArray(data) && data.length > 0){
+                        resposta.data = data;
+                        resposta.success = true;
+                    }else{
+                        resposta.message = "Nenhum resultado para os parâmetros";
+                    }
+                    res.json(resposta);
+                })
+                .catch( err => {
+                    handlerError(err);
+                    res.status(500).end();
+                })
+        }).catch(err =>{
+            handlerError(err);
+            res.status(500).end();
+        });
+    });
 
     app.get('/licitacao/:idLicitacao', (req, res) => {
         let resposta = {

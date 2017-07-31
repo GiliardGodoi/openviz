@@ -118,16 +118,40 @@ DB.prototype.queryRankingFornecedor = function({cdIBGE,nrAno,skip, limit, sort})
 DB.prototype.queryItensLicitacao = function({cdIBGE, nrAno,skip, limit, sort}){
     let coll_name = "rawLicitacaoVencedor"
     let pipeline = []
+    let project = {
+        $project : {
+            idlicitacao : 1,
+            dsItem : 1,
+            nrQuantidade : 1,
+            vlMinimoUnitarioItem :  1,
+            vlMinimoTotal : 1,
+            vlMaximoUnitarioItem : 1,
+            vlMaximoTotal : 1,
+            nrQuantidadeVencedor : "$nrQuantidadeVencedorLicitacao",
+            vlUnitarioVencedor : "$vlLicitacaoVencedorLicitacao",
+            vlTotalVencedor : "$vlTotalVencedorLicitacao"
+        }
+    }
 
     if(cdIBGE & nrAno){
         pipeline[pipeline.length] = { "$match" : {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno}};
+        pipeline[pipeline.length] = project;
     }else{
         throw TypeError(errorMsg.PARAMETROS_DEVEM_SER_DEFINIDOS('cdIBGE','nrAno'));
     }
 
     if(limit) pipeline[pipeline.length] = { "$limit" : +limit};
     if(skip) pipeline[pipeline.length] = {"$skip" : +skip};
-
+    
+    let sort_stage = {"$sort" : {"vlContratado" : 0 } };
+    if(sort){
+        if(sort == "asc"){
+            sort_stage.$sort.vlContratado = 1;
+        }else if(sort == "desc"){
+            sort_stage.$sort.vlContratado = -1;
+        }
+        pipeline[pipeline.length] = sort_stage;
+    }
 
     return this.query(coll_name,pipeline);
 }
@@ -168,10 +192,20 @@ DB.prototype.queryLicitacoesMunicipio = function({cdIBGE, nrAno,skip, limit, sor
     }else{
         throw TypeError(errorMsg.PARAMETROS_DEVEM_SER_DEFINIDOS('cdIBGE','nrAno'));
     }
-    if(skip) pipeline[pipeline.length] = {$skip : +skip};
 
+    if(skip) pipeline[pipeline.length] = {$skip : +skip};
     if(limit) pipeline[pipeline.length] = { $limit : +limit};
 
+    let sort_stage = {"$sort" : {"vlContratado" : 0 } };
+    if(sort){
+        if(sort == "asc"){
+            sort_stage.$sort.vlContratado = 1;
+        }else if(sort == "desc"){
+            sort_stage.$sort.vlContratado = -1;
+        }
+        pipeline[pipeline.length] = sort_stage;
+    }
+    
     return this.query(coll_name,pipeline);
 }
 
