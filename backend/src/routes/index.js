@@ -1,4 +1,4 @@
-import database from '../db.js'
+import database from '../database/db.js'
 import handlerError from '../utils/apiErrorHandling'
 
 module.exports = (app) => {
