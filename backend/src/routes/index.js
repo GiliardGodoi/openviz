@@ -18,7 +18,7 @@ module.exports = (app) => {
             message : '',
             data : []
         };
-
+        console.log('\t/licitacoes/:cdIBGE/:nrAno')
         let parametrosPesquisa = {...req.params,...req.query}
         
         database.connect(config.db.uri).then( () => {
@@ -41,18 +41,20 @@ module.exports = (app) => {
             res.status(500).end();
         });
     });
-
     /*
         /licitacoes/:cdIBGE/:nrAno/count
     */
-
     app.get('/licitacoes/:cdIBGE/:nrAno/itens', (req, res) => {
         let resposta = {
             success : false,
             message : '',
             data : []
         };
+        
         let parametrosPesquisa = {...req.params,...req.query}
+        
+        console.log('\t/licitacoes/:cdIBGE/:nrAno/itens')
+
         database.connect(config.db.uri).then( () =>{
             database.queryItensLicitacao(parametrosPesquisa)
                 .then( data => {
@@ -144,7 +146,7 @@ module.exports = (app) => {
         };
         let parametrosPesquisa = {...req.params,...req.query};
 
-        console.log(`\tGET /sinopseLicitacao cdIBGE : ${cdIBGE} nrAno ${nrAno}`);
+        console.log('\t/sinopses/licitacoes/:cdIBGE/:nrAno');
 
         database.connect(config.db.uri).then( () => {
             database.querySinopseLicitacao(parametrosPesquisa)
@@ -198,5 +200,66 @@ module.exports = (app) => {
         });
 
     });
+
+    app.get('/municipios/:cdEstado',(req, res)=>{
+        let resposta = {
+            success : false,
+            message : '',
+            data : []
+        };
+
+        let parametrosPesquisa = {'cdEstado' : req.params.cdEstado }
+
+        database.connect(config.db.uri)
+            .then( () => {
+                database.queryMunicipio(parametrosPesquisa)
+                    .then( (data) => {
+                        if(Array.isArray(data) && data.length > 0){
+                            resposta.data = data;
+                            resposta.success = true;
+                        }else{
+                            resposta.message = "Nenhum resultado para os parâmetros";
+                        }
+                        res.json(resposta);
+                    })
+                    .catch( err => {
+                        handlerError(err);        
+                        res.status(500).end();
+                    });
+            })
+            .catch( () => {
+
+            });
+    });
+
+    app.get('/maps/:cdEstado', (req, res) =>{
+        let resposta = {
+            success : false,
+            message : '',
+            data : []
+        };
+
+        let parametrosPesquisa = {'cdEstado' : req.params.cdEstado }
+        
+        database.connect(config.db.uri).then( () => {
+            database.queryGeojson(parametrosPesquisa)
+                .then( (data) => {
+                    if(Array.isArray(data) && data.length > 0){
+                        resposta.data = data;
+                        resposta.success = true;
+                    }else{
+                        resposta.message = "Nenhum resultado para os parâmetros";
+                    }
+                    res.json(resposta);
+                })
+                .catch( err => {
+                    handlerError(err);        
+                    res.status(500).end();
+                });
+        }).catch( err => {
+            handlerError(err);
+            res.status(500).end();
+        });
+    })
 
 }

@@ -1,5 +1,5 @@
 var MongoClient = require('mongodb').MongoClient;
-var errorMsg = require('./utils/errorsMessagens')
+var errorMsg = require('../utils/errorsMessagens')
 
 function DB(){
     this.db = null;
@@ -55,6 +55,31 @@ DB.prototype.close = function(){
                 log(`erro ao fechar conexão com banco \n${error.message}`);
             } )
     }
+}
+
+DB.prototype.queryMunicipio = function({cdIBGE, nmMunicipio}){
+    let coll_name = 'municipio'
+    let pipeline = []
+
+    if(cdIBGE){
+        pipeline[pipeline.length] = { '$match' : {'cdIBGE' : cdIBGE}}
+    }else if(nmMunicipio){
+        pipeline[pipeline.length] = { '$match' : {'municipio' : nmMunicipio}}
+    }
+    return this.query(coll_name,pipeline)
+}
+
+DB.prototype.queryGeojson = function({cdEstado, nmEstado}){
+    let coll_name = 'geojson'
+    let pipeline = []
+
+    if(cdEstado){
+        pipeline[pipeline.length] = { '$match' : {'properties.id' : cdEstado}}
+    }else if(nmEstado){
+        pipeline[pipeline.length] = { '$match' : {'properties.name' : nmEstado}}
+    }
+    
+    return this.query(coll_name,pipeline)
 }
 
 DB.prototype.querySinopseLicitacao = function({cdIBGE,nrAno,skip, limit, sort}){
@@ -143,12 +168,12 @@ DB.prototype.queryItensLicitacao = function({cdIBGE, nrAno,skip, limit, sort}){
     if(limit) pipeline[pipeline.length] = { "$limit" : +limit};
     if(skip) pipeline[pipeline.length] = {"$skip" : +skip};
     
-    let sort_stage = {"$sort" : {"vlContratado" : 0 } };
+    let sort_stage = {"$sort" : {vlTotalVencedor : 0 } };
     if(sort){
         if(sort == "asc"){
-            sort_stage.$sort.vlContratado = 1;
+            sort_stage.$sort.vlTotalVencedor = 1;
         }else if(sort == "desc"){
-            sort_stage.$sort.vlContratado = -1;
+            sort_stage.$sort.vlTotalVencedor = -1;
         }
         pipeline[pipeline.length] = sort_stage;
     }
