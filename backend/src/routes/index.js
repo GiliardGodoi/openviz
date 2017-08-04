@@ -18,7 +18,7 @@ module.exports = (app) => {
             message : '',
             data : []
         };
-        console.log('\t/licitacoes/:cdIBGE/:nrAno')
+        console.log(`\tGET ${req.path}`)
         let parametrosPesquisa = {...req.params,...req.query}
         
         database.connect(config.db.uri).then( () => {
@@ -53,7 +53,7 @@ module.exports = (app) => {
         
         let parametrosPesquisa = {...req.params,...req.query}
         
-        console.log('\t/licitacoes/:cdIBGE/:nrAno/itens')
+        console.log(`\tGET ${req.path}`)
 
         database.connect(config.db.uri).then( () =>{
             database.queryItensLicitacao(parametrosPesquisa)
@@ -83,7 +83,7 @@ module.exports = (app) => {
             data : null
         };
         let parametrosPesquisa = {...req.params,...req.query}
-
+        console.log(`\tGET ${req.path}`)
         database.connect(config.db.uri).then( () => {
             database.queryLicitacao(parametrosPesquisa)
                 .then( (doc) => {
@@ -115,7 +115,7 @@ module.exports = (app) => {
         };
 
         let parametrosPesquisa = {...req.params,...req.query};
-
+        console.log(`\tGET ${req.path}`)
         database.connect(config.db.uri).then( () => {
             database.queryRankingFornecedor(parametrosPesquisa)
                 .then( (data) => {
@@ -146,7 +146,7 @@ module.exports = (app) => {
         };
         let parametrosPesquisa = {...req.params,...req.query};
 
-        console.log('\t/sinopses/licitacoes/:cdIBGE/:nrAno');
+        console.log(`\tGET ${req.path}`)
 
         database.connect(config.db.uri).then( () => {
             database.querySinopseLicitacao(parametrosPesquisa)
@@ -178,7 +178,7 @@ module.exports = (app) => {
         };
 
         let parametrosPesquisa = {...req.params,...req.query};
-
+        console.log(`\tGET ${req.path}`)
         database.connect(config.db.uri).then( () => {
             database.querySinopseCriterioAvaliacaoPorModalidade(parametrosPesquisa)
                 .then ( (data) => {
@@ -209,7 +209,7 @@ module.exports = (app) => {
         };
 
         let parametrosPesquisa = {'cdEstado' : req.params.cdEstado }
-
+        console.log(`\tGET ${req.path}`)
         database.connect(config.db.uri)
             .then( () => {
                 database.queryMunicipio(parametrosPesquisa)
@@ -240,7 +240,7 @@ module.exports = (app) => {
         };
 
         let parametrosPesquisa = {'cdEstado' : req.params.cdEstado }
-        
+        console.log(`\tGET ${req.path}`)
         database.connect(config.db.uri).then( () => {
             database.queryGeojson(parametrosPesquisa)
                 .then( (data) => {
