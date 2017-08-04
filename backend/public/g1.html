@@ -12,34 +12,11 @@
     <script src="js/d3/d3.js"></script>
     <script type="text/javascript">
         function draw(data){
-            "use scrit"
-            var margin = 75, width = 1140 - margin, height = 960 - margin;
-            geojson = data.data[0];
-            // debugger;
-            var svg = d3.select("#chart-map");
-            svg.attr("width", width+margin)
-                .attr("height", height+margin)
-                .append("g")
-                .attr("class","map");
-
-            var projection = d3.geoMercator().scale(width*2).translate([width*2, height/2]);
-
-            svg.select("#chart-map>.map")
-                .selectAll("path")
-                .data(geojson.features)
-                .enter()
-                .append("path")
-                .attr("d", d3.geoPath(projection));
+            debugger;
         }
     </script>
     <style>
-        body{
-            background-color: lightsteelblue;
-        }
-        .map path {
-            stroke : black;
-            fill : black;
-        }
+        
     </style>
   </head>
   <body>
@@ -57,19 +34,11 @@
         </div>
     </nav>
     <div>
-        <div class="container">
-            <div class="jumbotron">
-                <h1>Paraná State</h1>
-                <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
-            </div>
-            <div>
-                <svg id="chart-map"></svg>
-            </div>
-        </div>
+        <svg id="chart-map"></svg>
     </div>
 
     <script type="text/javascript">
-        d3.json("maps/41",draw);
+        d3.json("fornecedores/412410/2015?sort=desc",draw);
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
