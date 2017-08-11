@@ -83,26 +83,15 @@ DB.prototype.queryGeojson = function({cdEstado, nmEstado}){
 }
 
 DB.prototype.querySinopseLicitacao = function({cdIBGE,nrAno,skip, limit, sort}){
-    let _this = this;
+    
     let coll_name = 'sinopseLicitacao';
-    let query = {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno};
+    let pipeline = []
 
-    return new Promise( (resolve, reject) => {
-        _this.db.collection(coll_name, {strict : true}, (err, collection) => {
-            if(err){
-                log('erro ao definir collection em querySinopseLicitacao');
-                reject(err);
-            }
-            let cursor = collection.find(query);
-            cursor.toArray((err, docs) => {
-                if(err){
-                    log('erro em cursor.toArray em querySinopseLicitacao');
-                    reject(err);
-                }
-                resolve(docs);
-            });
-        });
-    });
+    let match = { '$match' : {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno}};
+    let sort_stage = { '$sort' : {'dsModalidadeLicitacao' : 1 }}
+
+    return this.query(coll_name,[match]);
+    
 }
 
 DB.prototype.querySinopseCriterioAvaliacaoPorModalidade = function({cdIBGE, nrAno}){
