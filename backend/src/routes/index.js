@@ -182,7 +182,7 @@ module.exports = (app) => {
         database.connect(config.db.uri).then( () => {
             database.querySinopseCriterioAvaliacaoPorModalidade(parametrosPesquisa)
                 .then ( (data) => {
-                    if(Array.isArray(data) && data.length > 0){
+                    if(data){
                         resposta.data = data;
                         resposta.success = true;
                     }else{

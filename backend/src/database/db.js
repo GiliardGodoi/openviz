@@ -98,10 +98,23 @@ DB.prototype.querySinopseCriterioAvaliacaoPorModalidade = function({cdIBGE, nrAn
     if(!cdIBGE & !nrAno){
         throw TypeError(errorMsg.PARAMETROS_DEVEM_SER_DEFINIDOS('cdIBGE','nrAno'));
     }
-    let pipeline = [{ "$match" : {"cdIBGE" : cdIBGE, "nrAno" : nrAno}}];
+    let _this = this;
+    let match = {"cdIBGE" : cdIBGE, "nrAno" : nrAno};
     let coll_name = "sinopseCriterioAvaliacaoPorModalidade";
-
-    return this.query(coll_name,pipeline);
+  		  
+     return new Promise( (resolve, reject) => {	
+         _this.db.collection(coll_name, {strict : true}, (err, collection) => {
+            if(err){
+                reject(err);
+            }
+            let cursor = collection.findOne(match, (err, item) => {
+                if(err){
+                    reject(err);
+                }
+                resolve(item);
+            })
+         });
+     });
 }
 
 DB.prototype.queryRankingFornecedor = function({cdIBGE,nrAno,skip, limit, sort}){
