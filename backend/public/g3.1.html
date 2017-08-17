@@ -4,23 +4,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- As 3 meta tags acima *devem* vir em primeiro lugar dentro do `head`; qualquer outro conteúdo deve vir *após* essas tags -->
-    <title>Heat Map</title>
+    <title>Bootstrap Template</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <script src="js/d3/d3.js"></script>
     
     <style>
-        .bordered {
-            stroke: #E6E6E6;
-            stroke-width:2px;
-            fill : #ffffd9;
-        } 
-        text.label {
-            font-size: 9pt;
-            font-family: Consolas, courier;
-            fill: #aaa;
-        }
+        
     </style>
   </head>
   <body>
@@ -38,11 +29,26 @@
         </div>
     </nav>
     <div>
-        <svg id="container-chart" width="750" height="450"></svg>
+        <svg id="container-chart" width="960" height="500"></svg>
     </div>
 
+    <script type="text/javascript">
+        const svg = d3.select("body") // Select the body element
+                    .append("svg")          // Append an SVG element to the body
+                    .attr("width", 960)     // make it 960 pixels wide
+                    .attr("height", 500)    // make it 500 pixels high
+                    .append("circle")       // append a cicle to the svg
+                    .attr("fill", "blue")   // fill the circle with 'blue'
+                    .attr("r", 20)          // set the radius to 10 pixels
+                    .attr('cx', 40)         // position the circle at 40 on the x axis
+                    .attr('cy', 100)        // position the circle at 250 on the y axis
+                    .transition()           // apply a transition
+                    .duration(4000)
+                    .delay(3000)         // apply it over 4000 milliseconds
+                    .attr('cx', 920);       // new horizontal position at 920 on x axis
+    
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="g4.js"></script>
   </body>
 </html>
