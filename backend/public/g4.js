@@ -29,22 +29,25 @@ function draw(err, received) {
 
     const gridBaseData = d3.cross(lsModalidades,lsCriterioAvaliacao);
 
-    debugger;
+    
 
-    const xLabels = chart.append("g").attr("class","g-y-label")
-                            .selectAll(".x-label")
+    const yLabels = chart.append("g").attr("class","g-y-label")
+                            .selectAll(".y-label")
                             .data(lsModalidades)
                             .enter()
                             .append("text")
                             .text(d => d)
                             .attr('x', 0)
-                            .attr('y', (d, i) => yScale(d)  )
+                            .attr('y', (d, i) => {
+                                i += 1;
+                                return ( i * gridSize*1.05 ) / 2
+                            })
                             .style('text-anchor', "end")
                             .attr("transform", "translate(-6,0)")
                             .attr("class", 'label y-label');
 
-    const yLabels = chart.append("g").attr("class","g-x-label")
-                            .selectAll(".y-label")
+    const xLabels = chart.append("g").attr("class","g-x-label")
+                            .selectAll(".x-label")
                             .data(lsCriterioAvaliacao)
                             .enter()
                             .append("text")
@@ -57,7 +60,10 @@ function draw(err, received) {
 
     const cards = chart.append("g").attr("class","cards")
                         .selectAll("rect")
-                        .data(gridBaseData, d => d.join(":") )
+                        .data(gridBaseData, (d, i) => {
+                            console.log(d)
+                            return d
+                        } )
                         .enter()
                         .append("rect")
                         .attr("x", (d, i) => xScale(d[1]) )
@@ -73,7 +79,11 @@ function draw(err, received) {
 
     const existentes = chart.select("g.cards")
                     .selectAll("rect")
-                    .data(data, d => [d['dsModalidade'],d['dsCriterioAvaliacao'] ].join(":") )
+                    .data(data, d => {
+                        let key = [d['dsModalidade'],d['dsCriterioAvaliacao'] ];
+                        console.log(key)
+                        return key
+                    })
     const novos = existentes.enter()
                     .append("rect")
                     .attr("x", (d, i) => xScale(d['dsCriterioAvaliacao']) )
