@@ -19,7 +19,7 @@ function draw(err, response) {
     let maxv = d3.max(data, d => d.vlContratado )
     let minv = d3.min(data, d => d.vlContratado )
     console.log([minv,maxv])
-
+    debugger;
     let radiusScale = d3.scaleSqrt().domain([minv,maxv]).range([5,70])
 
     const simulation = d3.forceSimulation()

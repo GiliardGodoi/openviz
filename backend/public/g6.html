@@ -4,16 +4,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- As 3 meta tags acima *devem* vir em primeiro lugar dentro do `head`; qualquer outro conteúdo deve vir *após* essas tags -->
-    <title>Treemap test</title>
+    <title>Bubble Chart</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <script src="js/d3/d3.js"></script>         
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script src="js/d3/d3.js"></script>
+    
     <style>
-        #container{
-            margin: 0 auto;
+        .bordered {
+            stroke: #E6E6E6;
+            stroke-width:2px;
+            fill : #ffffd9;
+        } 
+        text.label {
+            font-size: 9pt;
+            font-family: Consolas, courier;
+            fill: #aaa;
+        }
+        .polygons {
+           fill: none;
+           stroke: #000;
         }
     </style>
   </head>
@@ -31,11 +41,12 @@
             </ul>
         </div>
     </nav>
-    <div class="container">
-        <svg id="container-chart" width="850" height="500"></svg>
+    <div>
+        <div id="container-chart"></div>
     </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="g2.js"></script>
+    <script type="text/javascript" src="g6.js"></script>
   </body>
 </html>
