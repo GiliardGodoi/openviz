@@ -24,7 +24,7 @@ function mapCodigo2Letter(codigo){
     return word;
 }
 
-function callback(err, received) {
+function start(err, received) {
     const data = received.data.map(type);
     const lstModalidades = data.map( d => d['dsModalidadeLicitacao'] )
                             .filter( (item, pos, array) => {
@@ -215,4 +215,4 @@ function callback(err, received) {
 
 }
 
-d3.json("/licitacoes/412410/2014", callback);
+d3.json("/licitacoes/412410/2014", start);
