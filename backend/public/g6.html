@@ -11,19 +11,11 @@
     <script src="js/d3/d3.js"></script>
     
     <style>
-        .bordered {
-            stroke: #E6E6E6;
-            stroke-width:2px;
-            fill : #ffffd9;
-        } 
-        text.label {
-            font-size: 9pt;
-            font-family: Consolas, courier;
-            fill: #aaa;
+        div.outer{
+            width: 100%;
         }
-        .polygons {
-           fill: none;
-           stroke: #000;
+        div.container{
+            margin: 0 auto;
         }
     </style>
   </head>
@@ -41,8 +33,8 @@
             </ul>
         </div>
     </nav>
-    <div>
-        <div id="container-chart"></div>
+    <div class="outer">
+        <div id="container-chart" class="container"></div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

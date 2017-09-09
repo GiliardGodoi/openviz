@@ -19,6 +19,7 @@ function key(d){
 }
 
 function init(){
+    initFormatLocale()
     initMargin()
     initGroupsSVGElements();
     initScales();
@@ -27,8 +28,25 @@ function init(){
     console.log('initialize elements');
 }
 
+function initFormatLocale(){
+    chart.brFormat = d3.formatLocale({
+        "decimal": ",",
+        "thousands": ".",
+        "grouping": [3],
+        "currency": ["R$", ""],
+        "dateTime": "%a %b %e %X %Y",
+        "date": "%m/%d/%Y",
+        "time": "%H:%M:%S",
+        "periods": ["AM", "PM"],
+        "days": ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
+        "shortDays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        "shortMonths": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+      });
+}
+
 function initMargin(){
-    gMain.margin = {top: 10, right: 10, bottom: 30, left: 100};
+    gMain.margin = {top: 10, right: 10, bottom: 30, left: 300};
     gMain.width = 860 - gMain.margin.left - gMain.margin.right;
     gMain.height = 500 - gMain.margin.top - gMain.margin.bottom;
 
@@ -46,19 +64,13 @@ function initGroupsSVGElements(){
                 .attr("width",width)
                 .attr("height",height);
 
-    chart.defs = chart.svg.append("defs")
-                        .append("clipPath")
-                        .attr("id","clip")
-                        .attr("x", -gMain.margin.left)
-                        .attr("width",gMain.margin.left + gMain.width)
-                        .attr("height",gMain.height);
-
     chart.MainGroup = chart.svg.append("g")
-                            .attr("class","mainGroup")
+                            .attr("class","mainGroupWrapper")
                             .attr("transform","translate("+[gMain.margin.left,gMain.margin.top]+")")
                             .append("g")
                             .attr("clip-path","url(#clip)")
-                            .style("clip-path","url(#clip)");
+                            .style("clip-path","url(#clip)")
+                            .attr("class","mainGroup");
 
     let translateXMini = gMain.margin.left+gMain.margin.right+gMain.width+gMini.margin.left;
     let translateYMini = gMini.margin.top;
@@ -67,7 +79,15 @@ function initGroupsSVGElements(){
                             .attr("transform","translate("+[translateXMini,translateYMini]+")");
     chart.brushGroup = chart.svg.append("g")
                             .attr("class","brushGroup")
-                            .attr("transform","translate("+[translateXMini,translateYMini]+")");                 
+                            .attr("transform","translate("+[translateXMini,translateYMini]+")");
+    
+    chart.defs = chart.svg.append("defs")
+                            .append("clipPath")
+                            .attr("id","clip")
+                            .append("rect")
+                            .attr("x", -gMain.margin.left)
+                            .attr("width",gMain.margin.left + gMain.width)
+                            .attr("height",gMain.height);
 }
 
 function initScales(){
@@ -81,7 +101,7 @@ function initScales(){
 }
 
 function initAxis(){
-    gMain.xAxis = d3.axisBottom().scale(gMain.xScale).ticks(5);
+    gMain.xAxis = d3.axisBottom().scale(gMain.xScale).ticks(10).tickFormat(chart.brFormat.format("$.0s"));
     //add group for the x axis
     d3.select(".mainGroupWrapper").append("g").attr("class","axis x-axis").attr("transform", "translate("+[0,gMain.height]+")");
     
@@ -117,7 +137,8 @@ function draw(_){
             .attr("y", d => gMini.yScale(y(d)))
             .attr("height", gMini.yScale.bandwidth() );
     //ENTER
-    mini_bar.enter().append("rect").attr("class","rect").attr("x", 0)
+    mini_bar.enter().append("rect").attr("class","bar")
+            .attr("x", 0)
             .attr("width", d => gMini.xScale(x(d)))
             .attr("y", d => gMini.yScale(y(d)))
             .attr("height", gMini.yScale.bandwidth())
@@ -125,9 +146,9 @@ function draw(_){
     //EXIT
     mini_bar.exit().remove();
 
-    chart.gBrush.call(chart.brush.move,[0,50]);
+    chart.gBrush.call(chart.brush.move,[0,20]);
 
-    update(data);
+    update();
 }
 
 function drawAxis(){
@@ -165,6 +186,8 @@ function brushmove(){
     gMain.yZoom.domain(selection);
     let newRange = [gMain.yZoom(originalRange[0]), gMain.yZoom(originalRange[1])];
     gMain.yScale.range(newRange).padding(0.4).paddingOuter(0);
+    // update y axis at Main Group
+    d3.select(".mainGroup").select(".axis.y-axis").call(gMain.yAxis);
     update();
 }
 
@@ -175,8 +198,7 @@ function callback(err, response) {
     var data = response.data;
     init();
     draw(response.data);
-
 }
 
-d3.json("/fornecedores/412410/2015",callback)
+d3.json("/fornecedores/412410/2015?limit=100",callback)
 
