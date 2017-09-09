@@ -7,7 +7,7 @@ const group_chart = svg.append("g").attr("class", "group-chart").attr("transform
 
 // const colors = ["#f39c12", "#d35400", "#c0392b", "#2980b9", "#9b59b6"]
 // const colors = d3.scaleOrdinal().range(d3.schemeCategory20c)
-const colors = ["#EFB605", "#E58903", "#E01A25", "#C20049", "#991C71", "#66489F", "#2074A0", "#10A66E", "#7EB852"]
+const colors = ["#2ecc71", "#2980b9", "#8e44ad", "#f1c40f", "#e67e22", "#e74c3c"]
 
 function type(d){
     d["dtEdital"] = new Date(d["dtEdital"])
@@ -39,7 +39,8 @@ function callback(err, received) {
     const yExtent = [0,d3.max(data, d => d["vlLicitacao"] )];
     // Por que d3.extent(data, d => d["vlLicitacao"] )
     const xScale = d3.scaleTime().range([0, width]).domain(xExtent);
-    const yScale = d3.scaleLinear().range([height,0]).domain(yExtent);
+    // const yScale = d3.scaleLinear().range([height,0]).domain(yExtent);
+    const yScale = d3.scaleLog().range([height,0]).domain([1,d3.max(data, d => d["vlLicitacao"] )]);
     const rScale = function(d){ return 4; };
     // Inicializando Eixos
     const xAxis = d3.axisBottom(xScale);
@@ -96,10 +97,12 @@ function callback(err, received) {
         if(!s){
             if(!idleTimeout) return idleTimeout = setTimeout(idle,idleDelay);
             xScale.domain(xExtent);
-            yScale.domain(yExtent);
+            // yScale.domain(yExtent);
+            yScale.domain([1,d3.max(data, d => d["vlLicitacao"] )]);
         }else{
             xScale.domain([s[0][0],s[1][0]].map(xScale.invert,xScale));
             yScale.domain([s[1][1],s[0][1]].map(yScale.invert,yScale));
+            // yScale.domain([d3.max([1,s[1][1]]) ,s[0][1]].map(yScale.invert,yScale));
             circleGroup.select(".brush").call(brush.move,null);
         }
         zoom();
@@ -198,19 +201,18 @@ function callback(err, received) {
         }
         if(site !== svg._tooltipped ){
             if(svg._tooltipped){
-                console.log("tooltipped ",svg._tooltipped.data);
+                // console.log("tooltipped ",svg._tooltipped.data);
                 removeTooltip(svg._tooltipped.data)
             }
             if(site){
-                console.log("new site ",site.data);
+                // console.log("new site ",site.data);
                 showTooltip(site.data);
             }
             svg._tooltipped = site;
-            console.log(site);
         }
     })
 
 
 }
 
-d3.json("/licitacoes/412410/2015", callback);
+d3.json("/licitacoes/412410/2014", callback);
