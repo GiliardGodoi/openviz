@@ -22,10 +22,19 @@ var margin,
     idleDelay = 350,
     idleTimeout = null,
     idle = function(){ idleTimeout = null;},
-    myFormat,
+    myFormat, localeTimeFormat,
     radioDistanceFromPoint = 20,
     defaultOpacityCircle = 0.5,
-    isLogScale = false;
+    isLogScale = true;
+
+var formatMillisecond,
+    formatSecond,
+    formatMinute,
+    formatHour,
+    formatDay,
+    formatWeek,
+    formatMonth,
+    formatYear;
 
 // ACESSORS FUNCTIONS
 function x(d){
@@ -68,6 +77,24 @@ function initFormatLocale(){
         "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
         "shortMonths": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
       });
+    localeTimeFormat = d3.timeFormatLocale({
+        "dateTime" : "%a %b %e %X %Y",
+        "date" : "%d/%m/%Y",
+        "time" : "%H : %M : %S",
+        "periods" : ["AM", "PM"],
+        "days" : ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
+        "shortDays" : ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+        "months" : ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" ],
+        "shortMonths": ["Jan", "Fev", "Mar", "Abr", "Maio", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+    });
+    formatMillisecond = localeTimeFormat.format(".%L"),
+    formatSecond = localeTimeFormat.format(":%S"),
+    formatMinute = localeTimeFormat.format("%I:%M"),
+    formatHour = localeTimeFormat.format("%I %p"),
+    formatDay = localeTimeFormat.format("%a %d"),
+    formatWeek = localeTimeFormat.format("%b %d"),
+    formatMonth = localeTimeFormat.format("%B"),
+    formatYear = localeTimeFormat.format("%Y");
 }
 
 function initMargin(){
@@ -105,8 +132,19 @@ function initScales(){
 }
 
 function initAxis(){
-    xAxis = d3.axisBottom().scale(xScale);
-    yAxis = d3.axisLeft().scale(yScale);//.tickFormat( myFormat.format("$.2f"));
+    xAxis = d3.axisBottom().scale(xScale).tickFormat( multiFormat );
+    // yAxis = d3.axisLeft().scale(yScale).tickFormat( myFormat.format("$.2f"));
+    defineYAxis();
+}
+// localized times axis pattener by Mike Bostock at < https://bl.ocks.org/mbostock/805115ebaa574e771db1875a6d828949 > special thanks.
+function multiFormat(date){
+    return (d3.timeSecond(date) < date ? formatMillisecond
+    : d3.timeMinute(date) < date ? formatSecond
+    : d3.timeHour(date) < date ? formatMinute
+    : d3.timeDay(date) < date ? formatHour
+    : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? formatDay : formatWeek)
+    : d3.timeYear(date) < date ? formatMonth
+    : formatYear)(date);
 }
 
 function initBrushArea(){
@@ -115,10 +153,9 @@ function initBrushArea(){
 }
 
 function update(){
-    defineYScale();
-    // devemos primeiramente alternar entre as escalas pois defineYScale cria uma nova escala para o gráfico
-    // e devemos atribuir o dominio posteriormente, para não correr o risco de perdermos essa informação
-    defineYDomain();
+    defineYScale();   // devemos primeiramente alternar entre as escalas. Quando defineYScale cria uma nova escala para o gráfico
+    defineYDomain(); // e devemos atribuir o dominio posteriormente, para não correr o risco de perdermos essa informação
+    defineYAxis();
     updateAxis();
     drawBubbles();
     svg._diagram = null;
@@ -127,8 +164,15 @@ function update(){
 
 function updateAxis(){
     let t = circleGroup.transition().duration(750);
-    // chartGroup.select(".axis-x").transition(t).call(xAxis);
     chartGroup.select(".axis.axis-y").transition(t).call(yAxis);
+}
+
+function defineYAxis(){
+    if(isLogScale){
+        yAxis = d3.axisLeft().scale(yScale).ticks(5).tickFormat(myFormat.format("$.2f"));
+    }else{
+        yAxis = d3.axisLeft().scale(yScale).tickFormat( myFormat.format("$.2f"));
+    }
 }
 
 function defineYScale(){
@@ -142,7 +186,7 @@ function defineYScale(){
 
 function defineYDomain(){
     if(isLogScale){
-        yDomain = [1,d3.max(DATA, d => y(d) )];
+        yDomain = [0.1,d3.max(DATA, d => y(d) )];
     }else{
         yDomain = [0,d3.max(DATA, d => y(d) )];
     }
@@ -296,8 +340,10 @@ function showTooltip(d,i){
         html : true,
         content: function() { 
             return "<span style='font-size: 11px; text-align: center;'>" +
-                        "<span> Modalidade: "+d["dsModalidadeLicitacao"]+"</span> </br>" +
-                        "<span>Valor da Licitação R$" + d["vlLicitacao"]+ "</span> </br>" +
+                        "<span> "+d["dsModalidadeLicitacao"]+" n. "+d["nrLicitacao"]+"/"+d["nrAnoLicitacao"]+"</span> </br>" +
+                        "<span>"+d["dsObjeto"]+"</span> </br>"+
+                        "<span>Valor Edital R$" + d["vlLicitacao"]+ "</span> </br>" +
+                        "<span>Valor Adquirido R$" + d["vlTotalAdquiridoLicitacao"]+ "</span> </br>" +
                         "<span></span>"+
                     "</span>"; 
         }
