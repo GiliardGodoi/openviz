@@ -11,7 +11,7 @@ var margin,
     yAxis,
     xDomain,
     yDomain,
-    zDomain,
+    colorDomain,
     svg,
     chartGroup,
     circleGroup,
@@ -110,10 +110,10 @@ function initSVGGroupsElements(){
     clip = svg.append("defs").append("svg:clipPath")
                             .attr("id","clip")
                             .append("svg:rect")
-                            .attr("width", width)
-                            .attr("height", height+5)
-                            .attr("x",0)
-                            .attr("y",0);
+                            .attr("width", width+10)
+                            .attr("height", height+10)
+                            .attr("x",-5)
+                            .attr("y",-5);
     
     circleGroup = chartGroup.append("g")
                             .attr("clip-path", "url(#clip)")
@@ -157,7 +157,7 @@ function update(){
     defineYDomain(); // e devemos atribuir o dominio posteriormente, para não correr o risco de perdermos essa informação
     defineYAxis();
     updateAxis();
-    drawBubbles();
+    drawBubbles(DATA);
     svg._diagram = null;
     circleGroup.select(".brush").call(brush.move,null);
 }
@@ -181,7 +181,7 @@ function defineYScale(){
     }else{
         yScale = d3.scaleLinear().range([height,0]);
     }
-    
+    yScale.clamp(true);    
 }
 
 function defineYDomain(){
@@ -193,6 +193,24 @@ function defineYDomain(){
     yScale.domain(yDomain);
 }
 
+function defineXDomain(){
+    let extent = d3.extent(DATA, d => x(d) );
+    let newYear =  d3.timeYear(extent[0]); 
+    xDomain = [];
+    xDomain[0] = newYear;
+    xDomain[1] = d3.timeYear.offset(newYear);
+    
+    xScale.domain(xDomain);
+}
+
+function defineColorDomain(){
+    colorDomain = DATA.map( d => z(d) )
+    .filter( (item, pos, array) => {
+        return array.indexOf(item) == pos;
+    });
+    colorScale.domain(colorDomain);
+}
+
 // DRAW FUNCTIONS
 function draw(d){
     if(!d){
@@ -201,9 +219,12 @@ function draw(d){
     DATA = d.map(convertDate);
 
     //calcular os dominios para as dimensões x, y, z
-    calculateDomains();
+    defineYDomain();
+    defineXDomain();
+    defineColorDomain();
+    
     drawAxis();
-    drawBubbles();
+    drawBubbles(DATA);
 
     svg.on("mousemove",mousemoveOnSVG);
 }
@@ -220,8 +241,8 @@ function drawAxis(){
             .call(yAxis);
 }
 
-function drawBubbles(){
-    let bubbles = circleGroup.selectAll(".bubbles").data(DATA, d => key(d) );
+function drawBubbles(dataToDraw = []){
+    let bubbles = circleGroup.selectAll(".bubbles").data(dataToDraw, d => key(d) );
     
     // UPDATE
     bubbles.transition()
@@ -250,18 +271,6 @@ function drawBubbles(){
     bubbles.exit().remove();
 }
 
-function calculateDomains(){
-    zDomain = DATA.map( d => z(d) )
-                .filter( (item, pos, array) => {
-                    return array.indexOf(item) == pos;
-                });
-    
-    xDomain = d3.extent(DATA, d => x(d) );
-    defineYDomain();
-    xScale.domain(xDomain);
-    colorScale.domain(zDomain);
-}
-
 function calculateVoronoiDiagram(){
     console.log("calculando diagrama de voroni");
     svg._diagram = d3.voronoi().x(d => xScale(x(d)) ).y(d => yScale(y(d)) ).extent([[0,0],[width,height]])(DATA);
@@ -283,11 +292,13 @@ function brushEnded(){
         if(!idleTimeout) return idleTimeout = setTimeout(idle,idleDelay);
         xScale.domain(xDomain);
         yScale.domain(yDomain);
+        yScale.clamp(true);
         console.log('not s')
     }else{
         console.log('with s')
         xScale.domain([s[0][0],s[1][0]].map(xScale.invert,xScale));
         yScale.domain([s[1][1],s[0][1]].map(yScale.invert,yScale));
+        yScale.clamp(false);
         circleGroup.select(".brush").call(brush.move,null);
     }
     zoom();
@@ -391,6 +402,11 @@ function mapCodeToLetter(codigo){
     let word = '';
     for(let i = 0; i < codigo.length; i++) word += letter[+codigo[i]]
     return word;
+}
+
+function buscaDescricaoObjeto(palavra, dados){
+    let pattern = new RegExp(palavra,"im");
+    return dados.filter( d => pattern.test(d["dsObjeto"]) )
 }
 
 // start function
