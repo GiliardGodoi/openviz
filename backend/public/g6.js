@@ -24,7 +24,7 @@ function init(){
     initGroupsSVGElements();
     initScales();
     initAxis();
-    initBrush();
+    initBrushArea();
     console.log('initialize elements');
 }
 
@@ -109,7 +109,7 @@ function initAxis(){
     chart.MainGroup.append("g").attr("class","axis y-axis").attr("transform","translate(-5,0)");
 }
 
-function initBrush(){
+function initBrushArea(){
     chart.brush = d3.brushY().extent([[0,0],[gMini.width,gMini.height]]).on("brush",brushmove);
     chart.gBrush = d3.select(".brushGroup").append("g").attr("class","brush").call(chart.brush).call(chart.brush.move,null);
     chart.gBrush.selectAll("rect").attr("width",gMini.width);
@@ -119,9 +119,9 @@ function draw(_){
     if(!_){
         return
     }
-    data = _;
-    xDomain = [0, d3.max(data, d => x(d) )];
-    yDomain = data.map( d => y(d) );
+    DATA = _;
+    xDomain = [0, d3.max(DATA, d => x(d) )];
+    yDomain = DATA.map( d => y(d) );
     gMain.xScale.domain(xDomain);
     gMini.xScale.domain(xDomain);
     gMain.yScale.domain(yDomain);
@@ -131,7 +131,7 @@ function draw(_){
 
     //mini bar chart
     //DATA JOIN
-    var mini_bar = d3.select(".miniGroup").selectAll(".bar").data(data, d => key(d) );
+    var mini_bar = d3.select(".miniGroup").selectAll(".bar").data(DATA, d => key(d) );
     //UPDATE
     mini_bar.attr("width", d => gMini.xScale(x(d)))
             .attr("y", d => gMini.yScale(y(d)))
@@ -157,7 +157,7 @@ function drawAxis(){
 }
 
 function update(){
-    var bar = d3.select(".mainGroup").selectAll(".bar").data(data,d => key(d));
+    var bar = d3.select(".mainGroup").selectAll(".bar").data(DATA,d => key(d));
     //UPDATE
     bar.attr("width", d => gMain.xScale(x(d)))
         .attr("y", d => gMain.yScale(y(d) ))
@@ -191,7 +191,7 @@ function brushmove(){
     update();
 }
 
-function callback(err, response) {
+function start(err, response) {
     if(!response.data){
         return null;
     }
@@ -200,5 +200,5 @@ function callback(err, response) {
     draw(response.data);
 }
 
-d3.json("/fornecedores/412410/2015?limit=100",callback)
+d3.json("/fornecedores/412410/2015?limit=100",start)
 
