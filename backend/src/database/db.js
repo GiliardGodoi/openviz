@@ -142,6 +142,27 @@ DB.prototype.queryRankingFornecedor = function({cdIBGE,nrAno,skip, limit, sort})
     return this.query(coll_name,pipeline);
 }
 
+DB.prototype.queryMunicipioFromLicitacao = function(){
+    let coll_name = "rawLicitacao";
+    let project = { "$project" : {
+        "_id" : false,
+        "cdIBGE" : true,
+        "nmMunicipio" : true,
+        "nrAnoLicitacao" : true
+    }}
+    let group = { "$group" : {
+        "_id" : "$nrAnoLicitacao",
+        "municipios" : { "$addToSet": {
+            "nmMunicipio" : "$nmMunicipio",
+            "cdIBGE" : "$cdIBGE",
+            "nrAnoLicitacao" : "$nrAnoLicitacao"
+        } } } };
+    let pipe = [];
+    pipe[pipe.length] = project;
+    pipe[pipe.length] = group;
+    return this.query(coll_name,pipe);
+}
+
 DB.prototype.queryItensLicitacao = function({cdIBGE, nrAno,skip, limit, sort}){
     let coll_name = "rawLicitacaoVencedor"
     let pipeline = []
