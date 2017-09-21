@@ -21,7 +21,7 @@
     margin-right: auto;
 }
 #chart{
-    background-color: yellow;
+    /* background-color: yellow; */
     float: left;
     height: 500px;
     width: 850px;

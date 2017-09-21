@@ -7,52 +7,76 @@
     <title>Bubble Chart</title>
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <script src="js/d3/d3.js"></script>
-    <script src="js/jquery-3.2.1.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
+    <script src="./js/jquery-3.2.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
     
-    <style>
-        #container-chart{
-            margin: 0 auto;
-        }
-
-        .bordered {
-            stroke: #E6E6E6;
-            stroke-width:2px;
-            fill : #ffffd9;
-        } 
-        text.label {
-            font-size: 9pt;
-            font-family: Consolas, courier;
-            fill: #aaa;
-        }
-        .polygons {
-           fill: none;
-           stroke: #000;
-        }
-        line .links {
-           stroke: #000;
-        }
-    </style>
+    <script src="js/d3/d3.js"></script>
+    <link rel="stylesheet" href="mystyles/style.css">
   </head>
   <body>
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a href="#" class="navbar-brand">Open Viz</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Open Eye</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#meuNavBar" aria-controls="meuNavBar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="meuNavBar">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="#">Página 1</a>
+                <a class="nav-item nav-link" href="#">Página 2</a>
+                <a class="nav-item nav-link" href="#">Página 3</a>
             </div>
-            <ul class="nav navbar-nav">
-                <li class="active"> <a href="#">Home</a> </li>
-                <li> <a href="#">Page1</a> </li>
-                <li> <a href="#">Page2</a> </li>
-                <li> <a href="#">Page3</a> </li>
-            </ul>
         </div>
-    </nav>
-    <div>
-        <div id="container-chart" class="container"></div>
+    </nav>  
+    <div class="container-fluid">
+        <div class="container-main-chart">
+            <div id="filters">
+                <h4>Filtros de Pesquisa</h4>
+                <form class="container">
+                    <div class="row form-group">
+                        <div class="col">
+                            <label for="chooseScale">Alterne entre as escalas</label>
+                            <select name="chooseScale" id="chooseScale" class="form-control">
+                                <option value="log-scale">Escala Logarítmica</option>
+                                <option value="linear-scale">Escala Linear</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col">
+                            <label for="nrAnoLicitacao">Ano</label>
+                            <select name="nrAnoLicitacao" id="nrAnoLicitacao" class="form-control">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                            <div class="col">
+                                <label for="inputOne" class="form-control-label">Município:</label>
+                                <input class="form-control" type="search" id="inputOne" placeholder="Digite aqui a sua pesquisa..." required>
+                            </div>
+                        </div>
+                    <div class="row form-group">
+                        <div class="col">
+                            <label for="inputOne" class="form-control-label">Descrição do Objeto:</label>
+                            <input class="form-control" readonly type="search" id="inputTwo" placeholder="Digite aqui a sua pesquisa...">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col">
+                            <button type="button" class="btn btn-primary btn-block">Filtrar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div id="chart">
+                <h4>Distribuição das Licitações</h4>
+            </div>
+        </div>
     </div>
-    <script type="text/javascript" src="g5.1.js"></script>
+    
+    <script type="text/javascript" src="g5.js"></script>
   </body>
 </html>

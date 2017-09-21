@@ -434,7 +434,11 @@ function start(err, received) {
     draw(received.data);
 }
 
-d3.json("/licitacoes/412410/2016", start);
+// d3.json("/licitacoes/412410/2016", start);
+
+function lookingForData(){
+    
+}
 
 // funções para o formulario
 
@@ -443,8 +447,8 @@ function addEventsListners(){
 }
 
 function addChooseScaleEventListeners(){
-    selectInput = d3.select("#chooseScale");
-    console.log(selectInput);
+    selectInput = $("#chooseScale")[0];
+    // debugger;
     selectInput.onchange = function(event){
         console.log(this.value);
         if(this.value === "log-scale"){
@@ -457,4 +461,28 @@ function addChooseScaleEventListeners(){
     }
 }
 
-addEventsListners();
+function initFormInputs(){
+    initAnosInputSelect();
+    enableAutoCompleteInputForMunicipio();
+
+    addEventsListners();
+}
+
+
+function initAnosInputSelect(){
+    d3.json("/licitacoes/anos", (data) => {
+        let selection = d3.select("#nrAnoLicitacao")
+                        .selectAll("option")
+                        .data(data, d => d)
+                        .enter()
+                        .append("option")
+                        .attr("value", d => d)
+                        .text(d => d);
+    });
+}
+
+function enableAutoCompleteInputForMunicipio(){
+
+}
+
+initFormInputs();
