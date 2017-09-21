@@ -76,6 +76,45 @@ module.exports = (app) => {
         });
     });
 
+    app.get('/licitacoes/anos', (req, res) => {
+        let resposta = {
+            success : false,
+            message : '',
+            data : null
+        };
+        console.log(`\tGET ${req.path}`);
+
+        let anos = [2016, 2015, 2014, 2013];
+        resposta.data = anos;
+        resposta.success = true;
+        res.send(anos);
+    });
+
+    app.get("/licitacoes/municipios", (req, res) => {
+        let resposta = {
+            success : false,
+            message : '',
+            data : null
+        };
+
+        console.log(`\tGET ${req.path}`);
+
+        database.connect(config.db.uri).then( () =>{
+            database.queryMunicipioFromLicitacao()
+                .then( doc => {
+                    if(doc){
+                        resposta.data = doc;
+                        resposta.success = true;
+                    }
+                    res.json(resposta);;
+                }).catch(err => {
+                    res.status(500).end();
+                });
+        }).catch( err => {
+            res.status(500).end();
+        })
+    });
+
     app.get('/licitacao/:idLicitacao', (req, res) => {
         let resposta = {
             success : false,
