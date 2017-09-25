@@ -269,11 +269,13 @@ function drawBubbles(dataToDraw = []){
     
     // EXIT
     bubbles.exit().remove();
+    svg._diagram = null;
 }
 
 function calculateVoronoiDiagram(){
     console.log("calculando diagrama de voroni");
-    svg._diagram = d3.voronoi().x(d => xScale(x(d)) ).y(d => yScale(y(d)) ).extent([[0,0],[width,height]])(DATA);
+    let data = svg.selectAll("circle").data();
+    svg._diagram = d3.voronoi().x(d => xScale(x(d)) ).y(d => yScale(y(d)) ).extent([[0,0],[width,height]])(data);
     
     // svg.selectAll("g.polygons").remove()
 
@@ -344,8 +346,21 @@ function showTooltip(d,i){
     element.style("opacity", 1);
     // var el = element._groups[0];
 
-    console.log(d);
+    // console.log(d);
+    let card = d3.select("#card-display")
+                .datum(d)
+                .append("div")
+                .attr("class", "card")
 
+    card.append("div")
+                .attr("class","card-header")
+                .style("background-color",  d => colorScale(z(d)) )
+    card.append("div")
+                .attr("class", "card-block")
+                .append("p")
+                .text(d => d["dsObjeto"]);
+    card.style("max-height", "500px")
+        .style("overflow", "auto");
     // $(el).popover({
     //     placement: 'auto top',
     //     container: '#chart',
@@ -370,6 +385,7 @@ function removeTooltip(d, i){
     // $('.popover').each(function() {
     //     $(this).remove();
     // }); 
+    d3.selectAll("div.card").remove();
 }
 
 function changeYScale(){
