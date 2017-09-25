@@ -342,13 +342,13 @@ function mousemoveOnSVG(){
 function showTooltip(d,i){
     const element = d3.select(".bubbles."+mapCodeToLetter(key(d)));
     element.style("opacity", 1);
-    var el = element._groups[0];
+    // var el = element._groups[0];
 
-    // console.log(d);
+    console.log(d);
 
     // $(el).popover({
     //     placement: 'auto top',
-    //     container: '#container-chart',
+    //     container: '#chart',
     //     trigger: 'manual',
     //     html : true,
     //     content: function() { 
@@ -425,23 +425,7 @@ function buscaDescricaoObjeto(palavra, dados){
     return dados.filter( d => pattern.test(d["dsObjeto"]) )
 }
 
-// start function
-function start(err, received) {
-    if(!received.data){
-        return null;
-    }
-    init();
-    draw(received.data);
-}
-
-// d3.json("/licitacoes/412410/2016", start);
-
-function lookingForData(){
-    
-}
-
 // funções para o formulario
-
 function addEventsListners(){
     addChooseScaleEventListeners();
 }
@@ -461,28 +445,39 @@ function addChooseScaleEventListeners(){
     }
 }
 
-function initFormInputs(){
-    initAnosInputSelect();
+function enableFormEvents(){
     enableAutoCompleteInputForMunicipio();
 
     addEventsListners();
 }
 
-
-function initAnosInputSelect(){
-    d3.json("/licitacoes/anos", (data) => {
-        let selection = d3.select("#nrAnoLicitacao")
-                        .selectAll("option")
-                        .data(data, d => d)
-                        .enter()
-                        .append("option")
-                        .attr("value", d => d)
-                        .text(d => d);
-    });
-}
-
 function enableAutoCompleteInputForMunicipio(){
-
+    let input = document.querySelector("#inputDescricaoObjeto");
+    let condition = true;
+    input.onkeyup = function (event){
+        let value = event.target.value;
+        if(value.length >= 3){
+            if(condition){
+                setTimeout(() => {
+                    condition = true;
+                }, 750);
+                condition = false;
+                // console.log(value);
+                drawBubbles(buscaDescricaoObjeto(value,DATA));
+            }
+        }
+    }
 }
 
-initFormInputs();
+
+// start function
+function start(err, received) {
+    if(!received.data){
+        return null;
+    }
+    init();
+    draw(received.data);
+    enableFormEvents();
+}
+
+d3.json("/licitacoes/412410/2016", start);
