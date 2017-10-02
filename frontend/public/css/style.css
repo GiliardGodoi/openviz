@@ -1,0 +1,48 @@
+.bg-azul{
+    background-color:  #011A31;
+}
+.main-section{
+    margin-top: 50px;
+}
+
+a:hover{
+    text-decoration: none;
+}
+
+
+#chart{
+    /* background-color: yellow; */
+    /* float: left; */
+    /* height: 500px; */
+    /* width: 850px; */
+}
+
+#card-display{
+    max-height: 500px;
+    max-width: 250px;
+    margin-left: 10px;
+    /* float: left; */
+    /* background-color: yellow; */
+}
+
+.container-form{
+    height: 80%;
+    overflow: auto;
+}
+
+.axis .axis-x{
+    path : none;
+}
+
+.bubble{
+    fill: rgb(247, 158, 57);
+    fill-opacity: 0.5;
+    stroke: none;
+}
+
+.tree-layout{
+    stroke: white;
+    /* fill: rgb(247, 158, 57); */
+    fill-opacity: 0.5;
+}
+
