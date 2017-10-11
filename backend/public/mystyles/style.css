@@ -1,33 +1,31 @@
-.section{
+.bg-azul{
+    background-color:  #4080bf;
+}
+.main-section{
     margin-top: 50px;
 }
+
 button.btn{
-    border-radius: 50px;
+    /* border-radius: 50px; */
 }
 
 #chart{
     /* background-color: yellow; */
-    float: left;
-    height: 500px;
-    width: 850px;
+    /* float: left; */
+    /* height: 500px; */
+    /* width: 850px; */
 }
 
-#filters{
-    margin-left: 10px;
-    margin-right: 10px;
-    float: left;
-    height: 500px;
-    width: auto;
-    max-width: 500px;
-    min-width: 370px;
-    /* background-color: yellow; */
-}
 #card-display{
-    height: 500px;
-    width: 250px;
+    max-height: 500px;
+    max-width: 250px;
     margin-left: 10px;
-    float: left;
+    /* float: left; */
     /* background-color: yellow; */
 }
 
+.container-form{
+    height: 80%;
+    overflow: auto;
+}
 

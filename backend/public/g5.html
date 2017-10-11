@@ -26,7 +26,7 @@
     </style>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-azul">
         <a class="navbar-brand" href="#">Open Eye</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#meuNavBar" aria-controls="meuNavBar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -37,37 +37,72 @@
             </div>
         </div>
     </nav>  
-    <div class="container-fluid">
-        <div class="section">
-            <div id="filters">
-                <h4>Filtros de Pesquisa</h4>
-                <div class="container">
-                    <div class="row form-group">
-                        <div class="col">
-                            <label for="chooseScale">Alterne entre as escalas</label>
-                            <select name="chooseScale" id="chooseScale" class="form-control">
-                                <option value="log-scale">Escala Logarítmica</option>
-                                <option value="linear-scale">Escala Linear</option>
-                            </select>
+    <div class="container-fluid main-section">
+        <div class="row">
+            <div class="col-3 container-form">
+                <div class="card">
+                    <div class="card-header">
+                        <h6>Pesquisa</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="inputMunicipio">Município</label>
+                            <input type="text" name="inputMunicipio" id="inputMunicipio" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputMunicipio">Ano</label>
+                            <input type="text" name="inputMunicipio" id="inputAnoLicitacao" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputMunicipio">Descrição Objeto</label>
+                            <input type="text" name="inputMunicipio" id="inputDescricaoObjeto" class="form-control form-control-lg">
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <button type="button" class="btn btn-outline-primary btn-block">Pesquisar</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" class="btn btn-outline-warning btn-block">Limpar</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="row form-group">
-                        <div class="col">
-                            <label for="inputOne" class="form-control-label">Descrição do Objeto:</label>
-                            <input class="form-control" type="search" id="inputDescricaoObjeto" placeholder="Digite aqui a sua pesquisa...">
-                        </div>
+                </div>
+                <p></p>
+                <div class="card">
+                    <div class="card-header">
+                        <h6>Visualize</h6>
                     </div>
-                    <div class="row form-group">
-                        <div class="col">
-                            <button type="button" class="btn btn-primary btn-block">Filtrar</button>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label for="" class="col-form-label">Escala:</label>
+                            <div class="col-sm-5">
+                                <button type="button" class="btn btn-outline-primary btn-block">Linear</button>
+                            </div>
+                            <div class="col-sm-5">
+                                    <button type="button" class="btn btn-outline-primary btn-block">Log</button>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-form-label">Agregar por:</label>
+                            <div class="col">
+                                <select name="" id="" class="custom-select">
+                                    <option value="1">Ano</option>
+                                    <option value="2">Municipio</option>
+                                    <option value="3">Entidade</option>
+                                    <option value="4">Modalidade Licitação</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="chart">
-                <h4>Distribuição das Licitações</h4>
+            <div class="col-6">
+                <div id="chart"></div>
             </div>
-            <div id="card-display"class=""></div>
+            <div class="col-2">
+                <div id="lengend-display"></div>
+                <div id="card-display"></div>                
+            </div>
         </div>
     </div>
     

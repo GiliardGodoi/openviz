@@ -49,6 +49,10 @@ function z(d){
     return d['dsModalidadeLicitacao'];
 }
 
+function r(d){
+    return d["vlLicitacao"];
+}
+
 function key(d){
     return d["idLicitacao"];
 }
@@ -72,10 +76,10 @@ function initFormatLocale(){
         "date": "%m/%d/%Y",
         "time": "%H:%M:%S",
         "periods": ["AM", "PM"],
-        "days": ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
-        "shortDays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-        "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        "shortMonths": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        "days" : ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
+        "shortDays" : ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+        "months" : ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" ],
+        "shortMonths": ["Jan", "Fev", "Mar", "Abr", "Maio", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
       });
     localeTimeFormat = d3.timeFormatLocale({
         "dateTime" : "%a %b %e %X %Y",
@@ -99,8 +103,8 @@ function initFormatLocale(){
 
 function initMargin(){
     margin = {top: 20, right: 20, bottom: 60, left: 60};
-    width = 850 - margin.left - margin.right;
-    height = 500 - margin.top - margin.bottom;
+    width = 700 - margin.left - margin.right;
+    height = 450 - margin.top - margin.bottom;
 }
 
 function initSVGGroupsElements(){
@@ -263,7 +267,7 @@ function drawBubbles(dataToDraw = []){
             .duration(750)
             .attr("cx", d => xScale(x(d)) )
             .attr("cy", d => yScale(y(d)) )
-            .attr("r", d => rScale(d) )
+            .attr("r",  d => rScale(r(d)) )
             .style("fill", d => colorScale(z(d)))
             .style("opacity", defaultOpacityCircle );
     
@@ -350,16 +354,16 @@ function showTooltip(d,i){
     let card = d3.select("#card-display")
                 .datum(d)
                 .append("div")
-                .attr("class", "card")
+                .attr("class", "card card-licitacao")
 
     card.append("div")
                 .attr("class","card-header")
                 .style("background-color",  d => colorScale(z(d)) )
     card.append("div")
-                .attr("class", "card-block")
+                .attr("class", "card-body")
                 .append("p")
                 .text(d => d["dsObjeto"]);
-    card.style("max-height", "500px")
+    card.style("max-height", "300px")
         .style("overflow", "auto");
     // $(el).popover({
     //     placement: 'auto top',
@@ -385,7 +389,7 @@ function removeTooltip(d, i){
     // $('.popover').each(function() {
     //     $(this).remove();
     // }); 
-    d3.selectAll("div.card").remove();
+    d3.selectAll("div.card-licitacao").remove();
 }
 
 function changeYScale(){
@@ -442,9 +446,6 @@ function buscaDescricaoObjeto(palavra, dados){
 }
 
 // funções para o formulario
-function addEventsListners(){
-    addChooseScaleEventListeners();
-}
 
 function addChooseScaleEventListeners(){
     selectInput = $("#chooseScale")[0];
@@ -464,7 +465,7 @@ function addChooseScaleEventListeners(){
 function enableFormEvents(){
     enableAutoCompleteInputForMunicipio();
 
-    addEventsListners();
+    addChooseScaleEventListeners();
 }
 
 function enableAutoCompleteInputForMunicipio(){
