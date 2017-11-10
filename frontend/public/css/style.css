@@ -1,20 +1,25 @@
 .bg-azul{
     background-color:  #011A31;
 }
-.main-section{
-    margin-top: 50px;
+
+.section {
+    margin: 25px 0 5px 10px;
 }
 
 a:hover{
     text-decoration: none;
 }
 
-
+/* CLASSES DECLARADAS PARA OS CONTAINERS: FORMULARIO, CHART, LEGEND E CARD DISPLAY */
 #chart{
     /* background-color: yellow; */
-    /* float: left; */
-    /* height: 500px; */
-    /* width: 850px; */
+    display: block;
+    margin : 0 auto;
+}
+
+#chart > svg {
+    display: block;
+    margin: 0 auto;
 }
 
 #card-display{
@@ -26,23 +31,55 @@ a:hover{
 }
 
 .container-form{
-    height: 80%;
+    height: 100%;
+    max-height: 900px;
+    width: 355px;
     overflow: auto;
+    margin: 5px auto;
+    /* float: left; */
 }
 
-.axis .axis-x{
-    path : none;
+/* CLASSES DECLARADAS PARA O GRÁFICO DE DISPERSÃO  */
+.axis .axis-y{
+    stroke : none;
 }
 
-.bubble{
-    fill: rgb(247, 158, 57);
-    fill-opacity: 0.5;
-    stroke: none;
+/* CLASSES DECLARADAS PARA O GRÁFICO BUBBLE PACK */
+.bubble-middle{
+    fill : #D7E8F3;
+    z-index: -5;
 }
 
+.bubble-middle:hover{
+    stroke: gray;
+}
+
+.bubble-leaf{
+    stroke: none !important;
+}
+
+.bubble-root{
+    fill: white;
+    stroke: rgba(14, 13, 13, 0.69);
+}
+
+/* CLASSES DECLARADAS PARA O GRÁFICO TREEMAP */
 .tree-layout{
     stroke: white;
-    /* fill: rgb(247, 158, 57); */
-    fill-opacity: 0.5;
+    stroke-width: 0.5px;
 }
 
+/* CLASSES DECLARADAS PARA PADRONIZAÇÃO DAS LEGENDAS */
+
+.legendTitle{
+    font-size: large;
+    color : #252525;
+    font-weight: bold;
+}
+
+
+/* REGRAS PARA FORMATAÇÃO DOS EIXOS DOS GRÁFICOS */
+
+.axis-y > path {
+    display: none;
+}
