@@ -1,5 +1,3 @@
-
-
 export default class BubbleForce {
     constructor(){
         this.simulation;
@@ -8,7 +6,7 @@ export default class BubbleForce {
 
         this.svg;
 
-        this.data;
+        this._data_;
         this.keys;
 
         this.xScale;
@@ -22,9 +20,21 @@ export default class BubbleForce {
 
     }
 
+    key(d){
+        return d["dsModalidadeLicitacao"];
+    }
+
+    radius(d){
+        return d["vlLicitacao"];
+    }
+
+    x(d){
+        return d["dsModalidadeLicitacao"];
+    }
+
     data(data){
-        this.data = data;
-        this.keys = this.data.map( d => d["dsModalidadeLicitacao"] )
+        this._data_ = data;
+        this.keys = this._data_.map( d => d["dsModalidadeLicitacao"] )
         .filter( (item, index, array) => {
             return array.indexOf(item) == index;
         });
@@ -54,7 +64,7 @@ export default class BubbleForce {
         this.colorScale.domain(this.keys);
         this.xScale.domain(this.keys);
         var _this = this;
-        this.simulation = d3.forceSimulation(this.data)
+        this.simulation = d3.forceSimulation(this._data_)
             .force("collision", d3.forceCollide().radius( d => {
                 return this.radiusScale(d["vlLicitacao"]) + 0.5 ;
             }))
@@ -63,7 +73,7 @@ export default class BubbleForce {
             }).strength(1) )
             .force("y", d3.forceY(this.height).y( d => _this.height / 2 ).strength(0.075) )
             .on("tick", () => {
-                var u = _this.svg.selectAll("circle").data(this.data);
+                var u = _this.svg.selectAll("circle").data(this._data_);
                     u.enter()
                     .append("circle")
                     .attr("r", d => {

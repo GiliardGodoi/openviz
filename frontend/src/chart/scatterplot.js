@@ -1,4 +1,4 @@
-import formatter from "./formatter.js";
+import Formatter from "./formatter.js";
 
 
 export default class ScatterPlot {
@@ -18,56 +18,87 @@ export default class ScatterPlot {
         this.colorScale;
         this.radiusScale;
 
+        this.colorSchema = ["#1abc9c", "#2ecc71","#3498db","#f1c40f","#e74c3c", "#8e44ad"];
         this.colorDomain;
+        this.yDomain;
+        this.xDomain;
 
         this.xAxis;
         this.yAxis;
+        this.isLogScale = true;
+
+        this.ordinalLegend;
+        this.svgLegend;
+
+        this.format = new Formatter();
 
         this.defaultOpacityCircle = 0.5;
     }
 
-    x(d){
+    _x_(d){
         return d['dtEdital'];
     }
 
-    y(d){
+    _y_(d){
         return d["vlLicitacao"] ;
     }
 
-    color(d){
+    _color_(d){
         return d['dsModalidadeLicitacao'];
     }
 
-    r(d){
+    _r_(d){
         return 4;
     }
 
-    key(d){
+    _key_(d){
         return d["idLicitacao"];
     }
 
-    data(_data){
-        if(!_data){
-            return this.data;
+
+
+    data(data){
+        if(!data){
+            return this._data_;
         }else{
-            this._data_ = _data.map(this.convertDate);
-            this.colorDomain = _data.filter((item, index, array) => {
-                return array.indexOf(item) === index;
-            })
+            this._data_ = data.map(this.convertDate);
+            this._defineColorDomain();
+            this._defineXDomain();
+            this._defineYDomain();
         }
-        
-        console.log('data setup');
     }
+
+    _defineYDomain(){
+        this.yDomain = [1, d3.max(this._data_, d=> this._y_(d) )];
+    }
+
+    _defineXDomain(){
+        let extent = d3.extent(this._data_, d => this._x_(d) );
+        let newYear =  d3.timeYear(extent[0]); 
+        this.xDomain = [];
+        this.xDomain[0] = newYear;
+        this.xDomain[1] = d3.timeYear.offset(newYear);
+    }
+
+    _defineColorDomain(){
+        this.colorDomain = this._data_.map( item => this._color_(item) ).filter((item, index, array) => {
+            return array.indexOf(item) === index;
+        }).sort( (a,b) => {
+            return a - b;
+        })
+    }
+
 
     init(){
         this.initMargin();
         this.initSVGElements();
         this.initScale();
+        this.initLegend();
     }
 
     initMargin(){
-        this.margin = {top: 20, right: 20, bottom: 60, left: 60};
-        this.width = 700 - this.margin.left - this.margin.right;
+        this.margin = {top: 20, right: 10, bottom: 60, left: 80};
+        this.width = 750 - this.margin.left - this.margin.right;
         this.height = 450 - this.margin.top - this.margin.bottom;
     }
 
@@ -94,9 +125,13 @@ export default class ScatterPlot {
         this.yScale = d3.scaleLog().range([this.height,0]);
         this.xScale = d3.scaleTime().range([0, this.width]);
         
-        this.colorScale = d3.scaleOrdinal().range(["#2ecc71", "#2980b9", "#8e44ad", "#f1c40f", "#e67e22", "#e74c3c"]);
+        this.colorScale = d3.scaleOrdinal().range(this.colorSchema);
 
         this.radiusScale = function(d){ return 4; };
+    }
+
+    initLegend(){
+        this.ordinalLegend = d3.legendColor().shape("circle").title("Legenda - Modalidades Licitação").scale(this.colorScale);
     }
 
     draw(){
@@ -104,18 +139,36 @@ export default class ScatterPlot {
             console.log("data is not defined");
             return;
         }
-        let extent = d3.extent(this._data_, d => this.x(d) );
-        let newYear =  d3.timeYear(extent[0]); 
-        this.xDomain = [];
-        this.xDomain[0] = newYear;
-        this.xDomain[1] = d3.timeYear.offset(newYear);        
+                
         this.xScale.domain(this.xDomain);
-
-        this.yDomain = [0.01, d3.max(this._data_, d=> this.y(d) )];
         this.yScale.domain(this.yDomain);
         this.colorScale.domain(this.colorDomain);
 
+        // xAxis
+        this.xAxis = d3.axisBottom().scale(this.xScale).tickFormat( this.format.getTimeFormat() );
+        
+        this.chartGroup.append("g")
+                .attr("class", "axis axis-x")
+                .attr("transform", "translate("+[0,(this.height + 5)]+")")
+                .call(this.xAxis);
+        // yAxis
+        let interpolate = d3.interpolateRound(this.yDomain[0],this.yDomain[1]);
+        this.yAxis = d3.axisLeft().scale(this.yScale).ticks(5).tickFormat( this.format.localeFormat.format("$,.2f"))//.tickValues([0,0.01,0.15,0.2,0.75,1].map(i => interpolate(i) ));
+        console.log(this.yAxis.tickArguments());
+        this.chartGroup.append("g")
+                .attr("class", "axis axis-y")
+                .attr("transform", "translate(0,0)")
+                .call(this.yAxis);
+
         this.drawMarks();
+
+        this.svgLegend = d3.select("#legend-display")
+                            .append("svg")
+                            .attr("height", 200)
+                            .append("g")
+                            .attr("class", "lengenda")
+                            .attr("transform", "translate(20,20)")
+                            .call(this.ordinalLegend);
     }
 
     drawMarks(){
@@ -124,7 +177,7 @@ export default class ScatterPlot {
             return;
         }
 
-        let bubbles = this.circleGroup.selectAll(".bubbles").data(this._data_, d => this.key(d) );
+        let bubbles = this.circleGroup.selectAll(".bubbles").data(this._data_, d => this._key_(d) );
         
         // UPDATE
         bubbles.transition()
@@ -136,17 +189,17 @@ export default class ScatterPlot {
         //ENTER
         bubbles.enter()
                 .append("circle")
-                .attr("class", d => ("bubbles "+this.mapCodeToLetter(this.key(d)) ))
-                .attr("cx", d => this.xScale(this.x(d)) )
+                .attr("class", d => ("bubbles "+this.mapCodeToLetter(this._key_(d)) ))
+                .attr("cx", d => this.xScale(this._x_(d)) )
                 .attr("cy", this.height )
                 .attr("r", 0 )
-                .style("fill", d => this.colorScale(this.color(d)))
+                .style("fill", d => this.colorScale(this._color_(d)))
                 .transition()
                 .duration(750)
-                .attr("cx", d => this.xScale(this.x(d)) )
-                .attr("cy", d => this.yScale(this.y(d)) )
-                .attr("r",  d => this.radiusScale(this.r(d)) )
-                .style("fill", d => this.colorScale(this.color(d)))
+                .attr("cx", d => this.xScale(this._x_(d)) )
+                .attr("cy", d => this.yScale(this._y_(d)) )
+                .attr("r",  d => this.radiusScale(this._r_(d)) )
+                .style("fill", d => this.colorScale(this._color_(d)))
                 .style("opacity", this.defaultOpacityCircle );
         
         // EXIT
