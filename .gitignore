@@ -1,9 +1,8 @@
-
+#ignorando arquivos do projeto
 backend/public/css
 backend/public/fonts
 backend/public/js
-
-/frontend/public/js/app.js
+frontend/public/js/app.js
 
 #debbuging
 .vscode
