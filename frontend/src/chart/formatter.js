@@ -12,7 +12,8 @@ export default class Formatter {
             "months" : ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" ],
             "shortMonths": ["Jan", "Fev", "Mar", "Abr", "Maio", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
         });
-        this.myFormat = d3.formatLocale({
+
+        this.localeFormat = d3.formatLocale({
             "decimal": ",",
             "thousands": ".",
             "grouping": [3],
@@ -27,24 +28,44 @@ export default class Formatter {
             "shortMonths": ["Jan", "Fev", "Mar", "Abr", "Maio", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
           });
 
-          this.formatMillisecond = localeTimeFormat.format(".%L");
-          this.formatSecond = localeTimeFormat.format(":%S");
-          this.formatMinute = localeTimeFormat.format("%I:%M");
-          this.formatHour = localeTimeFormat.format("%I %p");
-          this.formatDay = localeTimeFormat.format("%a %d");
-          this.formatWeek = localeTimeFormat.format("%b %d");
-          this.formatMonth = localeTimeFormat.format("%B");
-          this.formatYear = localeTimeFormat.format("%Y");
+          this.formatMillisecond = this.localeTimeFormat.format(".%L");
+          this.formatSecond = this.localeTimeFormat.format(":%S");
+          this.formatMinute = this.localeTimeFormat.format("%I:%M");
+          this.formatHour = this.localeTimeFormat.format("%I %p");
+          this.formatDay = this.localeTimeFormat.format("%a %d");
+          this.formatWeek = this.localeTimeFormat.format("%b %d");
+          this.formatMonth = this.localeTimeFormat.format("%B");
+          this.formatYear = this.localeTimeFormat.format("%Y");
+
+
         
     }
 
     multiFormat(date){
-        return (d3.timeSecond(date) < date ? formatMillisecond
-        : d3.timeMinute(date) < date ? formatSecond
-        : d3.timeHour(date) < date ? formatMinute
-        : d3.timeDay(date) < date ? formatHour
-        : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? formatDay : formatWeek)
-        : d3.timeYear(date) < date ? formatMonth
-        : formatYear)(date);
-    }    
+        let _this = this;
+        return (d3.timeSecond(date) < date ? _this.formatMillisecond
+        : d3.timeMinute(date) < date ? _this.formatSecond
+        : d3.timeHour(date) < date ? _this.formatMinute
+        : d3.timeDay(date) < date ? _this.formatHour
+        : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? _this.formatDay : _this.formatWeek)
+        : d3.timeYear(date) < date ? _this.formatMonth
+        : _this.formatYear)(date);
+    }
+    
+    getFormater(spec){
+        return this.localeFormat.format(spec);
+    }
+
+    getTimeFormat(){
+        var _this = this;
+        return function muiltiTimeFormat(date){
+            return (d3.timeSecond(date) < date ? _this.formatMillisecond
+            : d3.timeMinute(date) < date ? _this.formatSecond
+            : d3.timeHour(date) < date ? _this.formatMinute
+            : d3.timeDay(date) < date ? _this.formatHour
+            : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? _this.formatDay : _this.formatWeek)
+            : d3.timeYear(date) < date ? _this.formatMonth
+            : _this.formatYear)(date);
+        }
+    }
 }
