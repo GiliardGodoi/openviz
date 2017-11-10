@@ -1,5 +1,5 @@
 
-export default class BarChartModalidadeAoLongoAno {
+export default class MultipleBarChart {
     constructor(){
         this._data_ = null;
         this._meses_ = ['jan', 'fev', 'mar', 'abr', 'maio', 'jun', 'jul', 'ago', 'set', 'out','nov', 'dez']
@@ -38,11 +38,12 @@ export default class BarChartModalidadeAoLongoAno {
     }
 
     _defineYScale(){
-        this.yScale = d3.scaleLinear().domain(this.yDomain).range([])
+        this.yScale = d3.scaleLinear().domain(this.yDomain)
     }
 
     _defineXScale(){
-        
+        this.xScale = d3.scaleBand().domain(this._modalidades_)
+        console.log('oi');
     }
 
     _y(v){
@@ -51,6 +52,10 @@ export default class BarChartModalidadeAoLongoAno {
 
     _x(v){
         return 0;
+    }
+
+    meses(){
+        
     }
 
     data(data){
@@ -102,20 +107,23 @@ export default class BarChartModalidadeAoLongoAno {
                     let y = (i - x) % 3;
                     let mini = d3.select(this);
                     mini.attr("transform", "translate("+[(innerWidth * x), (innerHeight * y) ]+")");
-                    mini.append("rect").attr("width", innerWidth).attr("height", innerHeight)
-                        .attr("fill", (x+y) % 2 ? "yellow" : "steelblue" )
-                    // mini.selectAll("rect")
-                    //     .data(d.values )
-                    //     .enter()
-                    //     .append("rect")
-                    //     .attr("x", (v, i) => 31 * i )
-                    //     .attr("y", (v, i) => {
-                    //         return innerHeight - _this._y(v);
-                    //     })
-                    //     .attr("width", 30 )
-                    //     .attr("height", v => _this._y(v) )
-                    //     .attr("fill", v => _this.colorScale(v.key));
-                    // console.log(`(x: ${x}, y: ${y})`);
+                    // mini.append("rect").attr("width", innerWidth).attr("height", innerHeight)
+                    //     .attr("fill", (x+y) % 2 ? "yellow" : "steelblue" )
+                    
+                    mini.append("g").attr("transform", "translate(15,30)").append("text").text(_this._meses_[d.key])
+                    
+                    mini.selectAll("rect")
+                        .data(d.values )
+                        .enter()
+                        .append("rect")
+                        .attr("x", (v, i) => 31 * i )
+                        .attr("y", (v, i) => {
+                            return innerHeight - _this._y(v);
+                        })
+                        .attr("width", 30 )
+                        .attr("height", v => _this._y(v) )
+                        .attr("fill", v => _this.colorScale(v.key));
+                    console.log(`(x: ${x}, y: ${y})`);
                     console.log(d);
                 });
     }
