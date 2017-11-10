@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "backend do projeto open viz",
+  "description": "Projeto de Visualização de Dados Abertos Governamentais",
   "private": true,
   "main": "index.js",
   "scripts": {
