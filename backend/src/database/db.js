@@ -154,8 +154,7 @@ DB.prototype.queryMunicipioFromLicitacao = function(){
         "_id" : "$nrAnoLicitacao",
         "municipios" : { "$addToSet": {
             "nmMunicipio" : "$nmMunicipio",
-            "cdIBGE" : "$cdIBGE",
-            "nrAnoLicitacao" : "$nrAnoLicitacao"
+            "cdIBGE" : "$cdIBGE"
         } } } };
     let pipe = [];
     pipe[pipe.length] = project;
