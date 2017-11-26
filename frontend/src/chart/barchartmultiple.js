@@ -19,6 +19,7 @@ export default class BarChart {
         this._padding = 2;
 
         this._svg = null;
+        this._svgLegend = null;
 
         this._colorRange = null;
         this._yRange = null;
@@ -176,6 +177,17 @@ export default class BarChart {
                     });
     }
 
+    _createSVGLegend() {
+        let ordinalLegend = d3.legendColor().shape("circle").title("Legenda - Modalidades Licitação").scale(this._colorScale);
+        this._svgLegend = d3.select("#legend-display")
+            .append("svg")
+                .attr("height", 200)
+            .append("g")
+                .attr("class", "lengenda")
+                .attr("transform", "translate(20,20)")
+            .call(ordinalLegend)
+    }
+
     draw() {
         this._defineInnerChartSize();
         this._defineInputDomain(this._data);
@@ -186,6 +198,8 @@ export default class BarChart {
         this._createSVGElement();
         this._drawAxisElement();
         this._drawChartElements();
+
+        this._createSVGLegend();
     }
 
 
