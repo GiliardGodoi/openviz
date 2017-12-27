@@ -28,7 +28,7 @@
     </head>
     <body>
         <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-azul">
-            <a class="navbar-brand" href="#">Publica</a>
+            <a class="navbar-brand" href="#">Transparência Pública</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#meuNavBar" aria-controls="meuNavBar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
             </button>
@@ -49,13 +49,9 @@
                                 </div>
                                 <form>
                                     <div class="form-row">
-                                        <div class="form-group col-md-8">
-                                            <label for="inputMunicipio">Municipio</label>
-                                            <input type="text" name="inputMunicipio" id="inputMunicipio" class="form-control">
-                                        </div>
                                         <div class="form-group col-md-4">
                                             <label for="inputAno">Ano</label>
-                                            <select name="inputAno" id="inputAno" class="form-control custom-select">
+                                            <select name="inputAno" id="_inputAno" class="form-control custom-select">
                                                 <option value="invalid"></option>
                                                 <option value="2013">2013</option>
                                                 <option value="2014">2014</option>
@@ -63,11 +59,15 @@
                                                 <option value="2016">2016</option>
                                             </select>
                                         </div>
+                                        <div class="form-group col-md-8">
+                                            <label for="inputMunicipio">Municipio</label>
+                                            <input type="text" name="inputMunicipio" id="_inputMunicipio" class="form-control" readonly>
+                                        </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-8">
                                             <label for="inputDescricaoObjeto">Objeto</label>
-                                            <input type="text" name="inputDescricaoObjeto" id="inputDescricaoObjeto" class="form-control">
+                                            <input type="text" name="inputDescricaoObjeto" id="_inputDescricaoObjeto" class="form-control">
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label for="inputDescricaoModalidade">Modalidade de Licitação</label>
@@ -87,21 +87,21 @@
                                         <div class="form-group col-md-6">
                                             <label for="inputDataEdital">Data do Edital</label>
                                             <div class="input-group">
-                                                <input type="text" name="inputDataEdital" id="" class="form-control">
+                                                <input type="text" name="inputDataEditalMin" id="_inputDataEditalMin" class="form-control">
                                                 <div class="input-group-addon">
                                                     <span>até</span>
                                                 </div>
-                                                <input type="text" name="inputDataEdital2" id="" class="form-control">
+                                                <input type="text" name="inputDataEditalMax" id="_inputDataEditalMax" class="form-control">
                                             </div>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label for="inputDataAbertura">Data de Abertura</label>
                                             <div class="input-group">
-                                                    <input type="text" name="inputDataAbertura" id="" class="form-control">
+                                                    <input type="text" name="inputDataAberturaMin" id="_inputDataAberturaMin" class="form-control">
                                                 <div class="input-group-addon">
                                                     <span>até</span>
                                                 </div>
-                                                <input type="text" name="inputDataAbertura2" id="" class="form-control">
+                                                <input type="text" name="inputDataAberturaMax" id="_inputDataAberturaMax" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -109,18 +109,18 @@
                                         <div class="form-group col-md-6">
                                             <label for="inputValorLicitacao">Valor da Licitação</label>
                                             <div class="input-group">
-                                                <input type="text" name="inputValorLicitacaoMin" id="" class="form-control">
+                                                <input type="text" name="inputValorLicitacaoMin" id="_inputValorLicitacaoMin" class="form-control">
                                                 <div class="input-group-addon">
                                                     <span>até</span>
                                                 </div>
-                                                <input type="text" name="inputValorLicitacaoMax" id="" class="form-control">
+                                                <input type="text" name="inputValorLicitacaoMax" id="_inputValorLicitacaoMax" class="form-control">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="">
-                                            <button type="button" class="btn btn-outline-primary btn-lg" id="btnSearch" align="right">Pesquisar</button>
-                                            <button type="button" class="btn btn-outline-warning btn-lg" id="btnClean" align="right">Limpar</button>
+                                            <button type="button" class="btn btn-outline-primary btn-lg" id="_btnSearch" align="right">Pesquisar</button>
+                                            <button type="button" class="btn btn-outline-warning btn-lg" id="_btnClean" align="right">Limpar</button>
                                         </div>
                                     </div>
                                 </form>
@@ -132,7 +132,7 @@
                     <div class="row">
                         <!-- <div class="col-3"></div> -->
                         <div class="col" id="col-1"> 
-                            <div id="chart"></div>
+                            <div id="_divChart"></div>
                         </div>
                         <div class="col-3" id="col-2">
                             <div id="legend-display"></div>
