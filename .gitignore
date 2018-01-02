@@ -1,9 +1,15 @@
-#ignorando arquivos do projeto
+# ignorando arquivos do projeto
 
 backend/public/css
 backend/public/fonts
 backend/public/js
 frontend/public/js
+
+# ignorando pastas checkpoints do ipynb notebook
+.ipynb_checkpoints
+
+# ignorando pasta de dados  data-analysis/data/
+./data-analysis
 
 #debbuging
 .vscode
