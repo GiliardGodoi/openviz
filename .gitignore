@@ -8,9 +8,13 @@ js/
 
 # ignorando pasta de dados  data-analysis/data
 data/
+tmp/
 
-#debbuging
+# debbuging
 .vscode
+
+# python cache
+__pycache__
 
 # Logs
 logs
