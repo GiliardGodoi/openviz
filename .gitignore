@@ -2,6 +2,7 @@
 css/
 fonts/
 js/
+app.js
 
 # ignorando pastas checkpoints do ipynb notebook
 .ipynb_checkpoints
