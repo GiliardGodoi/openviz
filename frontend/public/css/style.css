@@ -1,9 +1,6 @@
 .bg-azul{
     background-color:  #011A31;
-}
-
-.section {
-    margin: 25px auto 5px auto;
+    opacity: 0.8;
 }
 
 a:hover{

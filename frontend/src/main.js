@@ -1,9 +1,9 @@
-// import ScatterPlot from "./chart/scatterplot.js"
-// import BubblePack from "./chart/bubblepack.js"
-// import Treemap from "./chart/treemap.js"
-// import Bubbleforce from "./chart/bubbleforce.js"
-// import ClusterForce from "./chart/clusterforce.js"
-// import Barchart from './chart/barchartmultiple.js'
+// import ScatterPlot from './chart/scatterplot'
+// import BubblePack from './chart/bubblepack'
+// import Treemap from './chart/treemap'
+// import Bubbleforce from './chart/bubbleforce'
+// import ClusterForce from './chart/clusterforce'
+// import Barchart from './chart/barchartmultiple'
 
 const drawTable = function drawTable () {
 
@@ -12,12 +12,6 @@ const drawTable = function drawTable () {
 const drawChart = function drawChart () {
   const nome = 'grafico de barras'
   return nome
-}
-
-
-const logger = function logger (message) {
-  const print = true
-  if (print) console.log(message)
 }
 
 const btnCleanAction = function btnCleanAction () {
@@ -31,15 +25,6 @@ const btnSearchAction = function btnSearchAction () {
 }
 
 const inputMaskToMoney = function inputMaskToMoney (event) {
-  event.preventDefault();
-  let letsKeyPressed = event.key
-  let target = $(event.target)
-  let val = target.val()
-    
-  if (letsKeyPressed >= 0 || letsKeyPressed <= 9) {
-    logger(`last key pressed: ${letsKeyPressed}`)
-    target.val(val + letsKeyPressed)
-  }
 }
 
 const autocompleteActive = function autocompleteActive () {
@@ -47,7 +32,7 @@ const autocompleteActive = function autocompleteActive () {
     { label: 'SANTO ANTÔNIO DA PLATINA', id: '412410' },
     { label: 'JACAREZINHO', id: '411180' },
     { label: 'WENCESLAU BRAZ', id: '412850' },
-    { label: 'CORNÉLIO PROCÓPIO', id: '410640' }
+    { label: 'CORNÉLIO PROCÓPIO', id: '410640' },
   ]
 
   $('#_inputMunicipio').autocomplete({
@@ -80,10 +65,10 @@ window.onload = function onload () {
   $('#fullpage').fullpage({
     scrollBar: true,
   })
-  $(datepickerActive)
-  $(autocompleteActive)
-  $(inputMaskToMoneyActive)
+  // $(datepickerActive)
+  // $(autocompleteActive)
+  // $(inputMaskToMoneyActive)
 
   $('#_btnClean').click(btnCleanAction)
-  $('#_btnSearch').click(drawChart)
+  // $('#_btnSearch').click(btnSearchAction)
 }
