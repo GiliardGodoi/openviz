@@ -4,7 +4,7 @@ message.txt
 # ignorando arquivos do projeto
 css/
 fonts/
-js/
+
 app.js
 
 # ignorando pastas checkpoints do ipynb notebook
