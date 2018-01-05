@@ -1,3 +1,6 @@
+# ignorando template para mensagem de commit
+message.txt
+
 # ignorando arquivos do projeto
 css/
 fonts/

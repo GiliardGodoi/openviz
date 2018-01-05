@@ -1,18 +1,9 @@
-FIX ISSUE: #1 EXCEÇÃO AO REALIZAR PARSES DE DETERMINADOS ARQUIVOS
+[ESPECIFICAÇÃO]: TEMPLATE MESSAGEM DE COMMIT
 
-Por apresentar caracteres especiais alguns arquivos geram uma exceção ao realizar o parse com o metodo padrao 'etree.parse' (XMLSyntaxError).
-A minha solução consiste em tratar esta exceção já que para a maioria dos outros arquivos ela não ocorre com este metodo padrão. Acredito que o metodo padrão lida melhor com questões como gerenciamento de memoria ou coisas do tipo, melhor do que a alternativa aqui definida.
+Body:
+Escrever aqui toda informação que for pertinente ao commit realizado: descrição dos princípios da solução; funcionalidade implementada; dificuldades encontradas; problemas não resolvidos pela implementação.
 
-O tratamento da exceção gerada consiste nestes passos:
- - Ler como texto puro, para a memoria, o arquivo XML em questão, utilizando a bliblioteca codecs e encoding utf-16;
- - Utilizar expressão regular para substituir os caracteres problematicos por uma string vazia ('').
- - Utiliar o metodo ET.fromstring da biblioteca 'lxml' para realizar o parse do arquivo XML.
-
-Outras mudanças:
- - Substituição do package xml para lxml, devido a um Aviso de Vunerabilidade estampado na documentação da biblioteca xml (https://docs.python.org/3/library/xml.etree.elementtree.html)
- - A funçao handle_files agora permite salvar os arquivos no banco de dados e como arquivo csv atraves da configuração dos seus parâmetros. Não sei se é uma solução boa. Acho que não.
-
-Avisos importantes:
- - A funcao ET.parse retorna um objeto do tipo ElementTree, por isso precisamos obter o root Element de tree com 'tree.getroot()' e passar para a nossa função 'processRootElement'. Isso já não acontece com o uso do metodo ET.fromstring. Este último metodo ja retorna o um root Element o qual já passamos diretamente para a função que processa o 'root element';
- - O código da função 'fromXMLAsStringToDataFrame' presume que os registros do arquivo XML em questão estão em apenas uma única linha. O que sabemos que não pode acontecer. Assim, caso um dos arquivos tenha os seus registros espalhados para várias linhas, a função só vai retornar apenas um registro sem acusar uma Exceção em tempo de execução, mas que óbiviamente isso é um erro. Por isso decidi não fechar esta ISSUE.
-
+Footer:
+Fazer referência a issues e a commits na forma de listas
+ - [ISSUE #X](link para issue)
+ - [TITULO COMMIT](link para commit)
