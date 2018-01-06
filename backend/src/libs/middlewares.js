@@ -13,5 +13,4 @@ module.exports = (app) => {
     
     app.use(compression());
     app.use(cors());
-    app.use(express.static('public'));
 }
