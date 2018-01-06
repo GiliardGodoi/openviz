@@ -65,6 +65,8 @@
                                     <div id='rowInputMunicipio' class="form-group col-md-12">
                                         <label for="inputMunicipio">Municipio</label>
                                         <input type="text" name="municipio" id="_inputMunicipio" class="form-control" placeholder="Pesquise por Municípios" readonly required>
+                                        <input type="hidden" name="cdIBGE" id="_inputCdIBGE" value="">
+                                        <div id="autocompleteMunicipio" class="list-group"></div>
                                     </div>
                                 </div>
                                 <div class="form-row">
@@ -90,21 +92,21 @@
                                     <div class="form-group col-md-6">
                                         <label for="inputDataEdital">Data do Edital</label>
                                         <div class="input-group">
-                                            <input type="text" name="dtEditalMin" id="_inputDataEditalMin" class="form-control" readonly>
+                                            <input type="text" name="dtEditalMin" id="_inputDataEditalMin" class="form-control" placeholder="Min." readonly>
                                             <div class="input-group-addon">
                                                 <span>até</span>
                                             </div>
-                                            <input type="text" name="dtEditalMax" id="_inputDataEditalMax" class="form-control" readonly>
+                                            <input type="text" name="dtEditalMax" id="_inputDataEditalMax" class="form-control" placeholder="Max." readonly>
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputDataAbertura">Data de Abertura</label>
                                         <div class="input-group">
-                                            <input type="text" name="dtAberturaMin" id="_inputDataAberturaMin" class="form-control" readonly>
+                                            <input type="text" name="dtAberturaMin" id="_inputDataAberturaMin" class="form-control" placeholder="Min." readonly>
                                             <div class="input-group-addon">
                                                 <span>até</span>
                                             </div>
-                                            <input type="text" name="dtAberturaMax" id="_inputDataAberturaMax" class="form-control" readonly>
+                                            <input type="text" name="dtAberturaMax" id="_inputDataAberturaMax" class="form-control" placeholder="Max." readonly>
                                         </div>
                                     </div>
                                 </div>
