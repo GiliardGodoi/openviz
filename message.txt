@@ -1,9 +1,0 @@
-[ESPECIFICAÇÃO]: TEMPLATE MESSAGEM DE COMMIT
-
-Body:
-Escrever aqui toda informação que for pertinente ao commit realizado: descrição dos princípios da solução; funcionalidade implementada; dificuldades encontradas; problemas não resolvidos pela implementação.
-
-Footer:
-Fazer referência a issues e a commits na forma de listas
- - [ISSUE #X](link para issue)
- - [TITULO COMMIT](link para commit)

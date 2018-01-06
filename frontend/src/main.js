@@ -46,7 +46,6 @@ const eventClickBtnSearch = function eventClickBtnSearch () {
     }
     return newObj
   }, {})
-  return values
 }
 
 const eventClickBtnClean = function eventClickBtnClean () {
@@ -55,6 +54,7 @@ const eventClickBtnClean = function eventClickBtnClean () {
   $('.form-control').not('select#_inputAno').attr('readonly', '')
   $('select#_inputDescricaoModalidade.form-control').attr('disabled', '')
   $('#_inputDataEditalMin, #_inputDataEditalMax, #_inputDataAberturaMin, #_inputDataAberturaMax').datepicker('destroy')
+
 }
 
 const eventChangeInputVlLicitacao = function eventChangeInputVlLicitacao (event) {
@@ -71,6 +71,20 @@ const eventActionDrawTable = function eventActionDrawTable (event) {
 
 const eventActionDrawChart = function eventActionDrawChart (event) {
 
+}
+/** Referência para jquery.mask
+ * https://igorescobar.github.io/jQuery-Mask-Plugin/docs.html
+ * No objeto options pode ser configurados os seguintes eventos:
+ * onChange: function (value, event, input, options)
+ * onKeyPress
+ * onComplete
+ * onInvalid
+ */
+const enableMaskOnInputVlLicitacao = function maskOnInputVlLicitacao () {
+  const options = {
+    reverse: true,
+  }
+  $('#_inputValorLicitacaoMin, #_inputValorLicitacaoMax').mask('000.000.000.000.000,00', options)
 }
 
 const enableDatapicker = function datepickerActive (ANO = '2013') {
@@ -94,13 +108,14 @@ const enableDatapicker = function datepickerActive (ANO = '2013') {
 const enableForm = function enableForm (params) {
   $('.form-control').attr('readonly', null).attr('disabled', null)
   enableDatapicker()
-
-  $('#_btnSearch').click(eventClickBtnSearch)
-  $('#_btnClean').click(eventClickBtnClean)
+  enableMaskOnInputVlLicitacao()
 }
 
 window.onload = function onload () {
   $('#fullpage').fullpage({
     scrollBar: true,
   })
+  $('#_btnSearch').click(enableForm)
+  $('#_btnSearch').click(eventClickBtnSearch)
+  $('#_btnClean').click(eventClickBtnClean)
 }
