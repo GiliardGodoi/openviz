@@ -36,6 +36,22 @@ const defineAutocomplete = function defineAutocomplete () {
   })
 }
 
+const defineDatepicker = function defineDatepicker () {
+  $('#_inputDataEditalMin, #_inputDataEditalMax, #_inputDataAberturaMin, #_inputDataAberturaMax')
+    .datepicker({
+      showOtherMonths: true,
+      selectOtherMonths: true,
+      showOtherYears: false,
+      selectOtherYears: false,
+      changeMonth: true,
+      changeYear: false,
+      monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+      monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Maio', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+      dateFormat: 'dd/mm/yy',
+      disabled: true,
+    })
+}
+
 /** Referência para jquery.mask
  * https://igorescobar.github.io/jQuery-Mask-Plugin/docs.html
  * No objeto options pode ser configurados os seguintes eventos:
@@ -51,33 +67,33 @@ const enableMaskOnInputVlLicitacao = function maskOnInputVlLicitacao () {
   $('#_inputValorLicitacaoMin, #_inputValorLicitacaoMax').mask('000.000.000.000.000,00', options)
 }
 
-const enableDatapicker = function datepickerActive (ANO = '2013') {
+const enableDatepicker = function datepickerActive (params) {
+  const ano = Number(params.ano)
+  if (ano) {
+    const minDate = new Date(ano, 0, 1)
+    const maxDate = new Date(ano, 11, 31)
+    $('#_inputDataEditalMin, #_inputDataEditalMax, #_inputDataAberturaMin, #_inputDataAberturaMax')
+      .datepicker('option', {
+        minDate,
+        maxDate,
+      })
+    $('#_inputDataEditalMin, #_inputDataAberturaMin')
+      .datepicker('option', { defaultDate: minDate })
+    $('#_inputDataEditalMax, #_inputDataAberturaMax')
+      .datepicker('option', { defaultDate: new Date(ano, 11, 1) })
+  }
   $('#_inputDataEditalMin, #_inputDataEditalMax, #_inputDataAberturaMin, #_inputDataAberturaMax')
-    .datepicker({
-      showOtherMonths: true,
-      selectOtherMonths: true,
-      showOtherYears: false,
-      selectOtherYears: false,
-      changeMonth: true,
-      changeYear: true,
-      minDate: new Date(ANO, 0, 1),
-      maxDate: new Date(ANO, 11, 31),
-      defaultDate: new Date(ANO, 0, 1),
-      monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-      monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Maio', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-      dateFormat: 'dd/mm/yy',
-    })
+    .datepicker('option', 'disabled', false)
 }
 
-const enableAutocomplete = function enableAutocomplete (
-  source,
-  callback = null
-) {
-  $('#_inputMunicipio').autocomplete('option', 'source', source)
+const disableDatepicker = function disableDatepicker () {
+  $('#_inputDataEditalMin, #_inputDataEditalMax, #_inputDataAberturaMin, #_inputDataAberturaMax')
+    .datepicker('option', 'disabled', true)
+}
+
+const enableAutocomplete = function enableAutocomplete (params) {
+  if (params.source) { $('#_inputMunicipio').autocomplete('option', 'source', params.source) }
   $('#_inputMunicipio').autocomplete('option', 'disabled', false)
-  if (isFunction(callback)) {
-    callback()
-  }
 }
 
 const disableAutocomplete = function disableAutocomplete () {
@@ -85,8 +101,10 @@ const disableAutocomplete = function disableAutocomplete () {
 }
 
 const enableForm = function enableForm (params) {
+  const { source, ano } = params
   $('.form-control').attr('readonly', null).attr('disabled', null)
-  enableDatapicker()
+  enableDatepicker({ ano })
+  enableAutocomplete({ source })
   enableMaskOnInputVlLicitacao()
 }
 
@@ -111,9 +129,9 @@ const eventClickBtnClean = function eventClickBtnClean () {
   $('select.form-control').val('blank')
   $('.form-control').not('select#_inputAno').attr('readonly', '')
   $('select#_inputDescricaoModalidade.form-control').attr('disabled', '')
-  $('#_inputDataEditalMin, #_inputDataEditalMax, #_inputDataAberturaMin, #_inputDataAberturaMax').datepicker('destroy')
 
   disableAutocomplete()
+  disableDatepicker()
 }
 
 const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
@@ -130,7 +148,7 @@ const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
     }).done((response) => {
       const source = response.data.municipios
         .map(item => ({ label: item.nmMunicipio, id: item.cdIBGE }))
-      enableAutocomplete(source, enableForm)
+      enableForm({ source, ano: val })
       console.log(response)
     }).fail((response, status) => {
       console.log(`request fail: ${url}\nStatus: ${status}`)
@@ -140,13 +158,13 @@ const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
   }
 }
 
-const eventChangeInputVlLicitacao = function eventChangeInputVlLicitacao (event) {
+// const eventChangeInputVlLicitacao = function eventChangeInputVlLicitacao (event) {
 
-}
+// }
 
-const eventChangeInputsDate = function eventChangeInputsDate (event) {
+// const eventChangeInputsDate = function eventChangeInputsDate (event) {
 
-}
+// }
 
 const eventActionDrawTable = function eventActionDrawTable (event) {
 
@@ -161,6 +179,8 @@ window.onload = function onload () {
     scrollBar: true,
   })
   defineAutocomplete()
+  defineDatepicker()
+  // Eventos de alguns componentes devem ser definidos uma única vez
   $('#_btnSearch').click(eventClickBtnSearch)
   $('#_btnClean').click(eventClickBtnClean)
   $('#_inputAno').change(eventOnChangeInputAno)
