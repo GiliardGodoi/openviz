@@ -142,23 +142,28 @@ DB.prototype.queryRankingFornecedor = function({cdIBGE,nrAno,skip, limit, sort})
     return this.query(coll_name,pipeline);
 }
 
-DB.prototype.queryMunicipioFromLicitacao = function(){
-    let coll_name = "rawLicitacao";
-    let project = { "$project" : {
+DB.prototype.queryMunicipioFromLicitacao = function(params){
+    const coll_name = "rawLicitacao";
+    const nrAno = params.nrAno || '0'
+    const query = { '$match': {
+        'nrAnoLicitacao': nrAno
+    }}
+    const project = { "$project" : {
         "_id" : false,
         "cdIBGE" : true,
         "nmMunicipio" : true,
         "nrAnoLicitacao" : true
     }}
-    let group = { "$group" : {
+    const group = { "$group" : {
         "_id" : "$nrAnoLicitacao",
         "municipios" : { "$addToSet": {
             "nmMunicipio" : "$nmMunicipio",
             "cdIBGE" : "$cdIBGE"
         } } } };
-    let pipe = [];
-    pipe[pipe.length] = project;
-    pipe[pipe.length] = group;
+    const pipe = [];
+    pipe[0] = query;
+    pipe[1] = project;
+    pipe[2] = group;
     return this.query(coll_name,pipe);
 }
 

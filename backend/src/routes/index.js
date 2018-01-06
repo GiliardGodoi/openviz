@@ -20,26 +20,27 @@ module.exports = (app) => {
         };
         console.log(`\tGET ${req.path}`)
         let parametrosPesquisa = {...req.params,...req.query}
-        
-        database.connect(config.db.uri).then( () => {
-            database.queryLicitacoesMunicipio(parametrosPesquisa)
-                .then( (data) => {
-                    if(Array.isArray(data) && data.length > 0){
-                        resposta.data = data;
-                        resposta.success = true;
-                    }else{
-                        resposta.message = "Nenhum resultado para os parâmetros";
-                    }
-                    res.json(resposta);
-                })
-                .catch( err => {
-                    handlerError(err);        
-                    res.status(500).end();
-                });
-        }).catch( err => {
-            handlerError(err);
-            res.status(500).end();
-        });
+        console.log('\talguma coisa de estranha no reino da dinamarca')
+        // database.connect(config.db.uri).then( () => {
+
+        //     database.queryLicitacoesMunicipio(parametrosPesquisa)
+        //         .then( (data) => {
+        //             if(Array.isArray(data) && data.length > 0){
+        //                 resposta.data = data;
+        //                 resposta.success = true;
+        //             }else{
+        //                 resposta.message = "Nenhum resultado para os parâmetros";
+        //             }
+        //             res.json(resposta);
+        //         })
+        //         .catch( err => {
+        //             handlerError(err);        
+        //             res.status(500).end();
+        //         });
+        // }).catch( err => {
+        //     handlerError(err);
+        //     res.status(500).end();
+        // });
     });
     /*
         /licitacoes/:cdIBGE/:nrAno/count
@@ -76,7 +77,7 @@ module.exports = (app) => {
         });
     });
 
-    app.get('/licitacoes/anos', (req, res) => {
+    app.get('/licitacao/anos', (req, res) => {
         let resposta = {
             success : false,
             message : '',
@@ -90,17 +91,16 @@ module.exports = (app) => {
         res.send(anos);
     });
 
-    app.get("/licitacoes/municipios", (req, res) => {
+    app.get('/licitacao/municipios/:nrAno', (req, res) => {
         let resposta = {
             success : false,
             message : '',
             data : null
         };
-
-        console.log(`\tGET ${req.path}`);
-
+        const {nrAno} = req.params
+        console.log(`\tGET ${req.path}\n\t\tnrAno: ${nrAno}`)
         database.connect(config.db.uri).then( () =>{
-            database.queryMunicipioFromLicitacao()
+            database.queryMunicipioFromLicitacao({nrAno})
                 .then( doc => {
                     if(doc){
                         resposta.data = doc;
@@ -146,7 +146,7 @@ module.exports = (app) => {
         /licitacao/:idLicitacao/fornecedores    
     */
 
-    app.get('/fornecedores/:cdIBGE/:nrAno', (req, res) => {
+    app.get('/licitacao/fornecedores/:cdIBGE/:nrAno', (req, res) => {
         let resposta = {
             success : false,
             message : '',
@@ -177,7 +177,7 @@ module.exports = (app) => {
 
     });
 
-    app.get('/sinopses/licitacoes/:cdIBGE/:nrAno', (req, res) => {
+    app.get('/licitacao/sinopse/:cdIBGE/:nrAno', (req, res) => {
         let resposta = {
             success : false,
             message : '',
@@ -209,7 +209,7 @@ module.exports = (app) => {
      
     });
 
-    app.get('/sinopses/modalidades/:cdIBGE/:nrAno', (req, res) => {
+    app.get('/licitacao/sinopse/modalidades/:cdIBGE/:nrAno', (req, res) => {
         let resposta = {
             success : false,
             message : '',
@@ -271,7 +271,7 @@ module.exports = (app) => {
             });
     });
 
-    app.get('/maps/:cdEstado', (req, res) =>{
+    app.get('/mapa/:cdEstado', (req, res) =>{
         let resposta = {
             success : false,
             message : '',

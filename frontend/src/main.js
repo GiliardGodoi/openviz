@@ -54,7 +54,27 @@ const eventClickBtnClean = function eventClickBtnClean () {
   $('.form-control').not('select#_inputAno').attr('readonly', '')
   $('select#_inputDescricaoModalidade.form-control').attr('disabled', '')
   $('#_inputDataEditalMin, #_inputDataEditalMax, #_inputDataAberturaMin, #_inputDataAberturaMax').datepicker('destroy')
+}
 
+const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
+  event.preventDefault()
+  const input = event.target
+  const val = $(input).val()
+  const anos = ['2013', '2014', '2015', '2016', '2017']
+  if (anos.indexOf(val) >= 0) {
+    const url = `http://localhost:8080/licitacao/municipios/${val}`
+    $.ajax({
+      url,
+      dataType: 'json',
+      method: 'GET',
+    }).done((response) => {
+      console.log(response)
+    }).fail((response, status) => {
+      console.log(`request fail: ${url}\nStatus: ${status}`)
+    })
+  } else {
+    console.log(`não fazer nada por enquanto. valor invalido: ${val}`)
+  }
 }
 
 const eventChangeInputVlLicitacao = function eventChangeInputVlLicitacao (event) {
@@ -105,6 +125,7 @@ const enableDatapicker = function datepickerActive (ANO = '2013') {
     })
 }
 
+
 const enableForm = function enableForm (params) {
   $('.form-control').attr('readonly', null).attr('disabled', null)
   enableDatapicker()
@@ -118,4 +139,5 @@ window.onload = function onload () {
   $('#_btnSearch').click(enableForm)
   $('#_btnSearch').click(eventClickBtnSearch)
   $('#_btnClean').click(eventClickBtnClean)
+  $('#_inputAno').change(eventOnChangeInputAno)
 }
