@@ -102,8 +102,8 @@ module.exports = (app) => {
         database.connect(config.db.uri).then( () =>{
             database.queryMunicipioFromLicitacao({nrAno})
                 .then( doc => {
-                    if(doc){
-                        resposta.data = doc;
+                    if(Array.isArray(doc)){
+                        resposta.data = doc.length == 1 ? doc[0] : doc;
                         resposta.success = true;
                     }
                     res.json(resposta);;

@@ -1,3 +1,5 @@
+import { isFunction } from "util";
+
 // import ScatterPlot from './chart/scatterplot'
 // import BubblePack from './chart/bubblepack'
 // import Treemap from './chart/treemap'
@@ -21,77 +23,19 @@ const submitInputNroAno = function submitInputNroAno (params) {
 
 }
 
-const actionAutocomplete = function actionAutocomplete (params) {
-  const source = [
-    { label: 'SANTO ANTÔNIO DA PLATINA', id: '412410' },
-    { label: 'JACAREZINHO', id: '411180' },
-    { label: 'WENCESLAU BRAZ', id: '412850' },
-    { label: 'CORNÉLIO PROCÓPIO', id: '410640' },
-  ]
-
+const defineAutocomplete = function defineAutocomplete () {
   $('#_inputMunicipio').autocomplete({
-    source,
-    delay: 500,
-    minLength: 3,
+    source: null,
+    delay: 300,
+    minLength: 2,
+    classes: {
+      'ui-menu': 'list-group',
+      'ui-menu-item': 'list-group-item',
+    },
+    disabled: true,
   })
 }
 
-const eventClickBtnSearch = function eventClickBtnSearch () {
-  let values = $('.form-control').serializeArray() || []
-  values = values.reduce((previous, current, index) => {
-    const key = current.name ? current.name : index
-    const newObj = { ...previous }
-    if (current.value) {
-      newObj[key] = current.value
-    }
-    return newObj
-  }, {})
-}
-
-const eventClickBtnClean = function eventClickBtnClean () {
-  $('input.form-control').val(null)
-  $('select.form-control').val('blank')
-  $('.form-control').not('select#_inputAno').attr('readonly', '')
-  $('select#_inputDescricaoModalidade.form-control').attr('disabled', '')
-  $('#_inputDataEditalMin, #_inputDataEditalMax, #_inputDataAberturaMin, #_inputDataAberturaMax').datepicker('destroy')
-}
-
-const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
-  event.preventDefault()
-  const input = event.target
-  const val = $(input).val()
-  const anos = ['2013', '2014', '2015', '2016', '2017']
-  if (anos.indexOf(val) >= 0) {
-    const url = `http://localhost:8080/licitacao/municipios/${val}`
-    $.ajax({
-      url,
-      dataType: 'json',
-      method: 'GET',
-    }).done((response) => {
-      console.log(response)
-    }).fail((response, status) => {
-      console.log(`request fail: ${url}\nStatus: ${status}`)
-    })
-  } else {
-    console.log(`não fazer nada por enquanto. valor invalido: ${val}`)
-  }
-}
-
-const eventChangeInputVlLicitacao = function eventChangeInputVlLicitacao (event) {
-
-}
-
-const eventChangeInputsDate = function eventChangeInputsDate (event) {
-
-}
-
-const eventActionDrawTable = function eventActionDrawTable (event) {
-
-}
-
-const eventActionDrawChart = function eventActionDrawChart (event) {
-
-}
 /** Referência para jquery.mask
  * https://igorescobar.github.io/jQuery-Mask-Plugin/docs.html
  * No objeto options pode ser configurados os seguintes eventos:
@@ -125,6 +69,20 @@ const enableDatapicker = function datepickerActive (ANO = '2013') {
     })
 }
 
+const enableAutocomplete = function enableAutocomplete (
+  source,
+  callback = null
+) {
+  $('#_inputMunicipio').autocomplete('option', 'source', source)
+  $('#_inputMunicipio').autocomplete('option', 'disabled', false)
+  if (isFunction(callback)) {
+    callback()
+  }
+}
+
+const disableAutocomplete = function disableAutocomplete () {
+  $('#_inputMunicipio').autocomplete('option', 'disabled', true)
+}
 
 const enableForm = function enableForm (params) {
   $('.form-control').attr('readonly', null).attr('disabled', null)
@@ -132,11 +90,77 @@ const enableForm = function enableForm (params) {
   enableMaskOnInputVlLicitacao()
 }
 
+/* OS EVENTOS DEVEM SER A ÚLTIMA COISA A SEREM DEFINIDAS
+ pois eles farão uso de todas as outras funções definidas acima.
+*/
+
+const eventClickBtnSearch = function eventClickBtnSearch () {
+  let values = $('.form-control').serializeArray() || []
+  values = values.reduce((previous, current, index) => {
+    const key = current.name ? current.name : index
+    const newObj = { ...previous }
+    if (current.value) {
+      newObj[key] = current.value
+    }
+    return newObj
+  }, {})
+}
+
+const eventClickBtnClean = function eventClickBtnClean () {
+  $('input.form-control').val(null)
+  $('select.form-control').val('blank')
+  $('.form-control').not('select#_inputAno').attr('readonly', '')
+  $('select#_inputDescricaoModalidade.form-control').attr('disabled', '')
+  $('#_inputDataEditalMin, #_inputDataEditalMax, #_inputDataAberturaMin, #_inputDataAberturaMax').datepicker('destroy')
+
+  disableAutocomplete()
+}
+
+const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
+  event.preventDefault()
+  const input = event.target
+  const val = $(input).val()
+  const anos = ['2013', '2014', '2015', '2016', '2017']
+  if (anos.indexOf(val) >= 0) {
+    const url = `http://localhost:8080/licitacao/municipios/${val}`
+    $.ajax({
+      url,
+      dataType: 'json',
+      method: 'GET',
+    }).done((response) => {
+      const source = response.data.municipios
+        .map(item => ({ label: item.nmMunicipio, id: item.cdIBGE }))
+      enableAutocomplete(source, enableForm)
+      console.log(response)
+    }).fail((response, status) => {
+      console.log(`request fail: ${url}\nStatus: ${status}`)
+    })
+  } else {
+    console.log(`não fazer nada por enquanto. valor invalido: ${val}`)
+  }
+}
+
+const eventChangeInputVlLicitacao = function eventChangeInputVlLicitacao (event) {
+
+}
+
+const eventChangeInputsDate = function eventChangeInputsDate (event) {
+
+}
+
+const eventActionDrawTable = function eventActionDrawTable (event) {
+
+}
+
+const eventActionDrawChart = function eventActionDrawChart (event) {
+
+}
+
 window.onload = function onload () {
   $('#fullpage').fullpage({
     scrollBar: true,
   })
-  $('#_btnSearch').click(enableForm)
+  defineAutocomplete()
   $('#_btnSearch').click(eventClickBtnSearch)
   $('#_btnClean').click(eventClickBtnClean)
   $('#_inputAno').change(eventOnChangeInputAno)
