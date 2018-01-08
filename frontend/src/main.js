@@ -55,7 +55,12 @@ const defineDatepicker = function defineDatepicker () {
     })
 }
 
+<<<<<<< HEAD
 /** Habilita mascara para input #_inputVlLicitacao
+=======
+/** Referência para jquery.mask
+ * https://igorescobar.github.io/jQuery-Mask-Plugin/docs.html
+>>>>>>> cf6368ec34bae3c32915485743dc10941570c66d
  * No objeto options pode ser configurados os seguintes eventos:
  * onChange: function (value, event, input, options)
  * onKeyPress
