@@ -5,12 +5,13 @@
 // import ClusterForce from './chart/clusterforce'
 // import Barchart from './chart/barchartmultiple'
 import {
-  testcodIBGE,
+  testCodIBGE,
   testNroAno,
   testDsModalidade,
   testDsObjeto,
   testVlLicitacao,
-  testDtEditalDtAbertura } from './validators'
+  testDtEdital,
+  testDtAbertura } from './validators'
 
 /**
  * Realiza a validação dos parâmetros para pesquisa
@@ -30,13 +31,13 @@ const validateParams = function validate (params, sucess, fail = () => {}) {
     vlLicitacaoMin,
     vlLicitacaoMax,
   } = params
-  if (testcodIBGE(cdIBGE) &&
+  if (testCodIBGE(cdIBGE) &&
       testNroAno(nrAno) &&
       testDsModalidade(dsModalidade) &&
       testDsObjeto(dsObjeto) &&
       testVlLicitacao({ vlLicitacaoMin, vlLicitacaoMax }) &&
-      testDtEditalDtAbertura({ dtAberturaMin, dtAberturaMax }) &&
-      testDtEditalDtAbertura({ dtEditalMin, dtEditalMax })
+      testDtAbertura({ dtAberturaMin, dtAberturaMax }) &&
+      testDtEdital({ dtEditalMin, dtEditalMax })
   ) {
     sucess(params)
   } else {
@@ -163,7 +164,7 @@ const enableForm = function enableForm (params) {
  pois eles farão uso de todas as outras funções definidas acima.
 */
 
-/** \
+/**
  * Evento a ser disparado quando do click do Botão de pesquisa
  */
 
