@@ -4,15 +4,44 @@
 // import Bubbleforce from './chart/bubbleforce'
 // import ClusterForce from './chart/clusterforce'
 // import Barchart from './chart/barchartmultiple'
+import {
+  testcodIBGE,
+  testNroAno,
+  testDsModalidade,
+  testDsObjeto,
+  testVlLicitacao,
+  testDtEditalDtAbertura } from './validators'
 
 /**
  * Realiza a validação dos parâmetros para pesquisa
  * @param {object} params - parâmetros de pesquisa {name: string, value: string}
- * @param {function} callback - função a ser executada se a validação for sucesso
+ * @param {function} sucess - função a ser executada se a validação for sucesso
  */
-const validateParams = function validate (params, callback) {
-  const validated = { ...params }
-  callback(validated)
+const validateParams = function validate (params, sucess, fail = () => {}) {
+  const {
+    nrAno,
+    cdIBGE,
+    dsObjeto,
+    dsModalidade,
+    dtEditalMin,
+    dtEditalMax,
+    dtAberturaMin,
+    dtAberturaMax,
+    vlLicitacaoMin,
+    vlLicitacaoMax,
+  } = params
+  if (testcodIBGE(cdIBGE) &&
+      testNroAno(nrAno) &&
+      testDsModalidade(dsModalidade) &&
+      testDsObjeto(dsObjeto) &&
+      testVlLicitacao({ vlLicitacaoMin, vlLicitacaoMax }) &&
+      testDtEditalDtAbertura({ dtAberturaMin, dtAberturaMax }) &&
+      testDtEditalDtAbertura({ dtEditalMin, dtEditalMax })
+  ) {
+    sucess(params)
+  } else {
+    fail()
+  }
 }
 
 const submit = function submit (params) {
@@ -119,7 +148,7 @@ const disableAutocomplete = function disableAutocomplete () {
   $('#_inputMunicipio').autocomplete('option', 'disabled', true)
 }
 /**
- * 
+ * Habilita o formulário para entrada dos dados.
  * @param {*} params O parâmetro deve conter os atributo source e ano no mínimo.
  */
 const enableForm = function enableForm (params) {
@@ -137,8 +166,16 @@ const enableForm = function enableForm (params) {
 /** \
  * Evento a ser disparado quando do click do Botão de pesquisa
  */
+
 const eventClickBtnSearch = function eventClickBtnSearch () {
-  const params = $('.form-control').serializeArray()
+  let params = $('.form-control').serializeArray() || []
+  params = params.map((item, index) => {
+    const obj = {}
+    const value = item.value ? item.value : ''
+    const name = item.name ? item.name : String(index)
+    obj[name] = value
+    return obj
+  })
   validateParams(params, submitForm)
 }
 
