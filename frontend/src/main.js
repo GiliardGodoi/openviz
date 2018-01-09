@@ -5,8 +5,14 @@
 // import ClusterForce from './chart/clusterforce'
 // import Barchart from './chart/barchartmultiple'
 
-const compareStringValuesAsDate = function compareStringValuesAsDate (dtOne, dtTwo) {
-  return false
+/**
+ * Realiza a validação dos parâmetros para pesquisa
+ * @param {object} params - parâmetros de pesquisa {name: string, value: string}
+ * @param {function} callback - função a ser executada se a validação for sucesso
+ */
+const validateParams = function validate (params, callback) {
+  const validated = { ...params }
+  callback(validated)
 }
 
 const submit = function submit (params) {
@@ -14,7 +20,8 @@ const submit = function submit (params) {
 }
 
 const submitForm = function submitForm (params) {
-
+  const url = 'http://localhost:8080/licitacao/municipios/'
+  console.log('submit form', params)
 }
 
 const submitInputNroAno = function submitInputNroAno (params) {
@@ -36,6 +43,14 @@ const defineAutocomplete = function defineAutocomplete () {
       'ui-menu-item': 'list-group-item',
     },
     disabled: true,
+    select: (event, ui) => {
+      const inputCodIBGE = $('#_inputCodIBGE')
+      if (ui.item.id) {
+        inputCodIBGE.val(ui.item.id)
+      } else {
+        throw ErrorEvent('Não foi possivel atribuir valor para inputCodIBGE')
+      }
+    },
   })
 }
 
@@ -55,7 +70,8 @@ const defineDatepicker = function defineDatepicker () {
     })
 }
 
-/** Habilita mascara para input #_inputVlLicitacao
+/**
+ * Habilita mascara para input #_inputVlLicitacao
  * No objeto options pode ser configurados os seguintes eventos:
  * onChange: function (value, event, input, options)
  * onKeyPress
@@ -102,7 +118,10 @@ const enableAutocomplete = function enableAutocomplete (params) {
 const disableAutocomplete = function disableAutocomplete () {
   $('#_inputMunicipio').autocomplete('option', 'disabled', true)
 }
-
+/**
+ * 
+ * @param {*} params O parâmetro deve conter os atributo source e ano no mínimo.
+ */
 const enableForm = function enableForm (params) {
   const { source, ano } = params
   $('.form-control').attr('readonly', null).attr('disabled', null)
@@ -115,7 +134,12 @@ const enableForm = function enableForm (params) {
  pois eles farão uso de todas as outras funções definidas acima.
 */
 
+/** \
+ * Evento a ser disparado quando do click do Botão de pesquisa
+ */
 const eventClickBtnSearch = function eventClickBtnSearch () {
+  const params = $('.form-control').serializeArray()
+  validateParams(params, submitForm)
 }
 
 const eventClickBtnClean = function eventClickBtnClean () {
@@ -152,13 +176,6 @@ const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
   }
 }
 
-// const eventChangeInputVlLicitacao = function eventChangeInputVlLicitacao (event) {
-
-// }
-
-// const eventChangeInputsDate = function eventChangeInputsDate (event) {
-
-// }
 
 const eventActionDrawTable = function eventActionDrawTable (event) {
 
