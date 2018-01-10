@@ -1,10 +1,9 @@
-import { isNaN, log } from 'util'
-
+import { isNaN } from 'util'
+import d3 from 'd3'
 /*
  * RULES
  */
 const hasSpecialCharacter = valor => /[\{\[\($%&*\\/\)\]\}]/gi.test(valor)
-const hasDateFormater = date => /\d{2}\/\d{2}\/\d{4}/.test(date)
 const isDefinedValueForNroAno = year => ['2013', '2014', '2015', '2016', '2017'].indexOf(year) >= 0
 const isDefinedValueForDsModalidade = valor => ['blank', '1', '2', '3', '4', '5', '6'].indexOf(valor) >= 0
 const isNullValue = value => value === null
@@ -12,6 +11,13 @@ const isNaNValue = value => (isNaN(value))
 const isEmpty = value => value.length === 0
 const isUndefined = value => value === undefined
 
+const dateParse = d3.timeParse('%d/%m/%Y')
+const hasBrazilianDateFormat = date => /\d{2}\/\d{2}\/\d{4}/.test(date)
+const compareDates = (dtMin, dtMax) => { // estas duas funççoes aqui presiçam ser alteradas
+  const dateMin = dateParse(dtMin)
+  const dateMax = dateParse(dtMax)
+  return dateMin < dateMax
+}
 /**
  * Mostra uma messagem sobre o erro de validação especifico.
  * @param {string} message Mensagem a ser exibida
@@ -93,18 +99,58 @@ export function testVlLicitacao (params) {
   return true
 }
 
-export function testDtEdital (params) {
-  const { dtEditalMin, dtEditalMax } = params
-  if (hasDateFormater(dtEditalMin) || hasDateFormater(dtEditalMax)) {
+export function testDates (dtMin = '', dtMax = '', callback = () => {}) {
+  const dateMin = dtMin
+  const dateMax = dtMax
+  let validationResultDateMin = true
+  let validationResultDateMax = true
+  if (dateMin) {
+    validationResultDateMin = hasBrazilianDateFormat(dateMin)
+  }
+  if (dateMax) {
+    validationResultDateMax = hasBrazilianDateFormat(dateMax)
+  }
+  if (validationResultDateMin && validationResultDateMax) {
     return true
   }
+  callback()
   return false
+}
+
+export function testDtEdital (params) {
+  const { dtEditalMin, dtEditalMax } = params
+  let validationResult = testDates(dtEditalMin, dtEditalMax, () => {
+    showMessage('Look! Data Edital seems invalid!')
+  })
+  if (dtEditalMin &&
+      dtEditalMax &&
+      validationResult
+  ) {
+    validationResult = compareDates(dtEditalMin, dtEditalMax)
+    if (validationResult) {
+      return true
+    }
+    showMessage('Look! Data Edital Min é maior que Data Edital Max')
+    return false
+  }
+  return validationResult
 }
 
 export function testDtAbertura (params) {
   const { dtAberturaMin, dtAberturaMax } = params
-  if (hasDateFormater(dtAberturaMin) && hasDateFormater(dtAberturaMax)) {
-    log(10)
+  let validationResult = testDates(dtAberturaMin, dtAberturaMax, () => {
+    showMessage('Look! Data Abertura seems invalid!')
+  })
+  if (dtAberturaMin &&
+      dtAberturaMax &&
+      validationResult
+  ) {
+    validationResult = compareDates(dtAberturaMin, dtAberturaMax)
+    if (validationResult) {
+      return true
+    }
+    showMessage('Look! Data Abertura Min é maior que Data Abertura Max')
+    return false
   }
-  return true
+  return validationResult
 }
