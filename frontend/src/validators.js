@@ -1,26 +1,48 @@
-import { isNaN } from 'util'
+import { isNaN, log } from 'util'
+
 /*
  * RULES
  */
 const hasSpecialCharacter = valor => /[\{\[\($%&*\\/\)\]\}]/gi.test(valor)
-const isDefinedYear = year => ['2013', '2014', '2015', '2016', '2017'].indexOf(year) >= 0
+const hasDateFormater = date => /\d{2}\/\d{2}\/\d{4}/.test(date)
+const isDefinedValueForNroAno = year => ['2013', '2014', '2015', '2016', '2017'].indexOf(year) >= 0
 const isDefinedValueForDsModalidade = valor => ['blank', '1', '2', '3', '4', '5', '6'].indexOf(valor) >= 0
-const isntNullValue = value => value !== null
-const isntNaNValue = value => !(isNaN(value))
-const isntEmpty = value => value.length !== 0
+const isNullValue = value => value === null
+const isNaNValue = value => (isNaN(value))
+const isEmpty = value => value.length === 0
+const isUndefined = value => value === undefined
 
 /**
  * Mostra uma messagem sobre o erro de validação especifico.
  * @param {string} message Mensagem a ser exibida
  * @param {string} inputID ID do elemento para mostrar a mensagem
  */
-const showMessage = function showMessage (message, inputID) {
-  const element = $(inputID)
-  if (element) element.focus()
+const showMessage = function showMessage (message, inputID = null) {
+  if (inputID) $(inputID).focus()
   alert(`Mensagem de Validação:\n${message}`)
 }
 
 export function testCodIBGE (cdIBGE = '') {
+  if (isUndefined(cdIBGE)) {
+    showMessage('Look! cdIBGE is undefined')
+  }
+  if (isNullValue(cdIBGE)) {
+    showMessage('Look! cdIBGE is Null')
+    return false
+  }
+  if (isNaNValue(cdIBGE)) {
+    showMessage('Look! cdIBGE is NaN')
+    return false
+  }
+  if (isEmpty(cdIBGE)) {
+    showMessage('Look! cdIBGE is empty')
+    return false
+  }
+  if (hasSpecialCharacter(cdIBGE)) {
+    showMessage('Look! cdIBGE has special characters')
+    return false
+  }
+
   return true
 }
 
@@ -29,7 +51,7 @@ export function testCodIBGE (cdIBGE = '') {
  * @param {string} nrAno
  */
 export function testNroAno (nrAno) {
-  if (isDefinedYear(nrAno)) {
+  if (isDefinedValueForNroAno(nrAno)) {
     return true
   }
   showMessage('O parâmetro "Ano" é obrigatório!', '#_inputAno')
@@ -55,20 +77,34 @@ export function testDsModalidade (dsModalidade) {
  */
 export function testDsObjeto (dsObjeto) {
   if (hasSpecialCharacter(dsObjeto)) {
-    showMessage('O campo Descrição do Objeto não deve contér caracteres especiais', '#_inputDescricaoObjeto')
+    showMessage('O campo Descrição do Objeto não deve conter caracteres especiais', '#_inputDescricaoObjeto')
     return false
   }
   return true
 }
 
 export function testVlLicitacao (params) {
+  const { vlLicitacaoMin, vlLicitacaoMax } = params
+  if (hasSpecialCharacter(vlLicitacaoMin) &&
+      hasSpecialCharacter(vlLicitacaoMax)) {
+    showMessage('O campo vlLicitacao não pode ter caracteres especiais', '#_inputVlLicitacaoMin,#_inputVlLicitacaoMax')
+    return false
+  }
   return true
 }
 
 export function testDtEdital (params) {
-  return true
+  const { dtEditalMin, dtEditalMax } = params
+  if (hasDateFormater(dtEditalMin) || hasDateFormater(dtEditalMax)) {
+    return true
+  }
+  return false
 }
 
 export function testDtAbertura (params) {
+  const { dtAberturaMin, dtAberturaMax } = params
+  if (hasDateFormater(dtAberturaMin) && hasDateFormater(dtAberturaMax)) {
+    log(10)
+  }
   return true
 }

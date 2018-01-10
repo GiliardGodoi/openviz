@@ -18,7 +18,11 @@ import {
  * @param {object} params - parâmetros de pesquisa {name: string, value: string}
  * @param {function} sucess - função a ser executada se a validação for sucesso
  */
-const validateParams = function validate (params, sucess, fail = () => {}) {
+const validateParams = function validate (
+  params,
+  sucess = () => {},
+  fail = () => {}
+) {
   const {
     nrAno,
     cdIBGE,
@@ -45,18 +49,11 @@ const validateParams = function validate (params, sucess, fail = () => {}) {
   }
 }
 
-const submit = function submit (params) {
-
-}
-
 const submitForm = function submitForm (params) {
   const url = 'http://localhost:8080/licitacao/municipios/'
   console.log('submit form', params)
 }
 
-const submitInputNroAno = function submitInputNroAno (params) {
-
-}
 /** Cria autocomplete para o campo #_inputMunicipio
  * Ver também:
  *  - enableAutocomplete
@@ -213,7 +210,6 @@ const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
     console.log(`não fazer nada por enquanto. valor invalido: ${val}`)
   }
 }
-
 
 const eventActionDrawTable = function eventActionDrawTable (event) {
 
