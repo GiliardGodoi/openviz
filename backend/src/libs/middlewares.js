@@ -2,6 +2,7 @@ import express from "express";
 import bodyparser from 'body-parser';
 import compression from 'compression';
 import cors from 'cors';
+import expressValidator from 'express-validator'
 
 module.exports = (app) => {
     let config = app.src.libs.config;
@@ -10,6 +11,7 @@ module.exports = (app) => {
     app.set('json spaces', 4);
     app.use(bodyparser.json());
     app.use(bodyparser.urlencoded({extended : true }));
+    app.use(expressValidator())
     
     app.use(compression());
     app.use(cors());

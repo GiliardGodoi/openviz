@@ -1,46 +1,68 @@
+import { check, validationResult } from 'express-validator/check'
+import { matchedData, sanitize } from 'express-validator/filter'
 import database from '../database/db.js'
 import handlerError from '../utils/apiErrorHandling'
+import { error } from 'util';
+
 
 module.exports = (app) => {
     let config = app.src.libs.config;
-
+    const nome = 'openviz API'
+    let count = 0
+    const ANOS_DISPONIVEIS = ['2013', '2014', '2015', '2016']
     app.get('/', (req, res) => {
         res.json({
             name : 'OpenViz API',
             version : "v1",
-            status : 'ok!'
+            status : 'ok!',
+            count : count
         });
+        count += 1
     });
 
-    app.get('/licitacoes/:cdIBGE/:nrAno', (req, res) => {
+    app.get('/licitacoes/:cdIBGE/:nrAno', [
+        check('nrAno').isIn(ANOS_DISPONIVEIS).withMessage('Pesquisar entre os anos 2013~2016'),
+        check('nrAno').isLength({ min: 4}),
+        check('cdIBGE').isLength({ min : 6}),
+        check('nmMunicipio').trim(),
+        check('dsObjeto').optional().not().matches(/[\{\[\($%&*\\/\)\]\}]/g).withMessage('Descrição do objeto não pode conter caracteres especiais'),
+        check('dtEditalMin').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
+        check('dtEditalMax').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
+        check('dtAberturaMin').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
+        check('dtAberturaMax').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado')
+    ],
+     (req, res) => {
         let resposta = {
             success : false,
             message : '',
             data : []
         };
         console.log(`\tGET ${req.path}`)
-        let parametrosPesquisa = {...req.params,...req.query}
-        console.log('\talguma coisa de estranha no reino da dinamarca')
-        // database.connect(config.db.uri).then( () => {
-
-        //     database.queryLicitacoesMunicipio(parametrosPesquisa)
-        //         .then( (data) => {
-        //             if(Array.isArray(data) && data.length > 0){
-        //                 resposta.data = data;
-        //                 resposta.success = true;
-        //             }else{
-        //                 resposta.message = "Nenhum resultado para os parâmetros";
-        //             }
-        //             res.json(resposta);
-        //         })
-        //         .catch( err => {
-        //             handlerError(err);        
-        //             res.status(500).end();
-        //         });
-        // }).catch( err => {
-        //     handlerError(err);
-        //     res.status(500).end();
-        // });
+        const errors = validationResult(req)
+        if (!errors.isEmpty() ) {
+            res.status(400).end();
+        } else {
+            let parametrosPesquisa = {...req.params,...req.query}
+            database.connect(config.db.uri).then( () => {
+                database.queryLicitacoesMunicipio(parametrosPesquisa)
+                    .then( (data) => {
+                        if(Array.isArray(data) && data.length > 0){
+                            resposta.data = data;
+                            resposta.success = true;
+                        }else{
+                            resposta.message = "Nenhum resultado para os parâmetros";
+                        }
+                        res.json(resposta);
+                    })
+                    .catch( err => {
+                        handlerError(err);        
+                        res.status(500).end();
+                    });
+            }).catch( err => {
+                handlerError(err);
+                res.status(500).end();
+            });
+        }
     });
     /*
         /licitacoes/:cdIBGE/:nrAno/count
