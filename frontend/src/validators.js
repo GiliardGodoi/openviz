@@ -1,21 +1,24 @@
-import { isNaN } from 'util'
-import d3 from 'd3'
 /*
  * RULES
  */
 const hasSpecialCharacter = valor => /[\{\[\($%&*\\/\)\]\}]/gi.test(valor)
 const isDefinedValueForNroAno = year => ['2013', '2014', '2015', '2016', '2017'].indexOf(year) >= 0
-const isDefinedValueForDsModalidade = valor => ['blank', '1', '2', '3', '4', '5', '6'].indexOf(valor) >= 0
+const isDefinedValueForDsModalidade = valor => ['blank', '0', '1', '2', '3', '4', '5', '6'].indexOf(valor) >= 0
 const isNullValue = value => value === null
-const isNaNValue = value => (isNaN(value))
+const isNaNValue = value => value === Number(NaN)
 const isEmpty = value => value.length === 0
 const isUndefined = value => value === undefined
 
-const dateParse = d3.timeParse('%d/%m/%Y')
 const hasBrazilianDateFormat = date => /\d{2}\/\d{2}\/\d{4}/.test(date)
-const compareDates = (dtMin, dtMax) => { // estas duas funççoes aqui presiçam ser alteradas
-  const dateMin = dateParse(dtMin)
-  const dateMax = dateParse(dtMax)
+const parseDateFromString = (date) => {
+  const day = Number(date.substring(0, 2))
+  const month = Number(date.substring(3, 5)) - 1
+  const year = Number(date.substring(6))
+  return new Date(year, month, day)
+}
+const compareDates = (dtMin, dtMax) => {
+  const dateMin = parseDateFromString(dtMin)
+  const dateMax = parseDateFromString(dtMax)
   return dateMin < dateMax
 }
 /**
@@ -41,7 +44,7 @@ export function testCodIBGE (cdIBGE = '') {
     return false
   }
   if (isEmpty(cdIBGE)) {
-    showMessage('Look! cdIBGE is empty')
+    showMessage('Look! cdIBGE is Empty')
     return false
   }
   if (hasSpecialCharacter(cdIBGE)) {

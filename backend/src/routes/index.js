@@ -10,6 +10,8 @@ module.exports = (app) => {
     const nome = 'openviz API'
     let count = 0
     const ANOS_DISPONIVEIS = ['2013', '2014', '2015', '2016']
+    const VALORES_DESCRICAO_MODALIDADE_DISPONIVEL = ['blank', '0','1', '2', '3', '4', '5', '6']
+
     app.get('/', (req, res) => {
         res.json({
             name : 'OpenViz API',
@@ -22,24 +24,26 @@ module.exports = (app) => {
 
     app.get('/licitacoes/:cdIBGE/:nrAno', [
         check('nrAno').isIn(ANOS_DISPONIVEIS).withMessage('Pesquisar entre os anos 2013~2016'),
-        check('nrAno').isLength({ min: 4}),
         check('cdIBGE').isLength({ min : 6}),
+        check('cdIBGE').isNumeric().withMessage('cdIBGE deve conter apenas digitos numéricos'),
         check('nmMunicipio').trim(),
+        check('dsModalidade').optional().isIn(VALORES_DESCRICAO_MODALIDADE_DISPONIVEL),
         check('dsObjeto').optional().not().matches(/[\{\[\($%&*\\/\)\]\}]/g).withMessage('Descrição do objeto não pode conter caracteres especiais'),
         check('dtEditalMin').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
         check('dtEditalMax').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
         check('dtAberturaMin').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
-        check('dtAberturaMax').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado')
+        check('dtAberturaMax').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
+        check('vlLicitacaoMin').optional().isDecimal(),
+        check('vlLicitacaoMax').optional().isDecimal()
     ],
      (req, res) => {
         let resposta = {
             success : false,
             message : '',
-            data : []
         };
         console.log(`\tGET ${req.path}`)
         const errors = validationResult(req)
-        if (!errors.isEmpty() ) {
+        if (!errors.isEmpty()) {
             res.status(400).end();
         } else {
             let parametrosPesquisa = {...req.params,...req.query}
@@ -67,7 +71,11 @@ module.exports = (app) => {
     /*
         /licitacoes/:cdIBGE/:nrAno/count
     */
-    app.get('/licitacoes/:cdIBGE/:nrAno/itens', (req, res) => {
+    app.get('/licitacoes/:cdIBGE/:nrAno/itens', [
+        check('nrAno').isIn(ANOS_DISPONIVEIS).withMessage('Pesquisar entre os anos 2013~2016'),
+        check('cdIBGE').isLength({ min : 6}),
+        check('cdIBGE').isNumeric().withMessage('cdIBGE deve conter apenas digitos numéricos'),
+    ], (req, res) => {
         let resposta = {
             success : false,
             message : '',
@@ -107,34 +115,39 @@ module.exports = (app) => {
         };
         console.log(`\tGET ${req.path}`);
 
-        let anos = [2016, 2015, 2014, 2013];
-        resposta.data = anos;
+        resposta.data = ANOS_DISPONIVEIS;
         resposta.success = true;
         res.send(anos);
     });
 
-    app.get('/licitacao/municipios/:nrAno', (req, res) => {
+    app.get('/licitacao/municipios/:nrAno',[
+        check('nrAno').isIn(ANOS_DISPONIVEIS).withMessage('Pesquisar entre os anos 2013~2016'),
+    ], (req, res) => {
         let resposta = {
             success : false,
-            message : '',
-            data : null
         };
         const {nrAno} = req.params
         console.log(`\tGET ${req.path}\n\t\tnrAno: ${nrAno}`)
-        database.connect(config.db.uri).then( () =>{
-            database.queryMunicipioFromLicitacao({nrAno})
-                .then( doc => {
-                    if(Array.isArray(doc)){
-                        resposta.data = doc.length == 1 ? doc[0] : doc;
-                        resposta.success = true;
-                    }
-                    res.json(resposta);;
-                }).catch(err => {
-                    res.status(500).end();
-                });
-        }).catch( err => {
-            res.status(500).end();
-        })
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            resposta['error'] = errors.mapped()
+            res.status(400).json(resposta)
+        } else {
+            database.connect(config.db.uri).then( () =>{
+                database.queryMunicipioFromLicitacao({nrAno})
+                    .then( doc => {
+                        if(Array.isArray(doc)){
+                            resposta.data = doc.length == 1 ? doc[0] : doc;
+                            resposta.success = true;
+                        }
+                        res.json(resposta);;
+                    }).catch(err => {
+                        res.status(500).end();
+                    });
+            }).catch( err => {
+                res.status(500).end();
+            })
+        }
     });
 
     app.get('/licitacao/:idLicitacao', (req, res) => {
@@ -168,7 +181,11 @@ module.exports = (app) => {
         /licitacao/:idLicitacao/fornecedores    
     */
 
-    app.get('/licitacao/fornecedores/:cdIBGE/:nrAno', (req, res) => {
+    app.get('/licitacao/fornecedores/:cdIBGE/:nrAno', [
+        check('nrAno').isIn(ANOS_DISPONIVEIS).withMessage('Pesquisar entre os anos 2013~2016'),
+        check('cdIBGE').isLength({ min : 6}),
+        check('cdIBGE').isNumeric().withMessage('cdIBGE deve conter apenas digitos numéricos'),
+    ], (req, res) => {
         let resposta = {
             success : false,
             message : '',
@@ -199,7 +216,11 @@ module.exports = (app) => {
 
     });
 
-    app.get('/licitacao/sinopse/:cdIBGE/:nrAno', (req, res) => {
+    app.get('/licitacao/sinopse/:cdIBGE/:nrAno', [
+        check('nrAno').isIn(ANOS_DISPONIVEIS).withMessage('Pesquisar entre os anos 2013~2016'),
+        check('cdIBGE').isLength({ min : 6}),
+        check('cdIBGE').isNumeric().withMessage('cdIBGE deve conter apenas digitos numéricos'),
+    ], (req, res) => {
         let resposta = {
             success : false,
             message : '',
@@ -231,7 +252,11 @@ module.exports = (app) => {
      
     });
 
-    app.get('/licitacao/sinopse/modalidades/:cdIBGE/:nrAno', (req, res) => {
+    app.get('/licitacao/sinopse/modalidades/:cdIBGE/:nrAno', [
+        check('nrAno').isIn(ANOS_DISPONIVEIS).withMessage('Pesquisar entre os anos 2013~2016'),
+        check('cdIBGE').isLength({ min : 6}),
+        check('cdIBGE').isNumeric().withMessage('cdIBGE deve conter apenas digitos numéricos'),
+    ], (req, res) => {
         let resposta = {
             success : false,
             message : '',

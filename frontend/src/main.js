@@ -167,13 +167,13 @@ const enableForm = function enableForm (params) {
 
 const eventClickBtnSearch = function eventClickBtnSearch () {
   let params = $('.form-control').serializeArray() || []
-  params = params.map((item, index) => {
-    const obj = {}
+  params = params.reduce((previous, item, index) => {
+    const current = { ...previous }
     const value = item.value ? item.value : ''
     const name = item.name ? item.name : String(index)
-    obj[name] = value
-    return obj
-  })
+    current[name] = value
+    return current
+  }, {})
   validateParams(params, submitForm)
 }
 
