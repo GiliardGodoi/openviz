@@ -44,7 +44,9 @@ module.exports = (app) => {
         console.log(`\tGET ${req.path}`)
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
-            res.status(400).end();
+            resposta['errors'] = errors.mapped()
+            res.status(400);
+            res.json(resposta)
         } else {
             let parametrosPesquisa = {...req.params,...req.query}
             database.connect(config.db.uri).then( () => {

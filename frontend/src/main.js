@@ -50,8 +50,17 @@ const validateParams = function validate (
 }
 
 const submitForm = function submitForm (params) {
-  const url = 'http://localhost:8080/licitacao/municipios/'
+  const { cdIBGE, nrAno, ...dataReq } = params
+  const url = `http://localhost:8080/licitacoes/${cdIBGE}/${nrAno}`
   console.log('submit form', params)
+  $.getJSON(
+    url,
+    dataReq,
+    (response, status) => {
+      console.log(response)
+      console.log(status)
+    }
+  )
 }
 
 /** Cria autocomplete para o campo #_inputMunicipio
@@ -167,13 +176,14 @@ const enableForm = function enableForm (params) {
 
 const eventClickBtnSearch = function eventClickBtnSearch () {
   let params = $('.form-control').serializeArray() || []
-  params = params.reduce((previous, item, index) => {
-    const current = { ...previous }
-    const value = item.value ? item.value : ''
-    const name = item.name ? item.name : String(index)
-    current[name] = value
-    return current
-  }, {})
+  params = params.filter(item => item.value)
+    .reduce((previous, item, index) => {
+      const current = { ...previous }
+      const value = item.value ? item.value : ''
+      const name = item.name ? item.name : String(index)
+      current[name] = value
+      return current
+    }, {})
   validateParams(params, submitForm)
 }
 
