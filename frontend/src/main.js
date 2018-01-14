@@ -1,9 +1,4 @@
-// import ScatterPlot from './chart/scatterplot'
-// import BubblePack from './chart/bubblepack'
-// import Treemap from './chart/treemap'
-// import Bubbleforce from './chart/bubbleforce'
-// import ClusterForce from './chart/clusterforce'
-// import Barchart from './chart/barchartmultiple'
+import TabelaLicitacao from './charts/TabelaLicitacao'
 import {
   testCodIBGE,
   testNroAno,
@@ -52,13 +47,19 @@ const validateParams = function validate (
 const submitForm = function submitForm (params) {
   const { cdIBGE, nrAno, ...dataReq } = params
   const url = `http://localhost:8080/licitacoes/${cdIBGE}/${nrAno}`
-  console.log('submit form', params)
   $.getJSON(
     url,
     dataReq,
     (response, status) => {
-      console.log(response)
-      console.log(status)
+      if (status === 'success') {
+        if (response.success) {
+          const tabela = new TabelaLicitacao()
+          tabela.setData(response.data.slice(0, 100))
+            .setWrapper('#table_div')
+            .draw()
+          $('#table_container').fadeIn()
+        }
+      }
     }
   )
 }
@@ -212,27 +213,26 @@ const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
       const source = response.data.municipios
         .map(item => ({ label: item.nmMunicipio, id: item.cdIBGE }))
       enableForm({ source, ano: val })
-      console.log(response)
     }).fail((response, status) => {
       console.log(`request fail: ${url}\nStatus: ${status}`)
     })
   } else {
-    console.log(`não fazer nada por enquanto. valor invalido: ${val}`)
+    throw Error(`não fazer nada por enquanto. valor invalido: ${val}`)
   }
 }
 
-const eventActionDrawTable = function eventActionDrawTable (event) {
+const eventActionDrawTable = function eventActionDrawTable () {
 
 }
 
-const eventActionDrawChart = function eventActionDrawChart (event) {
+const eventActionDrawChart = function eventActionDrawChart () {
 
 }
 
 window.onload = function onload () {
-  $('#fullpage').fullpage({
-    scrollBar: true,
-  })
+  // $('#fullpage').fullpage({
+  //   scrollBar: true,
+  // })
   defineAutocomplete()
   defineDatepicker()
   // Eventos de alguns componentes devem ser definidos uma única vez
