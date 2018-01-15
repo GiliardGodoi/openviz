@@ -1,8 +1,12 @@
 var MongoClient = require('mongodb').MongoClient;
 var errorMsg = require('../utils/errorsMessagens')
 
-function DB(){
+function DB(uri = null){
+    if (!uri) {
+        throw TypeError('Parâmetro URI deve ser informado')
+    }
     this.db = null;
+    this.URI = uri
 
     this.query = function(collname, pipeline = [{}]){
         let _this = this;
@@ -11,24 +15,26 @@ function DB(){
                 if(err){
                     reject(err);
                 }
-
-                let cursor = collection.aggregate(pipeline);
-
-                cursor.toArray( (err, docs) =>{
-                    if(err){
-                        reject(err);
-                    }else{
-                        resolve(docs);
-                    }
-                })
+                if (!collection) {
+                    reject({error: "Objeto collection is null"})
+                } else {
+                    const cursor = collection.aggregate(pipeline);
+                    cursor.toArray( (err, docs) =>{
+                        if(err){
+                            reject(err);
+                        }else{
+                            resolve(docs);
+                        }
+                    })
+                }
             });
         });
     }
 }
 
-DB.prototype.connect = function(uri){
+DB.prototype.connect = function(){
     let _this = this;
-
+    const uri = this.URI
     return new Promise( (resolve, reject) => {
         if(_this.db){
             resolve();
@@ -83,7 +89,6 @@ DB.prototype.queryGeojson = function({cdEstado, nmEstado}){
 }
 
 DB.prototype.querySinopseLicitacao = function({cdIBGE,nrAno,skip, limit, sort}){
-    
     let coll_name = 'sinopseLicitacao';
     let pipeline = []
 
@@ -102,23 +107,11 @@ DB.prototype.querySinopseCriterioAvaliacaoPorModalidade = function({cdIBGE, nrAn
     let match = {"cdIBGE" : cdIBGE, "nrAno" : nrAno};
     let coll_name = "sinopseCriterioAvaliacaoPorModalidade";
   		  
-     return new Promise( (resolve, reject) => {	
-         _this.db.collection(coll_name, {strict : true}, (err, collection) => {
-            if(err){
-                reject(err);
-            }
-            let cursor = collection.findOne(match, (err, item) => {
-                if(err){
-                    reject(err);
-                }
-                resolve(item);
-            })
-         });
-     });
+     return this.query(coll_name,[match])
 }
 
 DB.prototype.queryRankingFornecedor = function({cdIBGE,nrAno,skip, limit, sort}){
-    let coll_name = "rankingFornecedor";
+    let coll_name = "listaFornecedores";
     let pipeline = [];
     if(cdIBGE & nrAno){
         pipeline[pipeline.length] = { "$match" : {"cdIBGE" : cdIBGE, "nrAno" : nrAno}}; // match stage
@@ -272,4 +265,4 @@ function log(mensagem, tipo = 0){
     }
 }
 
-module.exports = new DB;
+module.exports = DB;

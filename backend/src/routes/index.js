@@ -1,13 +1,12 @@
 import { check, validationResult } from 'express-validator/check'
 import { matchedData, sanitize } from 'express-validator/filter'
-import database from '../database/db.js'
+import DB from '../database/db.js'
 import handlerError from '../utils/apiErrorHandling'
 import { error } from 'util';
 
-
 module.exports = (app) => {
-    let config = app.src.libs.config;
-    const nome = 'openviz API'
+    const config = app.src.libs.config;
+    const database = new DB(config.db.uri)
     let count = 0
     const ANOS_DISPONIVEIS = ['2013', '2014', '2015', '2016']
     const VALORES_DESCRICAO_MODALIDADE_DISPONIVEL = ['blank', '0','1', '2', '3', '4', '5', '6']
@@ -49,7 +48,7 @@ module.exports = (app) => {
             res.json(resposta)
         } else {
             let parametrosPesquisa = {...req.params,...req.query}
-            database.connect(config.db.uri).then( () => {
+            database.connect().then( () => {
                 database.queryLicitacoesMunicipio(parametrosPesquisa)
                     .then( (data) => {
                         if(Array.isArray(data) && data.length > 0){
@@ -88,7 +87,7 @@ module.exports = (app) => {
         
         console.log(`\tGET ${req.path}`)
 
-        database.connect(config.db.uri).then( () =>{
+        database.connect().then( () =>{
             database.queryItensLicitacao(parametrosPesquisa)
                 .then( data => {
                     if(Array.isArray(data) && data.length > 0){
@@ -135,7 +134,7 @@ module.exports = (app) => {
             resposta['error'] = errors.mapped()
             res.status(400).json(resposta)
         } else {
-            database.connect(config.db.uri).then( () =>{
+            database.connect().then( () =>{
                 database.queryMunicipioFromLicitacao({nrAno})
                     .then( doc => {
                         if(Array.isArray(doc)){
@@ -160,7 +159,7 @@ module.exports = (app) => {
         };
         let parametrosPesquisa = {...req.params,...req.query}
         console.log(`\tGET ${req.path}`)
-        database.connect(config.db.uri).then( () => {
+        database.connect().then( () => {
             database.queryLicitacao(parametrosPesquisa)
                 .then( (doc) => {
                     if(doc){
@@ -196,7 +195,7 @@ module.exports = (app) => {
 
         let parametrosPesquisa = {...req.params,...req.query};
         console.log(`\tGET ${req.path}`)
-        database.connect(config.db.uri).then( () => {
+        database.connect().then( () => {
             database.queryRankingFornecedor(parametrosPesquisa)
                 .then( (data) => {
                     if(Array.isArray(data) && data.length > 0){
@@ -232,7 +231,7 @@ module.exports = (app) => {
 
         console.log(`\tGET ${req.path}`)
 
-        database.connect(config.db.uri).then( () => {
+        database.connect().then( () => {
             database.querySinopseLicitacao(parametrosPesquisa)
                 .then( (data) =>{
                     if(Array.isArray(data) && data.length > 0){
@@ -267,7 +266,7 @@ module.exports = (app) => {
 
         let parametrosPesquisa = {...req.params,...req.query};
         console.log(`\tGET ${req.path}`)
-        database.connect(config.db.uri).then( () => {
+        database.connect().then( () => {
             database.querySinopseCriterioAvaliacaoPorModalidade(parametrosPesquisa)
                 .then ( (data) => {
                     if(data){
@@ -298,7 +297,7 @@ module.exports = (app) => {
 
         let parametrosPesquisa = {'cdEstado' : req.params.cdEstado }
         console.log(`\tGET ${req.path}`)
-        database.connect(config.db.uri)
+        database.connect()
             .then( () => {
                 database.queryMunicipio(parametrosPesquisa)
                     .then( (data) => {
@@ -329,7 +328,7 @@ module.exports = (app) => {
 
         let parametrosPesquisa = {'cdEstado' : req.params.cdEstado }
         console.log(`\tGET ${req.path}`)
-        database.connect(config.db.uri).then( () => {
+        database.connect().then( () => {
             database.queryGeojson(parametrosPesquisa)
                 .then( (data) => {
                     if(Array.isArray(data) && data.length > 0){
