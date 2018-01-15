@@ -1,0 +1,99 @@
+{
+	"variables": [],
+	"info": {
+		"name": "OPENVIZ - API",
+		"_postman_id": "5e84d23f-a324-0aec-0f23-c73530b235b3",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8080/",
+			"request": {
+				"url": "http://localhost:8080",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/licitacao/municipios/:nrAno",
+			"request": {
+				"url": "http://localhost:8080/licitacao/municipios/2015",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/licitacoes/:cdIBGE/:nrAno",
+			"request": {
+				"url": "http://localhost:8080/licitacoes/410640/2015",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/licitacoes/:cdIBGE/:nrAno/itens",
+			"request": {
+				"url": "http://localhost:8080/licitacoes/410640/2015/itens",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/licitacao/:idLicitacao",
+			"request": {
+				"url": "http://localhost:8080/licitacao/837085",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/licitacao/fornecedores/:cdIBGE/:nrAno",
+			"request": {
+				"url": "http://localhost:8080/licitacao/fornecedores/411180/2016",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/licitacao/sinopse/:cdIBGE/:nrAno",
+			"request": {
+				"url": "http://localhost:8080/licitacao/sinopse/411180/2016",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/licitacao/sinopse/modalidades/:cdIBGE/:nrAno",
+			"request": {
+				"url": "http://localhost:8080/licitacao/sinopse/modalidades/411180/2016",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
