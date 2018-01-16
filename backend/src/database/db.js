@@ -1,5 +1,8 @@
-var MongoClient = require('mongodb').MongoClient;
-var errorMsg = require('../utils/errorsMessagens')
+import {MongoClient} from 'mongodb'
+import {buildPipeForLicitacaoMunicipio,
+        builPipeForRankingFornecedor,
+        buildPipeForMunicipioFromLicitacao
+     } from './pipebuilder'
 
 function DB(uri = null){
     if (!uri) {
@@ -110,53 +113,17 @@ DB.prototype.querySinopseCriterioAvaliacaoPorModalidade = function({cdIBGE, nrAn
      return this.query(coll_name,[match])
 }
 
-DB.prototype.queryRankingFornecedor = function({cdIBGE,nrAno,skip, limit, sort}){
+DB.prototype.queryRankingFornecedor = function(params){
     let coll_name = "listaFornecedores";
-    let pipeline = [];
-    if(cdIBGE & nrAno){
-        pipeline[pipeline.length] = { "$match" : {"cdIBGE" : cdIBGE, "nrAno" : nrAno}}; // match stage
-    }else{
-        throw TypeError(errorMsg.PARAMETROS_DEVEM_SER_DEFINIDOS('cdIBGE','nrAno'));
-    }
-
-    if(limit) pipeline[pipeline.length] = { "$limit" : +limit};
-    if(skip) pipeline[pipeline.length] = {"$skip" : +skip};
-    //asc = 1 desc = -1
-    let sort_stage = {"$sort" : {"vlContratado" : 0 } };
-    if(sort){
-        if(sort == "asc"){
-            sort_stage.$sort.vlContratado = 1;
-        }else if(sort == "desc"){
-            sort_stage.$sort.vlContratado = -1;
-        }
-        pipeline[pipeline.length] = sort_stage;
-    }
+    let pipeline = builPipeForRankingFornecedor(params)
     
     return this.query(coll_name,pipeline);
 }
 
 DB.prototype.queryMunicipioFromLicitacao = function(params){
     const coll_name = "rawLicitacao";
-    const nrAno = params.nrAno || '0'
-    const query = { '$match': {
-        'nrAnoLicitacao': nrAno
-    }}
-    const project = { "$project" : {
-        "_id" : false,
-        "cdIBGE" : true,
-        "nmMunicipio" : true,
-        "nrAnoLicitacao" : true
-    }}
-    const group = { "$group" : {
-        "_id" : "$nrAnoLicitacao",
-        "municipios" : { "$addToSet": {
-            "nmMunicipio" : "$nmMunicipio",
-            "cdIBGE" : "$cdIBGE"
-        } } } };
-    const pipe = [];
-    pipe[0] = query;
-    pipe[1] = project;
-    pipe[2] = group;
+    const pipe = buildPipeForMunicipioFromLicitacao(params)
+    
     return this.query(coll_name,pipe);
 }
 
@@ -208,49 +175,9 @@ DB.prototype.queryLicitacao = function({idLicitacao}){
     return this.query(coll_name,pipeline);
 }
 
-DB.prototype.queryLicitacoesMunicipio = function({cdIBGE, nrAno,skip, limit, sort}){
+DB.prototype.queryLicitacoesMunicipio = function(params){
     let coll_name = coll_name = "rawLicitacao";
-    let pipeline = [];
-    console.log(typeof cdIBGE);
-    console.log(typeof nrAno );
-    console.log(typeof skip );
-    console.log(typeof limit );
-
-    let project = { $project : { cdIBGE : 1,
-                     nmMunicipio: 1,
-                     nmEntidade : 1,
-                     idLicitacao : 1,
-                     nrLicitacao : 1,
-                     dsModalidadeLicitacao : 1,
-                     nrAnoLicitacao : 1,
-                     vlLicitacao : 1,
-                     vlTotalAdquiridoLicitacao : 1,
-                     dsObjeto : 1,
-                     dtEdital : 1,
-                     dtAbertura : 1
-                    }};
-    
-
-    if(cdIBGE & nrAno){
-        pipeline[pipeline.length] = { $match : {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno}}
-        pipeline[pipeline.length] = project
-    }else{
-        throw TypeError(errorMsg.PARAMETROS_DEVEM_SER_DEFINIDOS('cdIBGE','nrAno'));
-    }
-
-    if(skip) pipeline[pipeline.length] = {$skip : +skip};
-    if(limit) pipeline[pipeline.length] = { $limit : +limit};
-
-    let sort_stage = {"$sort" : {"vlContratado" : 0 } };
-    if(sort){
-        if(sort == "asc"){
-            sort_stage.$sort.vlContratado = 1;
-        }else if(sort == "desc"){
-            sort_stage.$sort.vlContratado = -1;
-        }
-        pipeline[pipeline.length] = sort_stage;
-    }
-    
+    let pipeline = buildPipeForLicitacaoMunicipio(params)    
     return this.query(coll_name,pipeline);
 }
 
