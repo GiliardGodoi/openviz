@@ -1,18 +1,90 @@
+/**
+ *  The Text Search in the aggregarion pipeline has the following restrictions:
+ *   - The $match stage that includes a $text must be the first stage in the pipeline.
+ *   - A text operator can only occur once in the stage.
+ *   - The text operator expression cannot appear in $or or $not expressions.
+ *   - The text search, by default, does not return the matching documents in order of matching scores.
+ *     Use the $meta aggregation expression in the $sort stage.
+ */
 
-module.exports.buildPipeForLicitacaoMunicipio = function buildPipeForQueryLicitacaoMunicipio (params) {
-  const {cdIBGE, nrAno,skip, limit, sort} = params
-  
-  const pipe = []
-  
+function buildMatchStageForQuerysParams (params) {
+  const {
+    cdIBGE,
+    nrAno,
+    dsModalidade,
+    dtEditalMin,
+    dtEditalMax,
+    dtAberturaMin,
+    dtAberturaMax,
+    vlLicitacaoMin,
+    vlLicitacaoMax,
+  } = params
+
+  const matchStage = {
+    '$match' : {
+      '$and' : []
+    }
+  }
+
   if (cdIBGE && nrAno) {
-    const match = { '$match' : { 
-      'cdIBGE' : cdIBGE,
-      'nrAnoLicitacao': nrAno
-    }}
-    pipe.push(match)
+    const cdIBGEExpression = {'cdIBGE' : cdIBGE}
+    const nrAnoExpression = {'nrAnoLicitacao': nrAno}
+    matchStage['$match']['$and'].push(cdIBGEExpression)
+    matchStage['$match']['$and'].push(nrAnoExpression)
   } else {
     throw TypeError('Parâmetros cdIBGE e nrAno obrigatorios')
   }
+
+  if (dsModalidade) {
+    const dsModalidadeExpression = {'dsModalidade': dsModalidade}
+    matchStage['$match']['$and'].push(dsModalidadeExpression)
+  }
+  if (dtEditalMin) {
+    const dtEditalMinExpression = {'dtEdital': {'$gte': dtEditalMin}}
+    matchStage['$match']['$and'].push(dtEditalMinExpression)
+  }
+  if (dtEditalMax) {
+    const dtEditalMaxExpression = {'dtEdital': {'$lte': dtEditalMax}}
+    matchStage['$match']['$and'].push(dtEditalMaxExpression)
+  }
+  if (dtAberturaMin) {
+    const dtAberturaMinExpression = {'dtAbertura': {'$gte': dtAberturaMin}}
+    matchStage['$match']['$and'].push(dtAberturaMinExpression)
+  }
+  if (dtAberturaMax) {
+    const dtAberturaMaxExpression = {'dtAbertura': {'$lte': dtAberturaMax}}
+    matchStage['$match']['$and'].push(dtAberturaMaxExpression)
+  }
+
+  if (vlLicitacaoMin) {
+    const vlLicitacaoMinExpression = {'vlLicitacao': {'$gte': vlLicitacaoMin}}
+    matchStage['$match']['$and'].push(vlLicitacaoMinExpression)
+  }
+  if (vlLicitacaoMax) {
+    const vlLicitacaoMaxExpression = {'vlLicitacao': {'$lte': vlLicitacaoMax}}
+    matchStage['$match']['$and'].push(vlLicitacaoMaxExpression)
+  }
+
+  return matchStage
+}
+
+module.exports.buildPipeForLicitacaoMunicipio = function buildPipeForQueryLicitacaoMunicipio (params) {
+  const {cdIBGE, nrAno, dsObjeto, skip, limit, sort} = params
+  
+  const pipe = []
+  if (dsObjeto) {
+    const textSearch = {
+      '$match': {
+        '$text' : {'$search': dsObjeto, '$language': 'pt'}
+      }
+    }
+    console.log('\t> dsObjeto', dsObjeto)
+    pipe.push(textSearch)
+  }
+
+  const match = buildMatchStageForQuerysParams(params)
+  pipe.push(match)
+  
   const project = { $project : { cdIBGE : 1,
     nmMunicipio: 1,
     nmEntidade : 1,

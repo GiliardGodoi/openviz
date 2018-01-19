@@ -1,8 +1,11 @@
 import { check, validationResult } from 'express-validator/check'
 import { matchedData, sanitize } from 'express-validator/filter'
+import {timeParse} from 'd3-time-format'
 import DB from '../database/db.js'
 import handlerError from '../utils/apiErrorHandling'
 import { error } from 'util';
+
+const parseDate = timeParse('%d/%m/%Y')
 
 module.exports = (app) => {
     const config = app.src.libs.config;
@@ -21,17 +24,35 @@ module.exports = (app) => {
         count += 1
     });
 
-    app.get('/licitacoes/:cdIBGE/:nrAno', [
+    app.route('/licitacoes/:cdIBGE/:nrAno')
+    .all((req, res, next) => {
+        if (req.query.dtEditalMin) {
+            req.query.dtEditalMin = parseDate(req.query.dtEditalMin)
+        }
+        if (req.query.dtEditalMax) {
+            req.query.dtEditalMax = parseDate(req.query.dtEditalMax)
+        }
+        if (req.query.dtAberturaMin) {
+            req.query.dtAberturaMin = parseDate(req.query.dtAberturaMin)
+        }
+        if (req.query.dtAberturaMax) {
+            req.query.dtAberturaMax = parseDate(req.query.dtAberturaMax)
+        }
+        if (req.query.vlLicitacaoMin){
+            req.query.vlLicitacaoMin = +req.query.vlLicitacaoMin
+        }
+        if (req.query.vlLicitacaoMax){
+            req.query.vlLicitacaoMax = +req.query.vlLicitacaoMax
+        }
+        next()
+    })
+    .get([
         check('nrAno').isIn(ANOS_DISPONIVEIS).withMessage('Pesquisar entre os anos 2013~2016'),
         check('cdIBGE').isLength({ min : 6}),
         check('cdIBGE').isNumeric().withMessage('cdIBGE deve conter apenas digitos numéricos'),
         check('nmMunicipio').trim(),
         check('dsModalidade').optional().isIn(VALORES_DESCRICAO_MODALIDADE_DISPONIVEL),
         check('dsObjeto').optional().not().matches(/[\{\[\($%&*\\/\)\]\}]/g).withMessage('Descrição do objeto não pode conter caracteres especiais'),
-        check('dtEditalMin').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
-        check('dtEditalMax').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
-        check('dtAberturaMin').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
-        check('dtAberturaMax').optional().matches(/\d{2}\/\d{2}\/\d{4}/).withMessage('Não corresponde ao formato especificado'),
         check('vlLicitacaoMin').optional().isDecimal(),
         check('vlLicitacaoMax').optional().isDecimal()
     ],
