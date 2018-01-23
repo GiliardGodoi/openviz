@@ -1,7 +1,8 @@
 import {MongoClient} from 'mongodb'
 import {buildPipeForLicitacaoMunicipio,
         builPipeForRankingFornecedor,
-        buildPipeForMunicipioFromLicitacao
+        buildPipeForMunicipioFromLicitacao,
+        buildPipeForQueryItensLicitacao,
      } from './pipebuilder'
 
 function DB(uri = null){
@@ -87,7 +88,6 @@ DB.prototype.queryGeojson = function({cdEstado, nmEstado}){
     }else if(nmEstado){
         pipeline[pipeline.length] = { '$match' : {'properties.name' : nmEstado}}
     }
-    
     return this.query(coll_name,pipeline)
 }
 
@@ -127,45 +127,10 @@ DB.prototype.queryMunicipioFromLicitacao = function(params){
     return this.query(coll_name,pipe);
 }
 
-DB.prototype.queryItensLicitacao = function({cdIBGE, nrAno,skip, limit, sort}){
-    let coll_name = "licitacaoVencedor"
-    let pipeline = []
-    let project = {
-        $project : {
-            idlicitacao : 1,
-            dsItem : 1,
-            nrQuantidade : 1,
-            vlMinimoUnitarioItem :  1,
-            vlMinimoTotal : 1,
-            vlMaximoUnitarioItem : 1,
-            vlMaximoTotal : 1,
-            nrQuantidadeVencedor : "$nrQuantidadeVencedorLicitacao",
-            vlUnitarioVencedor : "$vlLicitacaoVencedorLicitacao",
-            vlTotalVencedor : "$vlTotalVencedorLicitacao"
-        }
-    }
-
-    if(cdIBGE & nrAno){
-        pipeline[pipeline.length] = { "$match" : {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno}};
-        pipeline[pipeline.length] = project;
-    }else{
-        throw TypeError(errorMsg.PARAMETROS_DEVEM_SER_DEFINIDOS('cdIBGE','nrAno'));
-    }
-
-    if(limit) pipeline[pipeline.length] = { "$limit" : +limit};
-    if(skip) pipeline[pipeline.length] = {"$skip" : +skip};
-    
-    let sort_stage = {"$sort" : {vlTotalVencedor : 0 } };
-    if(sort){
-        if(sort == "asc"){
-            sort_stage.$sort.vlTotalVencedor = 1;
-        }else if(sort == "desc"){
-            sort_stage.$sort.vlTotalVencedor = -1;
-        }
-        pipeline[pipeline.length] = sort_stage;
-    }
-
-    return this.query(coll_name,pipeline);
+DB.prototype.queryItensLicitacao = function(params){
+    const collectionName = "licitacaoVencedor"
+    const pipe = buildPipeForQueryItensLicitacao(params)
+    return this.query(collectionName,pipe);
 }
 
 DB.prototype.queryLicitacao = function({idLicitacao}){

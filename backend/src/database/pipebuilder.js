@@ -160,11 +160,52 @@ module.exports.buildPipeForMunicipioFromLicitacao = function buildPipeForMunicip
         "municipios" : { "$addToSet": {
             "nmMunicipio" : "$nmMunicipio",
             "cdIBGE" : "$cdIBGE"
-        } } } };
-    const pipe = [];
-    pipe[0] = query;
-    pipe[1] = project;
-    pipe[2] = group;
+        } } } }
+    const pipe = []
+    pipe.push(query)
+    pipe.push(project)
+    pipe.push(group)
 
     return pipe
+}
+
+module.exports.buildPipeForQueryItensLicitacao = function pipeItensLicitacao (params) {
+  const {cdIBGE, nrAno, skip, limit, sort} = params
+  const pipe = []
+  if (cdIBGE & nrAno) {
+    pipe.push({ "$match" : {"cdIBGE" : cdIBGE, "nrAnoLicitacao" : nrAno}})
+  } else {
+    throw TypeError('Os parâmetros cdIBGE e nrAno devem ser definidos');
+  }
+  const project = {
+    $project : {
+        idlicitacao : 1,
+        dsItem : 1,
+        nrQuantidade : 1,
+        vlMinimoUnitarioItem :  1,
+        vlMinimoTotal : 1,
+        vlMaximoUnitarioItem : 1,
+        vlMaximoTotal : 1,
+        nrQuantidadeVencedor : "$nrQuantidadeVencedorLicitacao",
+        vlUnitarioVencedor : "$vlLicitacaoVencedorLicitacao",
+    }
+  }
+  pipe.push(project)
+
+  if (limit) {
+    pipe.push({ "$limit" : +limit})
+  } 
+  if(skip) {
+    pipe.push({"$skip" : +skip})
+  }
+  
+  if(sort){
+      if(sort == "asc"){
+          pipe.sort({'$sort': {'vlLicitacao': 1} })
+      }else if(sort == "desc"){
+          pipe.sort({'$sort': {'vlLicitacao': -1} })
+      }
+  }
+
+  return pipe
 }
