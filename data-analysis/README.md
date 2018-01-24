@@ -6,8 +6,9 @@ Este diretório reúne os *scripts* utilizados para coleta e tratamento dos dado
 
 Após instalado o suite Anaconda (Versão 5.0.1) com Python 3.6, instale o módulo pymongo no ambiente criado pelo Anaconda. Digite o seguinte comando no prompt do Anaconda:
 
-´´´ conda install -c anaconda pymongo  ´´´
-
+  ´´´
+  conda install -c anaconda pymongo  
+  ´´´
 Execute os Notebooks:
 
   01-ObtendoInformacoesSobreMunicípiosPR.ipynb
@@ -17,6 +18,18 @@ Execute os Notebooks:
 Configure para a lista de municípios que desejar.
 
 Agora vc tem os dados utilizados pela aplicação.
+
+Para preparar o índice do tipo texto para o atributo dsObjeto na coleção 'licitacao', digite o comando:
+
+  ```
+    db.licitacao.createIndex({'dsObjeto': 'text'}, {'default_language': 'portuguese'})
+  ```
+
+## Preparação das agregações
+
+Algumas coleçãos referem-se a agrupamentos de dados existentes nas coleções: licitacao, licitacaoVencedor e licitacaoParticipante.
+Para  obter estas coleções extrar execute os scripts lab01.py ao lab05.py, nesta ordem.
+Ver Issue [#11](https://github.com/GiliardGodoi/openviz/issues/11) sobre a necessidade de melhora deste código.
 
 
 ## Nota
