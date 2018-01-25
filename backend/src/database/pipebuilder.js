@@ -35,8 +35,8 @@ function buildMatchStageForQuerysParams (params) {
     throw TypeError('Parâmetros cdIBGE e nrAno obrigatorios')
   }
 
-  if (dsModalidade) {
-    const dsModalidadeExpression = {'dsModalidade': dsModalidade}
+  if (dsModalidade && dsModalidade !== 'blank') {
+    const dsModalidadeExpression = {'dsModalidadeLicitacao': dsModalidade}
     matchStage['$match']['$and'].push(dsModalidadeExpression)
   }
   if (dtEditalMin) {
@@ -70,7 +70,7 @@ function buildMatchStageForQuerysParams (params) {
 
 module.exports.buildPipeForLicitacaoMunicipio = function buildPipeForQueryLicitacaoMunicipio (params) {
   const {cdIBGE, nrAno, dsObjeto, skip, limit, sort} = params
-  
+  console.log('\tat pipebuilder\n',JSON.stringify(params,4))
   const pipe = []
   if (dsObjeto) {
     const textSearch = {
@@ -84,7 +84,7 @@ module.exports.buildPipeForLicitacaoMunicipio = function buildPipeForQueryLicita
 
   const match = buildMatchStageForQuerysParams(params)
   pipe.push(match)
-  
+
   const project = { $project : { cdIBGE : 1,
     nmMunicipio: 1,
     nmEntidade : 1,
@@ -194,11 +194,11 @@ module.exports.buildPipeForQueryItensLicitacao = function pipeItensLicitacao (pa
 
   if (limit) {
     pipe.push({ "$limit" : +limit})
-  } 
+  }
   if(skip) {
     pipe.push({"$skip" : +skip})
   }
-  
+
   if(sort){
       if(sort == "asc"){
           pipe.sort({'$sort': {'vlLicitacao': 1} })

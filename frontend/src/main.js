@@ -53,11 +53,9 @@ const submitForm = function submitForm (params) {
     (response, status) => {
       if (status === 'success') {
         if (response.success) {
-          const tabela = new TabelaLicitacao()
-          tabela.setData(response.data.slice(0, 100))
-            .setWrapper('#table_div')
-            .draw()
-          $('#table_container').fadeIn()
+          console.log(response.data)
+        } else {
+          console.log(response)
         }
       }
     }

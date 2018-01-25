@@ -3,7 +3,17 @@
  */
 const hasSpecialCharacter = valor => /[\{\[\($%&*\\/\)\]\}]/gi.test(valor)
 const isDefinedValueForNroAno = year => ['2013', '2014', '2015', '2016', '2017'].indexOf(year) >= 0
-const isDefinedValueForDsModalidade = valor => ['blank', '0', '1', '2', '3', '4', '5', '6'].indexOf(valor) >= 0
+const isDefinedValueForDsModalidade = valor => [
+  'blank',
+  'Processo Dispensa',
+  'Processo Inexigibilidade',
+  'Pregão', 'Tomada de Preços',
+  'Convite',
+  'Concorrência',
+  'Leilão', 'Concurso',
+  'Regime Diferenciado de Contratações - RDC',
+].indexOf(valor) >= 0
+
 const isNullValue = value => value === null
 const isNaNValue = value => value === Number(NaN)
 const isEmpty = value => value.length === 0

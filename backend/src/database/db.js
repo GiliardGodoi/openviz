@@ -99,7 +99,7 @@ DB.prototype.querySinopseLicitacao = function({cdIBGE,nrAno,skip, limit, sort}){
     let sort_stage = { '$sort' : {'dsModalidadeLicitacao' : 1 }}
 
     return this.query(coll_name,[match]);
-    
+
 }
 
 DB.prototype.querySinopseCriterioAvaliacaoPorModalidade = function({cdIBGE, nrAno}){
@@ -109,21 +109,21 @@ DB.prototype.querySinopseCriterioAvaliacaoPorModalidade = function({cdIBGE, nrAn
     let _this = this;
     let match = {"cdIBGE" : cdIBGE, "nrAno" : nrAno};
     let coll_name = "sinopseCriterioAvaliacaoPorModalidade";
-  		  
+
      return this.query(coll_name,[match])
 }
 
 DB.prototype.queryRankingFornecedor = function(params){
     let coll_name = "listaFornecedores";
     let pipeline = builPipeForRankingFornecedor(params)
-    
+
     return this.query(coll_name,pipeline);
 }
 
 DB.prototype.queryMunicipioFromLicitacao = function(params){
     const coll_name = "licitacao";
     const pipe = buildPipeForMunicipioFromLicitacao(params)
-    
+
     return this.query(coll_name,pipe);
 }
 
@@ -142,7 +142,8 @@ DB.prototype.queryLicitacao = function({idLicitacao}){
 
 DB.prototype.queryLicitacoesMunicipio = function(params){
     let coll_name = coll_name = "licitacao";
-    let pipeline = buildPipeForLicitacaoMunicipio(params)    
+    let pipeline = buildPipeForLicitacaoMunicipio(params)
+    console.log('\t db.js\n',JSON.stringify(pipeline,4))
     return this.query(coll_name,pipeline);
 }
 

@@ -11,8 +11,17 @@ module.exports = (app) => {
     const config = app.src.libs.config;
     const database = new DB(config.db.uri)
     let count = 0
-    const ANOS_DISPONIVEIS = ['2013', '2014', '2015', '2016']
-    const VALORES_DESCRICAO_MODALIDADE_DISPONIVEL = ['blank', '0','1', '2', '3', '4', '5', '6']
+    const ANOS_DISPONIVEIS = ['2013', '2014', '2015', '2016', '2017']
+    const VALORES_DESCRICAO_MODALIDADE_DISPONIVEL = [
+      'blank',
+      'Processo Dispensa',
+      'Processo Inexigibilidade',
+      'Pregão', 'Tomada de Preços',
+      'Convite',
+      'Concorrência',
+      'Leilão', 'Concurso',
+      'Regime Diferenciado de Contratações - RDC',
+    ]
 
     app.get('/', (req, res) => {
         res.json({
@@ -69,6 +78,7 @@ module.exports = (app) => {
             res.json(resposta)
         } else {
             let parametrosPesquisa = {...req.params,...req.query}
+            console.log(JSON.stringify(parametrosPesquisa,4))
             database.connect().then( () => {
                 database.queryLicitacoesMunicipio(parametrosPesquisa)
                     .then( (data) => {
@@ -81,7 +91,7 @@ module.exports = (app) => {
                         res.json(resposta);
                     })
                     .catch( err => {
-                        handlerError(err);        
+                        handlerError(err);
                         res.status(500).end();
                     });
             }).catch( err => {
@@ -103,9 +113,9 @@ module.exports = (app) => {
             message : '',
             data : []
         };
-        
+
         let parametrosPesquisa = {...req.params,...req.query}
-        
+
         console.log(`\tGET ${req.path}`)
 
         database.connect().then( () =>{
@@ -195,12 +205,12 @@ module.exports = (app) => {
         }).catch( err => {
             res.status(500).end();
         });
-        
+
     });
 
-    /* 
+    /*
         /licitacao/:idLicitacao/itens
-        /licitacao/:idLicitacao/fornecedores    
+        /licitacao/:idLicitacao/fornecedores
     */
 
     app.get('/licitacao/fornecedores/:cdIBGE/:nrAno', [
@@ -271,7 +281,7 @@ module.exports = (app) => {
             handlerError(err);
             res.status(500).end();
         });
-     
+
     });
 
     app.get('/licitacao/sinopse/modalidades/:cdIBGE/:nrAno', [
@@ -331,7 +341,7 @@ module.exports = (app) => {
                         res.json(resposta);
                     })
                     .catch( err => {
-                        handlerError(err);        
+                        handlerError(err);
                         res.status(500).end();
                     });
             })
@@ -361,7 +371,7 @@ module.exports = (app) => {
                     res.json(resposta);
                 })
                 .catch( err => {
-                    handlerError(err);        
+                    handlerError(err);
                     res.status(500).end();
                 });
         }).catch( err => {
