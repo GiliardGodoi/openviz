@@ -1,0 +1,68 @@
+processar:
+ ['410010', '410110', '410270', '410360', '410640', '410970', '411180', '411370', '411990', '412070', '412410', '412660', '412850']
+ ['2013', '2014', '2015', '2016', '2017']
+executando consulta para:  ABATI? ano :  2013
+executando consulta para:  ABATI? ano :  2014
+executando consulta para:  ABATI? ano :  2015
+executando consulta para:  ABATI? ano :  2016
+executando consulta para:  ABATI? ano :  2017
+executando consulta para:  ANDIR? ano :  2013
+executando consulta para:  ANDIR? ano :  2014
+executando consulta para:  ANDIR? ano :  2015
+executando consulta para:  ANDIR? ano :  2016
+executando consulta para:  ANDIR? ano :  2017
+executando consulta para:  BARRA DO JACAR? ano :  2013
+executando consulta para:  BARRA DO JACAR? ano :  2014
+executando consulta para:  BARRA DO JACAR? ano :  2015
+executando consulta para:  BARRA DO JACAR? ano :  2016
+executando consulta para:  BARRA DO JACAR? ano :  2017
+executando consulta para:  CAMBAR? ano :  2013
+executando consulta para:  CAMBAR? ano :  2014
+executando consulta para:  CAMBAR? ano :  2015
+executando consulta para:  CAMBAR? ano :  2016
+executando consulta para:  CAMBAR? ano :  2017
+executando consulta para:  CORN?LIO PROC?PIO ano :  2013
+executando consulta para:  CORN?LIO PROC?PIO ano :  2014
+executando consulta para:  CORN?LIO PROC?PIO ano :  2015
+executando consulta para:  CORN?LIO PROC?PIO ano :  2016
+executando consulta para:  CORN?LIO PROC?PIO ano :  2017
+executando consulta para:  IBAITI ano :  2013
+executando consulta para:  IBAITI ano :  2014
+executando consulta para:  IBAITI ano :  2015
+executando consulta para:  IBAITI ano :  2016
+executando consulta para:  IBAITI ano :  2017
+executando consulta para:  JACAREZINHO ano :  2013
+executando consulta para:  JACAREZINHO ano :  2014
+executando consulta para:  JACAREZINHO ano :  2015
+executando consulta para:  JACAREZINHO ano :  2016
+executando consulta para:  JACAREZINHO ano :  2017
+executando consulta para:  LONDRINA ano :  2013
+executando consulta para:  LONDRINA ano :  2014
+executando consulta para:  LONDRINA ano :  2015
+executando consulta para:  LONDRINA ano :  2016
+executando consulta para:  LONDRINA ano :  2017
+executando consulta para:  PONTA GROSSA ano :  2013
+executando consulta para:  PONTA GROSSA ano :  2014
+executando consulta para:  PONTA GROSSA ano :  2015
+executando consulta para:  PONTA GROSSA ano :  2016
+executando consulta para:  PONTA GROSSA ano :  2017
+executando consulta para:  QUATIGU? ano :  2013
+executando consulta para:  QUATIGU? ano :  2014
+executando consulta para:  QUATIGU? ano :  2015
+executando consulta para:  QUATIGU? ano :  2016
+executando consulta para:  QUATIGU? ano :  2017
+executando consulta para:  SANTO ANT?NIO DA PLATINA ano :  2013
+executando consulta para:  SANTO ANT?NIO DA PLATINA ano :  2014
+executando consulta para:  SANTO ANT?NIO DA PLATINA ano :  2015
+executando consulta para:  SANTO ANT?NIO DA PLATINA ano :  2016
+executando consulta para:  SANTO ANT?NIO DA PLATINA ano :  2017
+executando consulta para:  SIQUEIRA CAMPOS ano :  2013
+executando consulta para:  SIQUEIRA CAMPOS ano :  2014
+executando consulta para:  SIQUEIRA CAMPOS ano :  2015
+executando consulta para:  SIQUEIRA CAMPOS ano :  2016
+executando consulta para:  SIQUEIRA CAMPOS ano :  2017
+executando consulta para:  WENCESLAU BRAZ ano :  2013
+executando consulta para:  WENCESLAU BRAZ ano :  2014
+executando consulta para:  WENCESLAU BRAZ ano :  2015
+executando consulta para:  WENCESLAU BRAZ ano :  2016
+executando consulta para:  WENCESLAU BRAZ ano :  2017

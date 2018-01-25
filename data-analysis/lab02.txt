@@ -1,0 +1,15 @@
+Executando para:
+ ['410010', '410110', '410270', '410360', '410640', '410970', '411180', '411370', '411990', '412070', '412410', '412660', '412850']
+cdIBGE:  410010  documentos atualizados:  395
+cdIBGE:  410110  documentos atualizados:  1022
+cdIBGE:  410270  documentos atualizados:  397
+cdIBGE:  410360  documentos atualizados:  1094
+cdIBGE:  410640  documentos atualizados:  1418
+cdIBGE:  410970  documentos atualizados:  1055
+cdIBGE:  411180  documentos atualizados:  1919
+cdIBGE:  411370  documentos atualizados:  6316
+cdIBGE:  411990  documentos atualizados:  5150
+cdIBGE:  412070  documentos atualizados:  440
+cdIBGE:  412410  documentos atualizados:  4451
+cdIBGE:  412660  documentos atualizados:  534
+cdIBGE:  412850  documentos atualizados:  692

@@ -1,0 +1,2 @@
+Iniciando execucao: 
+tempo de execução:  38.857444763183594
