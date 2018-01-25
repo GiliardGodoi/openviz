@@ -4,15 +4,19 @@ Este diretório reúne os *scripts* utilizados para coleta e tratamento dos dado
 
 ## Configuração do Banco
 
-Após instalado o suite Anaconda (Versão 5.0.1) com Python 3.6, instale o módulo pymongo no ambiente criado pelo Anaconda. Digite o seguinte comando no prompt do Anaconda:
+Após instalado o suite Anaconda (Versão 5.0.1) com Python 3.6, instale o módulo ``pymongo`` no ambiente criado pelo Anaconda. 
 
-  ´´´
-  conda install -c anaconda pymongo  
-  ´´´
+Digite o seguinte comando no prompt do Anaconda:
+
+  ```
+    conda install -c anaconda pymongo  
+  ```
 Execute os Notebooks:
 
   01-ObtendoInformacoesSobreMunicípiosPR.ipynb
+  
   02-ObtendoOsArquivos.ipynb
+  
   03-ExtraindoDadosDoXMLeSalvandoNoMongoDB.ipynb
 
 Configure para a lista de municípios que desejar.
