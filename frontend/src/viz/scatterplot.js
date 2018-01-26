@@ -1,221 +1,275 @@
-import Formatter from './formatter'
 
-
-export default class ScatterPlot {
+export default class Scatterplot {
   constructor () {
     this.DATA = null
-    this.width = null
-    this.height = null
-    this.margin = null
 
+    this.size = {
+      width: 750,
+      height: 450,
+    }
+
+    this.margin = {
+      top: 20,
+      right: 10,
+      bottom: 60,
+      left: 80,
+    }
+
+    this.SVG = null
     this.chartGroup = null
     this.circleGroup = null
-    this.svg = null
+    this.svgLegend = null
 
-    this.xScale = null
-    this.yScale = null
-    this.colorScale = null
-    this.radiusScale = null
-
-    this.colorSchema = ['#1abc9c', '#2ecc71', '#3498db', '#f1c40f', '#e74c3c', '#8e44ad']
-    this.colorDomain = null
-    this.yDomain = null
-    this.xDomain = null
+    this.X = d => d.x
+    this.Y = d => d.y
+    this.color = d => (d ? d.color : 'black')
+    this.radius = d => (d ? d.r : 4)
 
     this.xAxis = null
     this.yAxis = null
-    this.isLogScale = true
 
-    this.ordinalLegend = null
-    this.svgLegend = null
+    this.xDomain = null
+    this.yDomain = null
+    this.colorDomain = null
 
-    this.format = new Formatter()
+    this.colorRange = ['#1abc9c', '#2ecc71', '#3498db', '#f1c40f', '#e74c3c', '#8e44ad']
+    this.xRange = [0, this.size.width]
+    this.yRange = [this.size.height, 0]
+    this.radiusRange = [0, 15]
 
-    this.defaultOpacityCircle = 0.5
-  }
-
-  x (d) {
-    return d.dtEdital
-  }
-
-  y (d) {
-    return d.vlLicitacao
-  }
-
-  color (d) {
-    return d.dsModalidadeLicitacao
-  }
-
-  r (d) {
-    return 4
-  }
-
-  key (d) {
-    return d.idLicitacao
+    this.yScale = d3.scaleLog().range(this.yRange)
+    this.xScale = d3.scaleTime().range(this.xRange)
+    this.colorScale = d3.scaleOrdinal().range(this.colorRange)
+    this.radiusScale = () => 4
   }
 
 
-  data (data) {
-    if (!data) {
-      return this.DATA
-    }
-    this.DATA = data.map(this.convertDate)
-    this.defineColorDomain()
-    this.defineXDomain()
-    this.defineYDomain()
+  setData (data) {
+    this.DATA = data
     return this
   }
 
-  defineYDomain () {
-    this.yDomain = [1, d3.max(this.DATA, d => this.y(d))]
-  }
-
-  defineXDomain () {
-    const extent = d3.extent(this.DATA, d => this.x(d))
-    const newYear = d3.timeYear(extent[0])
-    this.xDomain = []
-    this.xDomain[0] = newYear
-    this.xDomain[1] = d3.timeYear.offset(newYear)
-  }
-
-  defineColorDomain () {
-    this.colorDomain = this.DATA.map(item => this.color(item))
-      .filter((item, index, array) => array.indexOf(item) === index)
-      .sort((a, b) => a - b)
-  }
-
-
-  init () {
-    this.initMargin()
-    this.initSVGElements()
-    this.initScale()
-    this.initLegend()
-  }
-
-  initMargin () {
-    this.margin = {
-      top: 20, right: 10, bottom: 60, left: 80,
+  setSize (size = [this.size.width, this.size.height]) {
+    if (!Array.isArray(size)) {
+      return this
     }
-    this.width = 750 - this.margin.left - this.margin.right
-    this.height = 450 - this.margin.top - this.margin.bottom
+
+    const [w, h] = size
+    if (w) this.size.width = w
+    if (h) this.size.height = h
+
+    return this
   }
 
-  initSVGElements () {
-    this.svg = d3.select('#chart').append('svg').attr('width', (this.width + this.margin.left + this.margin.right)).attr('height', (this.height + this.margin.top + this.margin.bottom))
-    this.chartGroup = this.svg.append('g').attr('class', 'group-chart').attr('transform', `translate(${[this.margin.left, this.margin.top]})`)
+  setMargins (margin) {
+    const {
+      top,
+      bottom,
+      right,
+      left,
+    } = margin
 
-    this.svg.append('defs')
+    if (top) this.margin.top = top
+    if (bottom) this.margin.bottom = bottom
+    if (right) this.margin.right = right
+    if (left) this.margin.left = left
+
+    return this
+  }
+
+  setYScale (scaleName) {
+    return this
+  }
+
+  setXScale (scaleName) {
+    return this
+  }
+
+  setColorScale (scaleName) {
+    return this
+  }
+
+  setRadiusScale (scaleName) {
+    return this
+  }
+
+  setColorRange (range) {
+    return this
+  }
+
+  setXRange (range) {
+    return this
+  }
+
+  setYRange (range) {
+    return this
+  }
+
+  setRadiusRange (range) {
+    return this
+  }
+
+  defineSVG (selector = 'body') {
+    const WIDTH = this.size.width + this.margin.left + this.margin.right
+    const HEIGHT = this.size.height + this.margin.top + this.margin.bottom
+    const translateX = this.margin.left
+    const translateY = this.margin.top
+
+    this.SVG = d3.select(selector)
+      .append('svg')
+      .attr('width', WIDTH)
+      .attr('height', HEIGHT)
+
+    this.chartGroup = this.SVG.append('g')
+      .attr('class', 'group-chart')
+      .attr('transform', `translate(${[translateX, translateY]})`)
+
+    this.SVG.append('defs')
       .append('svg:clipPath')
       .attr('id', 'clip')
       .append('svg:rect')
-      .attr('width', this.width + 10)
-      .attr('height', this.height + 10)
+      .attr('width', this.size.width + 10)
+      .attr('height', this.size.height + 10)
       .attr('x', -5)
       .attr('y', -5)
 
     this.circleGroup = this.chartGroup.append('g')
       .attr('clip-path', 'url(#clip)')
       .style('clip-path', 'url(#clip)')
-      .attr('class', 'circleGroup')
+      .attr('class', 'circle-group')
+
+    return this
   }
 
-  initScale () {
-    this.yScale = d3.scaleLog().range([this.height, 0])
-    this.xScale = d3.scaleTime().range([0, this.width])
-
-    this.colorScale = d3.scaleOrdinal().range(this.colorSchema)
-
-    this.radiusScale = function (d) { return 4 }
-  }
-
-  initLegend () {
-    this.ordinalLegend = d3.legendColor().shape('circle').title('Legenda - Modalidades Licitação').scale(this.colorScale)
-  }
-
-  draw () {
-    if (!this.data) {
-      console.log('data is not defined')
-      return
-    }
-
+  defineXDomain (domain) {
+    this.xDomain = domain
     this.xScale.domain(this.xDomain)
+
+    return this
+  }
+
+  defineYDomain (domain) {
+    this.yDomain = domain
     this.yScale.domain(this.yDomain)
+
+    return this
+  }
+
+  defineColorDomain (domain) {
+    this.colorDomain = domain
     this.colorScale.domain(this.colorDomain)
 
-    // xAxis
-    this.xAxis = d3.axisBottom().scale(this.xScale).tickFormat(this.format.getTimeFormat())
+    return this
+  }
 
+  defineCoordX (xAccessor) {
+    this.X = xAccessor
+    return this
+  }
+
+  defineCoordY (yAccessor) {
+    this.Y = yAccessor
+    return this
+  }
+
+  defineColorAccessor (colorAccessor) {
+    this.color = colorAccessor
+    return this
+  }
+
+  defineRadiusAccessor (radiusAcessor) {
+    this.radius = radiusAcessor
+    return this
+  }
+
+  defineKeyAccessor (keyAccessor) {
+    return this
+  }
+
+  defineBubbleClassAccessor (classAcessor) {
+    return this
+  }
+
+  drawAxis () {
+    this.drawXAxis().drawYAxis()
+    return this
+  }
+
+  drawXAxis () {
+    this.xAxis = d3.axisBottom().scale(this.xScale)
+    const translateXAxis = this.size.height + 5
     this.chartGroup.append('g')
       .attr('class', 'axis axis-x')
-      .attr('transform', `translate(${  [0, (this.height + 5)]  })`)
+      .attr('transform', `translate(${[0, translateXAxis]})`)
       .call(this.xAxis)
-    // yAxis
-    d3.interpolateRound(this.yDomain[0], this.yDomain[1])
-    this.yAxis = d3.axisLeft().scale(this.yScale).ticks(5).tickFormat(this.format.localeFormat.format('$,.2f'))// .tickValues([0,0.01,0.15,0.2,0.75,1].map(i => interpolate(i) ));
-    console.log(this.yAxis.tickArguments())
+
+    return this
+  }
+
+  drawYAxis () {
+    this.yAxis = d3.axisLeft().scale(this.yScale)
+
     this.chartGroup.append('g')
       .attr('class', 'axis axis-y')
       .attr('transform', 'translate(0,0)')
       .call(this.yAxis)
 
-    this.drawMarks()
-
-    this.svgLegend = d3.select('#legend-display')
-      .append('svg')
-      .attr('height', 200)
-      .append('g')
-      .attr('class', 'lengenda')
-      .attr('transform', 'translate(20,20)')
-      .call(this.ordinalLegend)
+    return this
   }
 
   drawMarks () {
-    if (!this.data) {
-      console.log('data is not defined')
-      return
+    if (!this.DATA) {
+      throw TypeError('Não é possível contruir o gráfico sem os dados')
     }
 
-    const bubbles = this.circleGroup.selectAll('.bubbles').data(this.DATA, d => this.key(d))
+    const cx = d => this.xScale(this.X(d))
+    const cy = d => this.yScale(this.Y(d))
+    const r = d => this.radiusScale(this.radius(d))
+    const fill = d => this.colorScale(this.color(d))
+    const opacity = 0.5
+
+    const bubbles = this.circleGroup.selectAll('.bubble')
+      .data(this.DATA)
 
     // UPDATE
     bubbles.transition()
       .ease(d3.easeSinInOut)
       .duration(750)
-      .attr('cx', d => this.xScale(this.x(d)))
-      .attr('cy', d => this.yScale(this.y(d)))
+      .attr('cx', cx)
+      .attr('cy', cy)
 
     // ENTER
     bubbles.enter()
       .append('circle')
-      .attr('class', d => (`bubbles ${this.mapCodeToLetter(this.key(d))}`))
-      .attr('cx', d => this.xScale(this.x(d)))
-      .attr('cy', this.height)
+      .attr('class', 'bubble')
+      .attr('cx', cx)
+      .attr('cy', this.size.height)
       .attr('r', 0)
-      .style('fill', d => this.colorScale(this.color(d)))
+      .style('fill', fill)
       .transition()
       .duration(750)
-      .attr('cx', d => this.xScale(this.x(d)))
-      .attr('cy', d => this.yScale(this.y(d)))
-      .attr('r', d => this.radiusScale(this.r(d)))
-      .style('fill', d => this.colorScale(this.color(d)))
-      .style('opacity', this.defaultOpacityCircle)
+      .attr('cx', cx)
+      .attr('cy', cy)
+      .attr('r', r)
+      .style('fill', fill)
+      .style('opacity', opacity)
 
-    // EXIT
     bubbles.exit().remove()
+
+    return this
   }
 
-  // HELPERS FUNCTIONS
-  convertDate (d) {
-    d.dtEdital = new Date(d.dtEdital)
-    d.dtAbertura = new Date(d.dtAbertura)
-    return d
+  drawLegend () {
+    return this
   }
 
-  mapCodeToLetter (codigo) {
-    const letter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
-    let number
-    let word = ''
-    for (let i = 0; i < codigo.length; i++) word += letter[+codigo[i]]
-    return word
+  draw () {
+    this.drawAxis()
+      .drawMarks()
+    return this
+  }
+
+  calculateVoronoiDiagram () {
+    return this
   }
 }
