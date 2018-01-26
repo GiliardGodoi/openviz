@@ -77,37 +77,37 @@ export default class Scatterplot {
     return this
   }
 
-  setYScale (scaleName) {
-    return this
-  }
+  // setYScale (scaleName) {
+  //   return this
+  // }
 
-  setXScale (scaleName) {
-    return this
-  }
+  // setXScale (scaleName) {
+  //   return this
+  // }
 
-  setColorScale (scaleName) {
-    return this
-  }
+  // setColorScale (scaleName) {
+  //   return this
+  // }
 
-  setRadiusScale (scaleName) {
-    return this
-  }
+  // setRadiusScale (scaleName) {
+  //   return this
+  // }
 
-  setColorRange (range) {
-    return this
-  }
+  // setColorRange (range) {
+  //   return this
+  // }
 
-  setXRange (range) {
-    return this
-  }
+  // setXRange (range) {
+  //   return this
+  // }
 
-  setYRange (range) {
-    return this
-  }
+  // setYRange (range) {
+  //   return this
+  // }
 
-  setRadiusRange (range) {
-    return this
-  }
+  // setRadiusRange (range) {
+  //   return this
+  // }
 
   defineSVG (selector = 'body') {
     const WIDTH = this.size.width + this.margin.left + this.margin.right

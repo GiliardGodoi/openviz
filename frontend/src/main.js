@@ -1,4 +1,4 @@
-import TabelaLicitacao from './charts/TabelaLicitacao'
+import DistribuicaoLicitacaoAno from './charts/DistribuicaoLicitacaoAno'
 import {
   testCodIBGE,
   testNroAno,
@@ -8,6 +8,7 @@ import {
   testDtEdital,
   testDtAbertura } from './validators'
 
+const grafico = new DistribuicaoLicitacaoAno()
 /**
  * Realiza a validação dos parâmetros para pesquisa
  * @param {object} params - parâmetros de pesquisa {name: string, value: string}
@@ -54,6 +55,7 @@ const submitForm = function submitForm (params) {
       if (status === 'success') {
         if (response.success) {
           console.log(response.data)
+          grafico.build(response.data)
         } else {
           console.log(response)
         }
