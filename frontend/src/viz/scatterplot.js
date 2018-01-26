@@ -1,3 +1,4 @@
+import {localeFormat, localeTimeFormat, multiFormat} from './utils/format'
 
 export default class Scatterplot {
   constructor () {
@@ -196,7 +197,7 @@ export default class Scatterplot {
   }
 
   drawXAxis () {
-    this.xAxis = d3.axisBottom().scale(this.xScale)
+    this.xAxis = d3.axisBottom().scale(this.xScale).tickFormat(multiFormat)
     const translateXAxis = this.size.height + 5
     this.chartGroup.append('g')
       .attr('class', 'axis axis-x')
@@ -207,7 +208,7 @@ export default class Scatterplot {
   }
 
   drawYAxis () {
-    this.yAxis = d3.axisLeft().scale(this.yScale)
+    this.yAxis = d3.axisLeft().scale(this.yScale).ticks(5).tickFormat(localeFormat.format('$,.2f'))
 
     this.chartGroup.append('g')
       .attr('class', 'axis axis-y')
