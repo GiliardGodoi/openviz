@@ -6,6 +6,10 @@ import handlerError from '../utils/apiErrorHandling'
 import { error } from 'util';
 
 const parseDate = timeParse('%d/%m/%Y')
+const parseNumber = value => {
+    value = value.replace(/\./g,'').replace(',','.')
+    return Number(value) || 0
+}
 
 module.exports = (app) => {
     const config = app.src.libs.config;
@@ -48,10 +52,12 @@ module.exports = (app) => {
             req.query.dtAberturaMax = parseDate(req.query.dtAberturaMax)
         }
         if (req.query.vlLicitacaoMin){
-            req.query.vlLicitacaoMin = +req.query.vlLicitacaoMin
+            req.query.vlLicitacaoMin = parseNumber(req.query.vlLicitacaoMin)
+            console.log(req.query.vlLicitacaoMin)
         }
         if (req.query.vlLicitacaoMax){
-            req.query.vlLicitacaoMax = +req.query.vlLicitacaoMax
+            req.query.vlLicitacaoMax = parseNumber(req.query.vlLicitacaoMax)
+            console.log(req.query.vlLicitacaoMax)
         }
         next()
     })
