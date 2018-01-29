@@ -1,5 +1,3 @@
-import {localeFormat, localeTimeFormat, multiFormat} from './utils/format'
-
 export default class Scatterplot {
   constructor () {
     this.DATA = null
@@ -26,24 +24,14 @@ export default class Scatterplot {
     this.color = d => (d ? d.color : 'black')
     this.radius = d => (d ? d.r : 4)
 
-    this.xAxis = null
-    this.yAxis = null
-
-    this.xDomain = null
-    this.yDomain = null
     this.colorDomain = null
 
     this.colorRange = ['#1abc9c', '#2ecc71', '#3498db', '#f1c40f', '#e74c3c', '#8e44ad']
-    this.xRange = [0, this.size.width]
-    this.yRange = [this.size.height, 0]
     this.radiusRange = [0, 15]
 
-    this.yScale = d3.scaleLog().range(this.yRange)
-    this.xScale = d3.scaleTime().range(this.xRange)
     this.colorScale = d3.scaleOrdinal().range(this.colorRange)
     this.radiusScale = () => 4
   }
-
 
   setData (data) {
     this.DATA = data
@@ -78,13 +66,33 @@ export default class Scatterplot {
     return this
   }
 
-  // setYScale (scaleName) {
-  //   return this
-  // }
+  setYScale (scaleName) {
+    switch (scaleName) {
+      case 'log':
+        this.yScale = d3.scaleLog().range(this.yRange)
+        break
+      case 'linear':
+        this.yScale = d3.scaleLinear().range(this.yRange)
+        break
+      default:
+        this.yScale = d3.scaleLog().range(this.yRange)
+    }
+    return this
+  }
 
-  // setXScale (scaleName) {
-  //   return this
-  // }
+  setXScale (scaleName) {
+    switch (scaleName) {
+      case 'log':
+        this.xScale = d3.scaleTime().range(this.xRange)
+        break
+      case 'linear':
+        this.xScale = d3.scaleLinear().range(this.xRange)
+        break
+      default:
+        this.xScale = d3.scaleTime().range(this.xRange)
+    }
+    return this
+  }
 
   // setColorScale (scaleName) {
   //   return this
@@ -142,24 +150,9 @@ export default class Scatterplot {
     return this
   }
 
-  defineXDomain (domain) {
-    this.xDomain = domain
-    this.xScale.domain(this.xDomain)
-
-    return this
-  }
-
-  defineYDomain (domain) {
-    this.yDomain = domain
-    this.yScale.domain(this.yDomain)
-
-    return this
-  }
-
   defineColorDomain (domain) {
     this.colorDomain = domain
     this.colorScale.domain(this.colorDomain)
-
     return this
   }
 
@@ -184,36 +177,27 @@ export default class Scatterplot {
   }
 
   defineKeyAccessor (keyAccessor) {
+    this.key = keyAccessor
     return this
   }
 
-  defineBubbleClassAccessor (classAcessor) {
-    return this
-  }
-
-  drawAxis () {
-    this.drawXAxis().drawYAxis()
-    return this
-  }
-
-  drawXAxis () {
-    this.xAxis = d3.axisBottom().scale(this.xScale).tickFormat(multiFormat)
+  drawXAxis (axis) {
+    this.xAxis = axis
     const translateXAxis = this.size.height + 5
     this.chartGroup.append('g')
       .attr('class', 'axis axis-x')
       .attr('transform', `translate(${[0, translateXAxis]})`)
-      .call(this.xAxis)
+      .call(axis)
 
     return this
   }
 
-  drawYAxis () {
-    this.yAxis = d3.axisLeft().scale(this.yScale).ticks(5).tickFormat(localeFormat.format('$,.2f'))
-
+  drawYAxis (axis) {
+    this.yAxis = axis
     this.chartGroup.append('g')
       .attr('class', 'axis axis-y')
       .attr('transform', 'translate(0,0)')
-      .call(this.yAxis)
+      .call(axis)
 
     return this
   }
@@ -222,9 +206,10 @@ export default class Scatterplot {
     if (!this.DATA) {
       throw TypeError('Não é possível contruir o gráfico sem os dados')
     }
-
-    const cx = d => this.xScale(this.X(d))
-    const cy = d => this.yScale(this.Y(d))
+    const xScale = this.xAxis.scale()
+    const yScale = this.yAxis.scale()
+    const cx = d => xScale(this.X(d))
+    const cy = d => yScale(this.Y(d))
     const r = d => this.radiusScale(this.radius(d))
     const fill = d => this.colorScale(this.color(d))
     const opacity = 0.5
@@ -261,16 +246,6 @@ export default class Scatterplot {
   }
 
   drawLegend () {
-    return this
-  }
-
-  draw () {
-    this.drawAxis()
-      .drawMarks()
-    return this
-  }
-
-  calculateVoronoiDiagram () {
     return this
   }
 }
