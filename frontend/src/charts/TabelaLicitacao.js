@@ -25,19 +25,19 @@ export default class TabelaLicitacao {
     this.quantidadePaginas = 1
   }
 
-  setData (data = []) {
-    this.data = data
-    const tamanhoDados = data.length
-    this.quantidadePaginas = Math.ceil(tamanhoDados / this.quantidadePorPagina)
-    return this
-  }
-
   setWrapper (container) {
     this.wrapperthis = container
     return this
   }
 
-  draw () {
+  build (data) {
+    if (!Array.isArray(data)) {
+      return this
+    }
+    this.data = data
+    const tamanhoDados = data.length
+    this.quantidadePaginas = Math.ceil(tamanhoDados / this.quantidadePorPagina)
+
     this.tabelaLicitacao
       .setColumnNames(this.columnNames)
       .setColumnLabels(this.columnLabel)
