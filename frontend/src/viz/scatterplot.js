@@ -39,14 +39,11 @@ export default class Scatterplot {
   }
 
   setSize (size = [this.size.width, this.size.height]) {
-    if (!Array.isArray(size)) {
-      return this
+    if (Array.isArray(size)) {
+      const [w, h] = size
+      if (w) this.size.width = w
+      if (h) this.size.height = h
     }
-
-    const [w, h] = size
-    if (w) this.size.width = w
-    if (h) this.size.height = h
-
     return this
   }
 
@@ -192,6 +189,20 @@ export default class Scatterplot {
     return this
   }
 
+  setXLabelAxis (text) {
+    const labelText = String(text)
+    this.chartGroup.select('.axis.axis-x')
+      .append('text')
+      .attr('x', this.size.width - 80)
+      .attr('y', 30)
+      .attr('dy', '-.35em')
+      .attr('fill', '#000')
+      .style('font-weight', 'bold')
+      .style('text-anchor', 'middle')
+      .text(labelText)
+    return this
+  }
+
   drawYAxis (axis) {
     this.yAxis = axis
     this.chartGroup.append('g')
@@ -199,6 +210,18 @@ export default class Scatterplot {
       .attr('transform', 'translate(0,0)')
       .call(axis)
 
+    return this
+  }
+
+  setYLabelAxis (text) {
+    const labelText = String(text)
+    this.chartGroup.select('.axis.axis-y')
+      .append('text')
+      .attr('x', 6)
+      .attr('dy', '.35em')
+      .attr('fill', '#000')
+      .style('font-weight', 'bold')
+      .text(labelText)
     return this
   }
 

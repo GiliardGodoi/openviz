@@ -11,6 +11,11 @@ export default class DiferencaEntreValorEditalAdjudicado {
 
     this.container = '#chart'
     this.DATA = null
+
+    this.size = {
+      width: 500,
+      height: 500,
+    }
   }
 
   calculateColorDomain (data) {
@@ -37,20 +42,25 @@ export default class DiferencaEntreValorEditalAdjudicado {
     const XYDomain = this.calculateXYDomain(data)
     const colorDomain = this.calculateColorDomain(data)
 
-    const xScale = d3.scaleLog().range([0, 750]).domain(XYDomain)
-    const yScale = d3.scaleLog().range([450, 0]).domain(XYDomain)
+    const xScale = d3.scaleLog().range([0, this.size.width]).domain(XYDomain)
+    const yScale = d3.scaleLog().range([this.size.height, 0]).domain(XYDomain)
 
     const xAxis = d3.axisBottom().scale(xScale).tickFormat(localeFormat.format('$,.2f')).tickValues([1, 100, 1000, 10000, 100000, 10000, 100000, 1000000, 1000000, 10000000])
     const yAxis = d3.axisLeft().scale(yScale).tickFormat(localeFormat.format('$,.2f')).tickValues([1, 100, 1000, 10000, 100000, 10000, 100000, 1000000, 1000000, 10000000])
+    const { width, height } = this.size
 
-    this.scatterplot.defineSVG(this.container)
+    this.scatterplot
+      .setSize([width, height])
+      .defineSVG(this.container)
       .defineCoordX(this.X)
       .defineCoordY(this.Y)
       .defineColorAccessor(this.color)
       .defineColorDomain(colorDomain)
       .setData(data)
       .drawXAxis(xAxis)
+      .setXLabelAxis('Valor do Edital')
       .drawYAxis(yAxis)
+      .setYLabelAxis('Valor Adjudicado*')
       .drawMarks()
   }
 }
