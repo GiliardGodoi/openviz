@@ -71,3 +71,8 @@ a:hover{
 .axis-y > path {
     display: none;
 }
+
+.polygons {
+    fill: none;
+    stroke: #000;
+  }
