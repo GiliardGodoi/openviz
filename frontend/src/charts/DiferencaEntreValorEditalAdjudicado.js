@@ -105,9 +105,9 @@ export default class DiferencaEntreValorEditalAdjudicado {
       .setYLabelAxis('Valor Adjudicado*')
       .drawMarks()
 
-    this.svg = d3.select('#chart svg')
-    const action = this.voronoiActionOnMouseMove()
-    this.svg.on('mousemove', action)
+    // this.svg = d3.select('#chart svg')
+    // const action = this.voronoiActionOnMouseMove()
+    // this.svg.on('mousemove', action)
   }
 
   voronoiActionOnMouseMove () {
