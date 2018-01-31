@@ -69,10 +69,12 @@ export default class DiferencaEntreValorEditalAdjudicado {
     this.xScale = d3.scaleLog()
       .range([0, this.size.width])
       .domain(XYDomain)
+      .clamp(true)
 
     this.yScale = d3.scaleLog()
       .range([this.size.height, 0])
       .domain(XYDomain)
+      .clamp(true)
 
     const ticksValuesArray = [1, 100, 1000, 10000, 100000, 10000, 100000, 1000000, 1000000, 10000000]
 
@@ -88,7 +90,7 @@ export default class DiferencaEntreValorEditalAdjudicado {
 
     const { width, height } = this.size
 
-    this.setTitle('Diferença entre Valor Adjudicado* e do Valor do Edital')
+    this.setTitle('Diferença entre Valor Adjudicado* e o Valor do Edital')
     this.scatterplot
       .setSize([width, height])
       .defineSVG(this.container)
@@ -111,19 +113,19 @@ export default class DiferencaEntreValorEditalAdjudicado {
   voronoiActionOnMouseMove () {
     let voronoi = null
     let tooltipped = null
-    const svg = this.svg
-    const marginLeft = 0 // this.margin.left
-    const marginRight = 0 // this.margin.right
+    const { svg } = this
+    const marginLeft = this.margin.left
+    const marginTop = this.margin.top
     const X = d => this.xScale(this.X(d))
     const Y = d => this.yScale(this.Y(d))
     const DATA = this.data
 
     function removeTooltip (data) {
-      console.log(data.idLicitacao)
+      console.log('remove tooltip')
     }
 
     function showTooltip (data) {
-      console.log(data.idLicitacao)
+      console.log(data)
     }
 
     function redrawPolygon (polygon) {
@@ -136,17 +138,18 @@ export default class DiferencaEntreValorEditalAdjudicado {
         voronoi = d3.voronoi().x(X).y(Y)(DATA)
         svg.append('g')
           .attr('class', 'polygons')
+          .attr('transform', `translate(${[marginLeft, marginTop]})`)
           .selectAll('path')
           .data(voronoi.polygons())
           .enter()
           .append('path')
           .call(redrawPolygon)
-
       }
+
       const p = d3.mouse(this)
       let site = null
       p[0] -= marginLeft
-      p[1] -= marginRight
+      p[1] -= marginTop
       if (p[0] < 0 || p[1] < 0) {
         site = null
       } else {

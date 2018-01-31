@@ -197,7 +197,6 @@ export default class Scatterplot {
       .attr('y', 30)
       .attr('dy', '-.35em')
       .attr('fill', '#000')
-      .style('font-weight', 'bold')
       .style('text-anchor', 'middle')
       .text(labelText)
     return this
@@ -215,12 +214,13 @@ export default class Scatterplot {
 
   setYLabelAxis (text) {
     const labelText = String(text)
+    const xPos = Math.floor(this.size.height / 5) - this.size.height
     this.chartGroup.select('.axis.axis-y')
       .append('text')
-      .attr('x', 6)
-      .attr('dy', '.35em')
+      .attr('x', xPos)
+      .attr('dy', '1em')
       .attr('fill', '#000')
-      .style('font-weight', 'bold')
+      .attr('transform', 'rotate(-90)')
       .text(labelText)
     return this
   }

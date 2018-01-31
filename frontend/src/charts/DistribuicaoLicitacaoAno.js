@@ -57,7 +57,7 @@ export default class DistribuicaoLicitacaoAno {
       .defineColorDomain(colorDomain)
       .setData(data)
       .drawYAxis(yAxis)
-      .setYLabelAxis('Valor da Licitação')
+      .setYLabelAxis('Valor Edital Licitação')
       .drawXAxis(xAxis)
       .setXLabelAxis('Data de Publicação do Edital')
       .drawMarks()
