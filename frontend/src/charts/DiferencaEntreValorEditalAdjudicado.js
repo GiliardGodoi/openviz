@@ -13,7 +13,7 @@ export default class DiferencaEntreValorEditalAdjudicado {
     this.xScale = null
     this.yScale = null
 
-    this.colorRange = ['#1abc9c', '#2ecc71', '#3498db', '#f1c40f', '#e74c3c', '#8e44ad']
+    this.colorRange = d3.schemeCategory10
 
     this.container = '#chart'
     this.svg = null

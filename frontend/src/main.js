@@ -1,52 +1,9 @@
 // import DistribuicaoLicitacaoAno from './charts/DistribuicaoLicitacaoAno'
 import DiferencaEntreValorEditalAdjudicado from './charts/DiferencaEntreValorEditalAdjudicado'
-
-import {
-  testCodIBGE,
-  testNroAno,
-  testDsModalidade,
-  testDsObjeto,
-  testVlLicitacao,
-  testDtEdital,
-  testDtAbertura } from './validators'
+import { validateParams } from './utils/validators'
 
 // const grafico = new DistribuicaoLicitacaoAno()
 const grafico = new DiferencaEntreValorEditalAdjudicado()
-/**
- * Realiza a validação dos parâmetros para pesquisa
- * @param {object} params - parâmetros de pesquisa {name: string, value: string}
- * @param {function} sucess - função a ser executada se a validação for sucesso
- */
-const validateParams = function validate (
-  params,
-  sucess = () => {},
-  fail = () => {}
-) {
-  const {
-    nrAno,
-    cdIBGE,
-    dsObjeto,
-    dsModalidade,
-    dtEditalMin,
-    dtEditalMax,
-    dtAberturaMin,
-    dtAberturaMax,
-    vlLicitacaoMin,
-    vlLicitacaoMax,
-  } = params
-  if (testCodIBGE(cdIBGE) &&
-      testNroAno(nrAno) &&
-      testDsModalidade(dsModalidade) &&
-      testDsObjeto(dsObjeto) &&
-      testVlLicitacao({ vlLicitacaoMin, vlLicitacaoMax }) &&
-      testDtAbertura({ dtAberturaMin, dtAberturaMax }) &&
-      testDtEdital({ dtEditalMin, dtEditalMax })
-  ) {
-    sucess(params)
-  } else {
-    fail()
-  }
-}
 
 const submitForm = function submitForm (params) {
   const { cdIBGE, nrAno, ...dataReq } = params

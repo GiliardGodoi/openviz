@@ -167,3 +167,39 @@ export function testDtAbertura (params) {
   }
   return validationResult
 }
+
+/**
+* Realiza a validação dos parâmetros para pesquisa
+* @param {object} params - parâmetros de pesquisa {name: string, value: string}
+* @param {function} sucess - função a ser executada se a validação for sucesso
+*/
+export function validateParams (
+  params,
+  sucess = () => {},
+  fail = () => {}
+) {
+  const {
+    nrAno,
+    cdIBGE,
+    dsObjeto,
+    dsModalidade,
+    dtEditalMin,
+    dtEditalMax,
+    dtAberturaMin,
+    dtAberturaMax,
+    vlLicitacaoMin,
+    vlLicitacaoMax,
+  } = params
+  if (testCodIBGE(cdIBGE) &&
+     testNroAno(nrAno) &&
+     testDsModalidade(dsModalidade) &&
+     testDsObjeto(dsObjeto) &&
+     testVlLicitacao({ vlLicitacaoMin, vlLicitacaoMax }) &&
+     testDtAbertura({ dtAberturaMin, dtAberturaMax }) &&
+     testDtEdital({ dtEditalMin, dtEditalMax })
+  ) {
+    sucess(params)
+  } else {
+    fail()
+  }
+}
