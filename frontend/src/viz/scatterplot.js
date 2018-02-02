@@ -17,19 +17,14 @@ export default class Scatterplot {
     this.SVG = null
     this.chartGroup = null
     this.circleGroup = null
-    this.svgLegend = null
 
     this.X = d => d.x
     this.Y = d => d.y
     this.color = d => (d ? d.color : 'black')
     this.radius = d => (d ? d.r : 4)
-
-    this.colorDomain = null
-
-    this.colorRange = ['#1abc9c', '#2ecc71', '#3498db', '#f1c40f', '#e74c3c', '#8e44ad']
     this.radiusRange = [0, 15]
 
-    this.colorScale = d3.scaleOrdinal().range(this.colorRange)
+    this.colorScale = null // d3.scaleOrdinal().range(['#1abc9c', '#2ecc71', '#3498db', '#f1c40f', '#e74c3c', '#8e44ad'])
     this.radiusScale = () => 4
   }
 
@@ -147,9 +142,8 @@ export default class Scatterplot {
     return this
   }
 
-  defineColorDomain (domain) {
-    this.colorDomain = domain
-    this.colorScale.domain(this.colorDomain)
+  defineColorScale (scale) {
+    this.colorScale = scale
     return this
   }
 
@@ -265,10 +259,6 @@ export default class Scatterplot {
 
     bubbles.exit().remove()
 
-    return this
-  }
-
-  drawLegend () {
     return this
   }
 }

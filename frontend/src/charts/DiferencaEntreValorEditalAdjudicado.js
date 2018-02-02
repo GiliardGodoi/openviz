@@ -1,5 +1,6 @@
 import Scatterplot from '../viz/scatterplot'
 import { localeFormat } from '../utils/format'
+import { ordinalLegend } from '../viz/legends'
 
 export default class DiferencaEntreValorEditalAdjudicado {
   constructor () {
@@ -12,7 +13,7 @@ export default class DiferencaEntreValorEditalAdjudicado {
     this.xScale = null
     this.yScale = null
 
-    this.colorRange = ['#EFB605', '#E58903', '#E01A25', '#C20049', '#991C71', '#66489F', '#2074A0', '#10A66E', '#7EB852']
+    this.colorRange = ['#1abc9c', '#2ecc71', '#3498db', '#f1c40f', '#e74c3c', '#8e44ad']
 
     this.container = '#chart'
     this.svg = null
@@ -76,6 +77,12 @@ export default class DiferencaEntreValorEditalAdjudicado {
       .domain(XYDomain)
       .clamp(true)
 
+    this.ordinalScale = d3.scaleOrdinal()
+      .range(this.colorRange)
+      .domain(colorDomain)
+
+    const legend = ordinalLegend({ scale: this.ordinalScale })
+
     const ticksValuesArray = [1, 100, 1000, 10000, 100000, 10000, 100000, 1000000, 1000000, 10000000]
 
     const xAxis = d3.axisBottom()
@@ -97,7 +104,7 @@ export default class DiferencaEntreValorEditalAdjudicado {
       .defineCoordX(this.X)
       .defineCoordY(this.Y)
       .defineColorAccessor(this.color)
-      .defineColorDomain(colorDomain)
+      .defineColorScale(this.ordinalScale)
       .setData(data)
       .drawXAxis(xAxis)
       .setXLabelAxis('Valor do Edital')
@@ -108,6 +115,10 @@ export default class DiferencaEntreValorEditalAdjudicado {
     // this.svg = d3.select('#chart svg')
     // const action = this.voronoiActionOnMouseMove()
     // this.svg.on('mousemove', action)
+    d3.select('#legend-display')
+      .append('svg')
+      .attr('class', 'legend')
+      .call(legend)
   }
 
   voronoiActionOnMouseMove () {
