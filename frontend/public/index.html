@@ -96,7 +96,7 @@
                                         <label for="inputDataEdital">Data do Edital</label>
                                         <div class="input-group">
                                             <input type="text" name="dtEditalMin" id="_inputDataEditalMin" class="form-control" placeholder="Min." readonly>
-                                            <div class="input-group-addon">
+                                            <div class="input-group-text">
                                                 <span>até</span>
                                             </div>
                                             <input type="text" name="dtEditalMax" id="_inputDataEditalMax" class="form-control" placeholder="Max." readonly>
@@ -106,7 +106,7 @@
                                         <label for="inputDataAbertura">Data de Abertura</label>
                                         <div class="input-group">
                                             <input type="text" name="dtAberturaMin" id="_inputDataAberturaMin" class="form-control" placeholder="Min." readonly>
-                                            <div class="input-group-addon">
+                                            <div class="input-group-text">
                                                 <span>até</span>
                                             </div>
                                             <input type="text" name="dtAberturaMax" id="_inputDataAberturaMax" class="form-control" placeholder="Max." readonly>
@@ -118,7 +118,7 @@
                                         <label for="inputValorLicitacao">Valor da Licitação</label>
                                         <div class="input-group">
                                             <input type="text" name="vlLicitacaoMin" id="_inputValorLicitacaoMin" class="form-control" placeholder='R$ (Min.)' readonly>
-                                            <div class="input-group-addon">
+                                            <div class="input-group-text">
                                                 <span>até</span>
                                             </div>
                                             <input type="text" name="vlLicitacaoMax" id="_inputValorLicitacaoMax" class="form-control" placeholder='R$ (Max.)' readonly>
@@ -140,19 +140,30 @@
             <!-- <div id='table_container' class="section container" style="display:none">
                 <div id="table_div"></div>
             </div> -->
-            <div id="visualizacao" class="section">
-                    <div class="row">
-                        <div class="col" id="col-1">
-                            <div class="">
-                                <div id="chart" class="card-body"></div>
+           <div class="container section">
+               <div class="row">
+                   <div class="col-sm-3">
+                        <div class="nav nav-pills flex-column" id="pills-tab" role="tablist">
+                            <a href="#chart-one" id="nav-chart-one" class="nav-link active" role="tab" data-toggle="tab">Distribuição Licitação</a>
+                            <a href="#chart-two" id="nav-chart-two" class="nav-link" role="tab" data-toggle="tab">Comparação Valor Edital x Adjudicado</a>
+                            <a href="#chart-three" id="nav-chart-three" class="nav-link" role="tab" data-toggle="tab">Quantidade Licitação</a>
+                            <!-- <a href="" id="" class="nav-link" role="tab" data-toggle="tab"></a> -->
+                        </div>
+                   </div>
+                   <div class="col-9">
+                        <div class="tab-content" id="pills-tab-content">
+                            <div id="chart-one" class="tab-pane fade show active" role="tabpanel" >
+                                <div id="chart"></div>
                             </div>
+                            <div id="chart-two" class="tab-pane fade" role="tabpanel" >
+                            </div>
+                            <div id="chart-three" class="tab-pane fade" role="tabpanel" >
+                            </div>
+                            <!-- <div id="" class="tab-pane fade" role="tabpanel" ></div>                             -->
                         </div>
-                        <div class="col-3" id="col-2">
-                            <div id="legend-display"></div>
-                            <div id="card-display"></div>
-                        </div>
-                    </div>
-                  </div>
+                   </div>
+               </div>
+           </div>
         </div>
         <script type="text/javascript" src="./js/app.js"></script>
     </body>
