@@ -10,17 +10,17 @@ gulp.task('server', () => {
   server.run(['server.js'])
 
   gulp.watch(['./src/**/*.html'], server.notify)
-  gulp.watch(['./src/**/*.js'],['code-js'])
+  gulp.watch(['./src/**/*.js'], ['jscode'])
 })
 
-gulp.task('code-js', () => {
+gulp.task('jscode', () => {
   browserify({
-    entries: 'src/main.js',
+    entries: ['src/main.js'],
     extensions: ['.js'],
     debug: true,
   })
     .transform(babelify, {
-      presets: ['es2015', 'stage-3']
+      presets: ['es2015', 'stage-3'],
     })
     .bundle()
     .on('error', (err) => {
@@ -32,4 +32,4 @@ gulp.task('code-js', () => {
     .pipe(gulp.dest('public/js'))
 })
 
-gulp.task('default', ['server', 'code-js'])
+gulp.task('default', ['server', 'jscode'])
