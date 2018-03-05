@@ -141,21 +141,23 @@
                 <div id="table_div"></div>
             </div> -->
            <div class="container section">
-               <div class="row">
-                   <div class="col-sm-3">
-                        <div class="nav nav-pills flex-column" id="pills-tab" role="tablist">
-                            <a href="#chart-one" id="nav-chart-one" class="nav-link active" role="tab" data-toggle="tab">Distribuição Licitação</a>
-                            <a href="#chart-two" id="nav-chart-two" class="nav-link" role="tab" data-toggle="tab">Comparação Valor Edital x Adjudicado</a>
-                            <a href="#chart-three" id="nav-chart-three" class="nav-link" role="tab" data-toggle="tab">Quantidade Licitação</a>
-                            <!-- <a href="" id="" class="nav-link" role="tab" data-toggle="tab"></a> -->
+               <div class="card">
+                   <div class="card-header">
+                        <div class="nav nav-pills nav-justified" id="pills-tab" role="tablist">
+                            <a href="#chart-one" id="nav-chart-one" class="nav-item nav-link active" role="tab" data-toggle="tab">Comparação Valor Edital E Adjudicado</a>
+                            <a href="#chart-two" id="nav-chart-two" class="nav-item nav-link" role="tab" data-toggle="tab">Distribuição Licitação</a>
+                            <a href="#chart-three" id="nav-chart-three" class="nav-item nav-link" role="tab" data-toggle="tab">Quantidade Licitação</a>
                         </div>
                    </div>
-                   <div class="col-9">
+                   <div class="card-body">
                         <div class="tab-content" id="pills-tab-content">
                             <div id="chart-one" class="tab-pane fade show active" role="tabpanel" >
-                                <div id="chart"></div>
+                                <div id="DiferencaEntreValorEditalAdjudicado"></div>
+                                <div id="diferenca-legenda"></div>
                             </div>
                             <div id="chart-two" class="tab-pane fade" role="tabpanel" >
+                                <div id="DistribuicaoLicitacaoAno"></div>
+                                <div id="distribuicao-legenda"></div>
                             </div>
                             <div id="chart-three" class="tab-pane fade" role="tabpanel" >
                             </div>
