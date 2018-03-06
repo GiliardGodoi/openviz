@@ -1,10 +1,11 @@
 import DistribuicaoLicitacaoAno from './charts/DistribuicaoLicitacaoAno'
-// import DiferencaEntreValorEditalAdjudicado from './charts/DiferencaEntreValorEditalAdjudicado'
+import DiferencaEntreValorEditalAdjudicado from './charts/DiferencaEntreValorEditalAdjudicado'
 import { validateParams } from './utils/validators'
 
 // const grafico = new DistribuicaoLicitacaoAno()
 const graficos = [
   new DistribuicaoLicitacaoAno(),
+  new DiferencaEntreValorEditalAdjudicado(),
 ]
 
 const submitForm = function submitForm (params) {
@@ -199,8 +200,8 @@ window.onload = function onload () {
   $('#_btnSearch').click(eventClickBtnSearch)
   $('#_btnClean').click(eventClickBtnClean)
   $('#_inputAno').change(eventOnChangeInputAno)
-  submitForm({
-    cdIBGE: '412410',
-    nrAno: '2017',
-  })
+  // submitForm({
+  //   cdIBGE: '412410',
+  //   nrAno: '2017',
+  // })
 }
