@@ -1,43 +1,39 @@
-import Scatterplot from '../viz/scatterplot'
 import { localeFormat, multiFormat } from '../utils/format'
 import { ordinalLegend } from '../viz/legends'
+import { tickValuesByPow } from '../utils/ticks'
+import {
+  calculateDomain,
+  calculateCategoricalDomain,
+  calculateLogDomain,
+} from '../utils/domains'
+
+import {
+  defineSVGAreaChart,
+  drawPoints,
+  drawAxis,
+} from '../viz/scatterplot'
 
 export default class DistribuicaoLicitacaoAno {
   constructor () {
-    this.scatterplot = new Scatterplot()
-
     this.X = item => new Date(item.dtEdital)
     this.Y = item => (item.vlLicitacao ? item.vlLicitacao : 1)
     this.color = item => item.dsModalidadeLicitacao
     this.colorRange = d3.schemeCategory10
-    this.container = '#chart'
+    this.IDContainer = '#DistribuicaoLicitacaoAno'
+    this.SVG = null
     this.DATA = null
-  }
 
-  calculateColorDomain (data) {
-    if (Array.isArray(data)) {
-      const colorDomain = data.map(item => this.color(item))
-        .filter((item, index, array) => array.indexOf(item) === index)
-        .sort((a, b) => a - b)
-      return colorDomain
+    this.size = {
+      width: 900,
+      height: 210,
     }
-    throw TypeError('Data must to be an Array')
-  }
 
-  calculateXDomain (data) {
-    if (Array.isArray(data)) {
-      const extent = d3.extent(data, d => this.X(d))
-      return extent
+    this.margin = {
+      top: 10,
+      right: 10,
+      bottom: 20,
+      left: 80,
     }
-    throw TypeError('Data must to be an Array')
-  }
-
-  calculateYDomain (data) {
-    if (Array.isArray(data)) {
-      const yDomain = [1, d3.max(data, d => this.Y(d))]
-      return yDomain
-    }
-    throw TypeError('Data must to be an Array')
   }
 
   setTitle (title) {
@@ -51,38 +47,65 @@ export default class DistribuicaoLicitacaoAno {
   }
 
   build (data) {
-    const xDomain = this.calculateXDomain(data)
-    const yDomain = this.calculateYDomain(data)
-    const colorDomain = this.calculateColorDomain(data)
+    const xDomain = calculateDomain(data, this.X)
+    const yDomain = calculateLogDomain(data, this.Y)
+    const colorDomain = calculateCategoricalDomain(data, this.color)
 
-    this.colorScale = d3.scaleOrdinal()
+    const colorScale = d3.scaleOrdinal()
       .range(this.colorRange)
       .domain(colorDomain)
 
-    const xScale = d3.scaleTime().range([0, 750]).domain(xDomain)
-    const xAxis = d3.axisBottom().scale(xScale).tickFormat(multiFormat)
+    const legend = ordinalLegend({ scale: this.colorScale, shapePadding: 5 })
 
-    const yScale = d3.scaleLog().range([450, 0]).domain(yDomain)
-    const yAxis = d3.axisLeft().scale(yScale).ticks(5).tickFormat(localeFormat.format('$,.2f'))
-    const legend = ordinalLegend({ scale: this.colorScale })
+    const tickValues = tickValuesByPow(yDomain)
+    const xScale = d3.scaleTime()
+      .range([0, this.size.width])
+      .domain(xDomain)
+    const xAxis = d3.axisBottom()
+      .scale(xScale)
+      .tickFormat(multiFormat)
 
-    this.setTitle('Distribuição das Licitações')
+    const yScale = d3.scaleLog()
+      .range([this.size.height, 0])
+      .domain(yDomain)
+    const yAxis = d3.axisLeft()
+      .scale(yScale).tickValues(tickValues)
+      .tickFormat(localeFormat.format('$,.2f'))
 
-    this.scatterplot.defineSVG(this.container)
-      .defineCoordX(this.X)
-      .defineCoordY(this.Y)
-      .defineColorAccessor(this.color)
-      .defineColorScale(this.colorScale)
-      .setData(data)
-      .drawYAxis(yAxis)
-      .setYLabelAxis('Valor Edital Licitação')
-      .drawXAxis(xAxis)
-      .setXLabelAxis('Data de Publicação do Edital')
-      .drawMarks()
 
-    d3.select('#legend-display')
-      .append('svg')
-      .attr('class', 'legend')
-      .call(legend)
+    this.SVG = defineSVGAreaChart({
+      selector: this.IDContainer,
+      size: this.size,
+      margin: this.margin,
+    })
+
+    drawAxis({
+      axis: xAxis,
+      container: this.SVG,
+      position: [0, this.size.height],
+      classname: 'axis axis-x',
+    })
+
+    drawAxis({
+      axis: yAxis,
+      container: this.SVG,
+      position: [0, 0],
+      classname: 'axis axis-y',
+    })
+
+    drawPoints({
+      data,
+      container: this.SVG,
+      cy: d => yScale(this.Y(d)),
+      cx: d => xScale(this.X(d)),
+      fill: d => colorScale(this.color(d)),
+      radius: 3,
+      opacity: 0.5,
+    })
+
+    // d3.select('#distribuicao-legenda')
+    //   .append('svg')
+    //   .attr('class', 'legend')
+    //   .call(legend)
   }
 }

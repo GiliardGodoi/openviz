@@ -1,264 +1,125 @@
-export default class Scatterplot {
-  constructor () {
-    this.DATA = null
-
-    this.size = {
-      width: 750,
-      height: 450,
-    }
-
-    this.margin = {
-      top: 20,
-      right: 10,
-      bottom: 60,
-      left: 80,
-    }
-
-    this.SVG = null
-    this.chartGroup = null
-    this.circleGroup = null
-
-    this.X = d => d.x
-    this.Y = d => d.y
-    this.color = d => (d ? d.color : 'black')
-    this.radius = d => (d ? d.r : 4)
-    this.radiusRange = [0, 15]
-
-    this.colorScale = null // d3.scaleOrdinal().range(['#1abc9c', '#2ecc71', '#3498db', '#f1c40f', '#e74c3c', '#8e44ad'])
-    this.radiusScale = () => 4
-  }
-
-  setData (data) {
-    this.DATA = data
-    return this
-  }
-
-  setSize (size = [this.size.width, this.size.height]) {
-    if (Array.isArray(size)) {
-      const [w, h] = size
-      if (w) this.size.width = w
-      if (h) this.size.height = h
-    }
-    return this
-  }
-
-  setMargins (margin) {
-    const {
-      top,
-      bottom,
-      right,
-      left,
-    } = margin
-
-    if (top) this.margin.top = top
-    if (bottom) this.margin.bottom = bottom
-    if (right) this.margin.right = right
-    if (left) this.margin.left = left
-
-    return this
-  }
-
-  setYScale (scaleName) {
-    switch (scaleName) {
-      case 'log':
-        this.yScale = d3.scaleLog().range(this.yRange)
-        break
-      case 'linear':
-        this.yScale = d3.scaleLinear().range(this.yRange)
-        break
-      default:
-        this.yScale = d3.scaleLog().range(this.yRange)
-    }
-    return this
-  }
-
-  setXScale (scaleName) {
-    switch (scaleName) {
-      case 'log':
-        this.xScale = d3.scaleTime().range(this.xRange)
-        break
-      case 'linear':
-        this.xScale = d3.scaleLinear().range(this.xRange)
-        break
-      default:
-        this.xScale = d3.scaleTime().range(this.xRange)
-    }
-    return this
-  }
-
-  // setColorScale (scaleName) {
-  //   return this
-  // }
-
-  // setRadiusScale (scaleName) {
-  //   return this
-  // }
-
-  // setColorRange (range) {
-  //   return this
-  // }
-
-  // setXRange (range) {
-  //   return this
-  // }
-
-  // setYRange (range) {
-  //   return this
-  // }
-
-  // setRadiusRange (range) {
-  //   return this
-  // }
-
-  defineSVG (selector = 'body') {
-    const WIDTH = this.size.width + this.margin.left + this.margin.right
-    const HEIGHT = this.size.height + this.margin.top + this.margin.bottom
-    const translateX = this.margin.left
-    const translateY = this.margin.top
-
-    this.SVG = d3.select(selector)
-      .append('svg')
-      .attr('width', WIDTH)
-      .attr('height', HEIGHT)
-
-    this.chartGroup = this.SVG.append('g')
-      .attr('class', 'group-chart')
-      .attr('transform', `translate(${[translateX, translateY]})`)
-
-    this.SVG.append('defs')
-      .append('svg:clipPath')
-      .attr('id', 'clip')
-      .append('svg:rect')
-      .attr('width', this.size.width + 10)
-      .attr('height', this.size.height + 10)
-      .attr('x', -5)
-      .attr('y', -5)
-
-    this.circleGroup = this.chartGroup.append('g')
-      .attr('clip-path', 'url(#clip)')
-      .style('clip-path', 'url(#clip)')
-      .attr('class', 'circle-group')
-
-    return this
-  }
-
-  defineColorScale (scale) {
-    this.colorScale = scale
-    return this
-  }
-
-  defineCoordX (xAccessor) {
-    this.X = xAccessor
-    return this
-  }
-
-  defineCoordY (yAccessor) {
-    this.Y = yAccessor
-    return this
-  }
-
-  defineColorAccessor (colorAccessor) {
-    this.color = colorAccessor
-    return this
-  }
-
-  defineRadiusAccessor (radiusAcessor) {
-    this.radius = radiusAcessor
-    return this
-  }
-
-  defineKeyAccessor (keyAccessor) {
-    this.key = keyAccessor
-    return this
-  }
-
-  drawXAxis (axis) {
-    this.xAxis = axis
-    const translateXAxis = this.size.height + 5
-    this.chartGroup.append('g')
-      .attr('class', 'axis axis-x')
-      .attr('transform', `translate(${[0, translateXAxis]})`)
-      .call(axis)
-
-    return this
-  }
-
-  setXLabelAxis (text) {
-    const labelText = String(text)
-    this.chartGroup.select('.axis.axis-x')
-      .append('text')
-      .attr('x', this.size.width - 80)
-      .attr('y', 30)
-      .attr('dy', '-.35em')
-      .attr('fill', '#000')
-      .style('text-anchor', 'middle')
-      .text(labelText)
-    return this
-  }
-
-  drawYAxis (axis) {
-    this.yAxis = axis
-    this.chartGroup.append('g')
-      .attr('class', 'axis axis-y')
-      .attr('transform', 'translate(0,0)')
-      .call(axis)
-
-    return this
-  }
-
-  setYLabelAxis (text) {
-    const labelText = String(text)
-    const xPos = Math.floor(this.size.height / 5) - this.size.height
-    this.chartGroup.select('.axis.axis-y')
-      .append('text')
-      .attr('x', xPos)
-      .attr('dy', '1em')
-      .attr('fill', '#000')
-      .attr('transform', 'rotate(-90)')
-      .text(labelText)
-    return this
-  }
-
-  drawMarks () {
-    if (!this.DATA) {
-      throw TypeError('Não é possível contruir o gráfico sem os dados')
-    }
-    const xScale = this.xAxis.scale()
-    const yScale = this.yAxis.scale()
-    const cx = d => xScale(this.X(d))
-    const cy = d => yScale(this.Y(d))
-    const r = d => this.radiusScale(this.radius(d))
-    const fill = d => this.colorScale(this.color(d))
-    const opacity = 0.5
-
-    const bubbles = this.circleGroup.selectAll('.bubble')
-      .data(this.DATA)
-
-    // UPDATE
-    bubbles.transition()
-      .ease(d3.easeSinInOut)
-      .duration(750)
-      .attr('cx', cx)
-      .attr('cy', cy)
-
-    // ENTER
-    bubbles.enter()
-      .append('circle')
-      .attr('class', 'bubble')
-      .attr('cx', cx)
-      .attr('cy', this.size.height)
-      .attr('r', 0)
-      .style('fill', fill)
-      .transition()
-      .duration(750)
-      .attr('cx', cx)
-      .attr('cy', cy)
-      .attr('r', r)
-      .style('fill', fill)
-      .style('opacity', opacity)
-
-    bubbles.exit().remove()
-
-    return this
-  }
+const SIZE = {
+  width: 750,
+  height: 450,
 }
+
+const MARGIN = {
+  top: 20,
+  right: 10,
+  bottom: 60,
+  left: 80,
+}
+
+const X = d => d.x
+const Y = d => d.y
+const COLOR_SCALE = () => 'steelblue'
+const RADIUS_SCALE = () => 3
+
+const CIRCLE_GROUP = 'circle-group'
+const CHART_GROUP = 'group-chart'
+
+function defineSVGAreaChart ({
+  selector,
+  size,
+  margin,
+}) {
+  const WIDTH = size.width || SIZE.width
+  const HEIGHT = size.height || SIZE.height
+  const translateX = margin.left || MARGIN.left
+  const translateY = margin.top || MARGIN.top
+
+  const TotalWidth = size.width + margin.left + margin.right
+  const TotalHeight = size.height + margin.top + margin.bottom
+
+  const SVG = d3.select(selector)
+    .append('svg')
+    .attr('width', TotalWidth)
+    .attr('height', TotalHeight)
+
+  const chartGroup = SVG.append('g')
+    .attr('class', CHART_GROUP)
+    .attr('transform', `translate(${[translateX, translateY]})`)
+
+  SVG.append('defs')
+    .append('svg:clipPath')
+    .attr('id', 'clip')
+    .append('svg:rect')
+    .attr('width', WIDTH + 10)
+    .attr('height', HEIGHT + 10)
+    .attr('x', -5)
+    .attr('y', -5)
+
+  chartGroup.append('g')
+    .attr('clip-path', 'url(#clip)')
+    .style('clip-path', 'url(#clip)')
+    .attr('class', CIRCLE_GROUP)
+
+  return SVG
+}
+
+function drawPoints ({
+  data,
+  container,
+  cy,
+  cx,
+  radius,
+  fill,
+  opacity,
+}) {
+  const CX = cx || X
+  const CY = cy || Y
+  const R = radius || RADIUS_SCALE
+  const FILL = fill || COLOR_SCALE
+  const OPACITY = opacity || 1
+  const SVG = container
+  const height = SVG.attr('height')
+
+  const bubbles = SVG.select(`.${CIRCLE_GROUP}`)
+    .selectAll('.bubble')
+    .data(data)
+
+  // UPDATE
+  bubbles.transition()
+    .ease(d3.easeSinInOut)
+    .duration(750)
+    .attr('cx', CX)
+    .attr('cy', CY)
+
+  // ENTER
+  bubbles.enter()
+    .append('circle')
+    .attr('class', 'bubble')
+    .attr('cx', CX)
+    .attr('cy', height)
+    .attr('r', 0)
+    .style('fill', FILL)
+    .transition()
+    .duration(750)
+    .attr('cx', CX)
+    .attr('cy', CY)
+    .attr('r', R)
+    .style('fill', FILL)
+    .style('opacity', OPACITY)
+
+  bubbles.exit().remove()
+
+  return SVG
+}
+
+function drawAxis ({
+  axis,
+  container,
+  position,
+  classname,
+}) {
+  const axisDrawed = container.select(`.${CHART_GROUP}`)
+    .append('g')
+    .attr('transform', `translate(${position})`)
+    .attr('class', classname)
+    .call(axis)
+  return axisDrawed
+}
+
+module.exports.defineSVGAreaChart = defineSVGAreaChart
+module.exports.drawPoints = drawPoints
+module.exports.drawAxis = drawAxis
