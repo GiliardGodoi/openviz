@@ -1,9 +1,11 @@
-// import DistribuicaoLicitacaoAno from './charts/DistribuicaoLicitacaoAno'
-import DiferencaEntreValorEditalAdjudicado from './charts/DiferencaEntreValorEditalAdjudicado'
+import DistribuicaoLicitacaoAno from './charts/DistribuicaoLicitacaoAno'
+// import DiferencaEntreValorEditalAdjudicado from './charts/DiferencaEntreValorEditalAdjudicado'
 import { validateParams } from './utils/validators'
 
 // const grafico = new DistribuicaoLicitacaoAno()
-const grafico = new DiferencaEntreValorEditalAdjudicado()
+const graficos = [
+  new DistribuicaoLicitacaoAno(),
+]
 
 const submitForm = function submitForm (params) {
   const { cdIBGE, nrAno, ...dataReq } = params
@@ -14,9 +16,8 @@ const submitForm = function submitForm (params) {
     (response, status) => {
       if (status === 'success') {
         if (response.success) {
-          grafico.build(response.data)
-        } else {
-          console.log(response)
+          const { data } = response
+          graficos.forEach(grafico => grafico.build(data))
         }
       }
     }
@@ -198,4 +199,8 @@ window.onload = function onload () {
   $('#_btnSearch').click(eventClickBtnSearch)
   $('#_btnClean').click(eventClickBtnClean)
   $('#_inputAno').change(eventOnChangeInputAno)
+  submitForm({
+    cdIBGE: '412410',
+    nrAno: '2017',
+  })
 }
