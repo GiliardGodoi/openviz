@@ -67,3 +67,13 @@ a:hover{
     fill: none;
     stroke: #000;
   }
+
+/* REGRAS PARA O TÍTULO DOS GRÁFICOS */
+
+.chart-title {
+    fill: #3B3B3B;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
