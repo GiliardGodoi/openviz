@@ -1,11 +1,11 @@
-import { localeFormat, multiFormat } from '../utils/format'
-import { ordinalLegend } from '../viz/legends'
-import { tickValuesByPow } from '../utils/ticks'
+import { localeFormat, multiFormat } from '../viz/utils/format'
+import { tickValuesByPow } from '../viz/utils/ticks'
+import { modalidadeLicitacaoScale } from '../viz/utils/categoricalScaleToModalidadeLicitacao'
+import { drawTitle } from '../viz/utils/titlesANDtext'
 import {
   calculateDomain,
-  calculateCategoricalDomain,
   calculateLogDomain,
-} from '../utils/domains'
+} from '../viz/utils/domains'
 
 import {
   defineSVGAreaChart,
@@ -29,7 +29,7 @@ export default class DistribuicaoLicitacaoAno {
     }
 
     this.margin = {
-      top: 10,
+      top: 50,
       right: 10,
       bottom: 20,
       left: 80,
@@ -49,13 +49,8 @@ export default class DistribuicaoLicitacaoAno {
   build (data) {
     const xDomain = calculateDomain(data, this.X)
     const yDomain = calculateLogDomain(data, this.Y)
-    const colorDomain = calculateCategoricalDomain(data, this.color)
 
-    const colorScale = d3.scaleOrdinal()
-      .range(this.colorRange)
-      .domain(colorDomain)
-
-    const legend = ordinalLegend({ scale: this.colorScale, shapePadding: 5 })
+    const colorScale = modalidadeLicitacaoScale()
 
     const tickValues = tickValuesByPow(yDomain)
     const xScale = d3.scaleTime()
@@ -103,9 +98,11 @@ export default class DistribuicaoLicitacaoAno {
       opacity: 0.5,
     })
 
-    // d3.select('#distribuicao-legenda')
-    //   .append('svg')
-    //   .attr('class', 'legend')
-    //   .call(legend)
+    drawTitle({
+      container: this.SVG,
+      text: 'Distribuição das Licitações ao Longo do Ano',
+      position: [
+        (this.margin.left + 30), 20],
+    })
   }
 }

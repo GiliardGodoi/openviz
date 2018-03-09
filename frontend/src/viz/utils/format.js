@@ -4,7 +4,7 @@ const localeFormat = d3.formatLocale({
   thousands: '.',
   grouping: [3],
   currency: ['R$', ''],
-  numerals: ['0', '1', '2', '3','4', '5', '6', '7', '8', '9'],
+  numerals: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
   percent: '%',
 })
 

@@ -1,10 +1,8 @@
-import { localeFormat } from '../utils/format'
-import { ordinalLegend } from '../viz/legends'
-import { tickValuesByPow } from '../utils/ticks'
-import {
-  calculateCategoricalDomain,
-} from '../utils/domains'
-
+import { localeFormat } from '../viz/utils/format'
+import { ordinalLegend, drawLegend } from '../viz/utils/legends'
+import { tickValuesByPow } from '../viz/utils/ticks'
+import { modalidadeLicitacaoScale } from '../viz/utils/categoricalScaleToModalidadeLicitacao'
+import { drawTitle } from '../viz/utils/titlesANDtext'
 import {
   defineSVGAreaChart,
   drawPoints,
@@ -22,13 +20,13 @@ export default class DiferencaEntreValorEditalAdjudicado {
     this.IDcontainer = '#DiferencaEntreValorEditalAdjudicado'
 
     this.size = {
-      width: 750,
+      width: 500,
       height: 500,
     }
 
     this.margin = {
-      top: 20,
-      right: 10,
+      top: 50,
+      right: 250,
       bottom: 30,
       left: 80,
     }
@@ -44,21 +42,10 @@ export default class DiferencaEntreValorEditalAdjudicado {
     throw TypeError('Data must to be an Array')
   }
 
-  setTitle (title) {
-    d3.select(this.container)
-      .append('h5')
-      .style('color', '#3B3B3B')
-      .style('text-align', 'center')
-      .text(title)
-
-    return this
-  }
-
   build (data) {
     this.data = data
 
     const XYDomain = this.calculateXYDomain(data)
-    const colorDomain = calculateCategoricalDomain(data, this.color)
     const { width, height } = this.size
 
     this.xScale = d3.scaleLog()
@@ -71,9 +58,7 @@ export default class DiferencaEntreValorEditalAdjudicado {
       .domain(XYDomain)
       .clamp(true)
 
-    this.ordinalScale = d3.scaleOrdinal()
-      .range(this.colorRange)
-      .domain(colorDomain)
+    this.ordinalScale = modalidadeLicitacaoScale()
 
     const ticksValuesArray = tickValuesByPow(XYDomain)
 
@@ -92,6 +77,7 @@ export default class DiferencaEntreValorEditalAdjudicado {
       size: this.size,
       margin: this.margin,
     })
+
     drawPoints({
       data,
       container: this.SVG,
@@ -113,6 +99,21 @@ export default class DiferencaEntreValorEditalAdjudicado {
       container: this.SVG,
       position: [0, this.size.height + 2],
       classname: 'axis axis-x',
+    })
+
+    drawLegend({
+      container: this.SVG,
+      legend: ordinalLegend({ scale: this.ordinalScale }),
+      position: [
+        (this.size.width + this.margin.left + 20),
+        (this.margin.top + 20)],
+    })
+
+    drawTitle({
+      container: this.SVG,
+      text: 'Diferença Entre Valor do Edital e Valor Adjudicado',
+      position: [
+        (this.margin.left), 20],
     })
   }
 }
