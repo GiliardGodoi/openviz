@@ -7,6 +7,14 @@ function calculateDomain (data, acessor) {
   throw TypeError('Data must to be an Array')
 }
 
+function calculateZeroToMaxDomain (data, acessor) {
+  const domain = [
+    0,
+    d3.max(data, acessor),
+  ]
+  return domain
+}
+
 function calculateCategoricalDomain (data, acessor) {
   const domain = d3.set(data, acessor)
     .values()
@@ -20,5 +28,6 @@ function calculateLogDomain (data, acessor) {
 }
 
 module.exports.calculateDomain = calculateDomain
+module.exports.zeroToMaxDomain = calculateZeroToMaxDomain
 module.exports.calculateCategoricalDomain = calculateCategoricalDomain
 module.exports.calculateLogDomain = calculateLogDomain

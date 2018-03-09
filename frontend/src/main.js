@@ -1,11 +1,13 @@
 import DistribuicaoLicitacaoAno from './charts/DistribuicaoLicitacaoAno'
 import DiferencaEntreValorEditalAdjudicado from './charts/DiferencaEntreValorEditalAdjudicado'
+import QuantidadeLicitacoes from './charts/QuantidadeLicitacoes'
 import { validateParams } from './viz/utils/validators'
 
 // const grafico = new DistribuicaoLicitacaoAno()
 const graficos = [
   new DistribuicaoLicitacaoAno(),
   new DiferencaEntreValorEditalAdjudicado(),
+  new QuantidadeLicitacoes(),
 ]
 
 const submitForm = function submitForm (params) {
@@ -180,14 +182,6 @@ const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
   } else {
     throw Error(`não fazer nada por enquanto. valor invalido: ${val}`)
   }
-}
-
-const eventActionDrawTable = function eventActionDrawTable () {
-
-}
-
-const eventActionDrawChart = function eventActionDrawChart () {
-
 }
 
 window.onload = function onload () {
