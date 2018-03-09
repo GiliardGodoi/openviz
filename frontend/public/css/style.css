@@ -77,3 +77,7 @@ a:hover{
     text-transform: uppercase;
     font-weight: 500;
 }
+
+rect.bar {
+    fill: steelblue;
+}
