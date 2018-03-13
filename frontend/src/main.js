@@ -1,13 +1,14 @@
 import DistribuicaoLicitacaoAno from './charts/DistribuicaoLicitacaoAno'
 import DiferencaEntreValorEditalAdjudicado from './charts/DiferencaEntreValorEditalAdjudicado'
 import QuantidadeLicitacoes from './charts/QuantidadeLicitacoes'
+import TreemapProcedimentosLicitacao from './charts/TreemapProcedimentosLicitacao'
 import { validateParams } from './viz/utils/validators'
 
-// const grafico = new DistribuicaoLicitacaoAno()
 const graficos = [
   new DistribuicaoLicitacaoAno(),
   new DiferencaEntreValorEditalAdjudicado(),
   new QuantidadeLicitacoes(),
+  new TreemapProcedimentosLicitacao(),
 ]
 
 const submitForm = function submitForm (params) {
@@ -194,8 +195,8 @@ window.onload = function onload () {
   $('#_btnSearch').click(eventClickBtnSearch)
   $('#_btnClean').click(eventClickBtnClean)
   $('#_inputAno').change(eventOnChangeInputAno)
-  submitForm({
-    cdIBGE: '412410',
-    nrAno: '2017',
-  })
+  // submitForm({
+  //   cdIBGE: '412410',
+  //   nrAno: '2017',
+  // })
 }
