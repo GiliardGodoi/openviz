@@ -29,7 +29,7 @@ function defineSVG ({
     .attr('height', totalHeight)
 
   SVG.append('g')
-    .attr('class', 'histogram-group')
+    .attr('class', 'chart histogram')
     .attr('transform', `translate(${[translateX, translateY]})`)
   return SVG
 }

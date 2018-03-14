@@ -18,7 +18,6 @@ export default class DistribuicaoLicitacaoAno {
     this.X = item => new Date(item.dtEdital)
     this.Y = item => (item.vlLicitacao ? item.vlLicitacao : 1)
     this.color = item => item.dsModalidadeLicitacao
-    this.colorRange = d3.schemeCategory10
     this.IDContainer = '#DistribuicaoLicitacaoAno'
     this.SVG = null
     this.DATA = null
@@ -34,16 +33,6 @@ export default class DistribuicaoLicitacaoAno {
       bottom: 20,
       left: 80,
     }
-  }
-
-  setTitle (title) {
-    d3.select(this.container)
-      .append('h5')
-      .style('color', '#3B3B3B')
-      .style('text-align', 'center')
-      .text(title)
-
-    return this
   }
 
   build (data) {
