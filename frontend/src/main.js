@@ -2,6 +2,7 @@ import DistribuicaoLicitacaoAno from './charts/DistribuicaoLicitacaoAno'
 import DiferencaEntreValorEditalAdjudicado from './charts/DiferencaEntreValorEditalAdjudicado'
 import QuantidadeLicitacoes from './charts/QuantidadeLicitacoes'
 import TreemapProcedimentosLicitacao from './charts/TreemapProcedimentosLicitacao'
+import LineChartQuantidadeLicitacao from './charts/LineChartQuantidadeLicitacao'
 import { validateParams } from './viz/utils/validators'
 
 const graficos = [
@@ -9,6 +10,7 @@ const graficos = [
   new DiferencaEntreValorEditalAdjudicado(),
   new QuantidadeLicitacoes(),
   new TreemapProcedimentosLicitacao(),
+  new LineChartQuantidadeLicitacao(),
 ]
 
 const submitForm = function submitForm (params) {
