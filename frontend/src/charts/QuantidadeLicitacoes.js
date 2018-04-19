@@ -1,4 +1,5 @@
 import { zeroToMaxDomain } from '../viz/utils/domains'
+import { modalidadeLicitacaoScale } from '../viz/utils/categoricalScaleToModalidadeLicitacao'
 import {
   drawBars,
   defineSVG,
@@ -11,8 +12,8 @@ export default class QuantidadeLicitacoes {
     this.X = d => (d.vlLicitacao || 0)
 
     this.size = {
-      width: 700,
-      height: 500,
+      width: 500,
+      height: 300,
     }
 
     this.margin = {
@@ -21,6 +22,7 @@ export default class QuantidadeLicitacoes {
       bottom: 20,
       left: 80,
     }
+
     this.init()
   }
 
@@ -37,6 +39,7 @@ export default class QuantidadeLicitacoes {
     const HEIGHT = this.size.height
     const XScale = this.xScale
     const YScale = this.yScale
+    const colorScale = modalidadeLicitacaoScale()
 
     this.SVG = defineSVG({
       selector: this.IDcontainer,
@@ -63,6 +66,7 @@ export default class QuantidadeLicitacoes {
       width: b => (XScale(b.x1) - XScale(b.x0) - 1),
       x: 1,
       translate: b => `translate(${[XScale(b.x0), YScale(Y(b))]})`,
+      color: colorScale,
     })
   }
 }

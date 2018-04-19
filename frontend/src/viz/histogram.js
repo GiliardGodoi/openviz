@@ -23,12 +23,12 @@ function defineSVG ({
   const totalHeight = (size.height + margin.top + margin.bottom) ||
     (SIZE.height + MARGIN.top + MARGIN.bottom)
 
-  const SVG = d3.select(selector)
+  let SVG = d3.select(selector)
     .append('svg')
     .attr('width', totalWidth)
     .attr('height', totalHeight)
 
-  SVG.append('g')
+  SVG = SVG.append('g')
     .attr('class', 'chart histogram')
     .attr('transform', `translate(${[translateX, translateY]})`)
   return SVG
@@ -54,7 +54,9 @@ function drawBars ({
   x,
   translate,
 }) {
-  const chart = container.select('svg > g.histogram-group')
+  const chart = container.append('g')
+    .attr('class', 'bars')
+
   chart.selectAll('rect')
     .data(bins)
     .enter()
