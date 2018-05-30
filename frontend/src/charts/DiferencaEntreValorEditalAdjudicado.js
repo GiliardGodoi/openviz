@@ -1,93 +1,70 @@
-import Scatterplot from '../viz/scatterplot'
-import { localeFormat } from '../utils/format'
-import { ordinalLegend } from '../viz/legends'
+import { localeFormat } from '../viz/utils/format'
+import { ordinalLegend, drawLegend } from '../viz/utils/legends'
+import { tickValuesByPow } from '../viz/utils/ticks'
+import { modalidadeLicitacaoScale } from '../viz/utils/categoricalScaleToModalidadeLicitacao'
+import { drawTitle } from '../viz/utils/titlesANDtext'
+import {
+  defineSVGAreaChart,
+  drawPoints,
+  drawAxis,
+} from '../viz/scatterplot'
 
 export default class DiferencaEntreValorEditalAdjudicado {
   constructor () {
-    this.scatterplot = new Scatterplot()
     this.data = null
-    this.X = item => (item.vlLicitacao ? item.vlLicitacao : 1)
-    this.Y = item => (item.vlTotalAdquiridoLicitacao ? item.vlTotalAdquiridoLicitacao : 1)
+    this.X = item => (item.vlLicitacao || 0.01)
+    this.Y = item => (item.vlTotalAdquiridoLicitacao || 0.01)
     this.color = item => item.dsModalidadeLicitacao
-
-    this.xScale = null
-    this.yScale = null
-
     this.colorRange = d3.schemeCategory10
 
-    this.container = '#chart'
-    this.svg = null
+    this.IDcontainer = '#DiferencaEntreValorEditalAdjudicado'
 
     this.size = {
-      width: 750,
+      width: 500,
       height: 500,
     }
 
     this.margin = {
-      top: 20,
-      right: 10,
-      bottom: 60,
+      top: 50,
+      right: 250,
+      bottom: 30,
       left: 80,
     }
   }
 
-  calculateColorDomain (data) {
-    if (Array.isArray(data)) {
-      const colorDomain = data.map(item => this.color(item))
-        .filter((item, index, array) => array.indexOf(item) === index)
-        .sort((a, b) => a - b)
-      return colorDomain
-    }
-    throw TypeError('Data must to be an Array')
-  }
-
   calculateXYDomain (data) {
     if (Array.isArray(data)) {
-      const XminMax = d3.extent(data, this.X)
-      const YminMax = d3.extent(data, this.Y)
-      const extent = d3.extent(XminMax.concat(YminMax))
+      const Xextent = d3.extent(data, this.X)
+      const Yextent = d3.extent(data, this.Y)
+      const extent = d3.extent(Xextent.concat(Yextent))
       return extent
     }
     throw TypeError('Data must to be an Array')
-  }
-
-  setTitle (title) {
-    d3.select(this.container)
-      .append('h5')
-      .style('color', '#3B3B3B')
-      .style('text-align', 'center')
-      .text(title)
-
-    return this
   }
 
   build (data) {
     this.data = data
 
     const XYDomain = this.calculateXYDomain(data)
-    const colorDomain = this.calculateColorDomain(data)
+    const { width, height } = this.size
 
     this.xScale = d3.scaleLog()
-      .range([0, this.size.width])
+      .range([0, width])
       .domain(XYDomain)
       .clamp(true)
 
     this.yScale = d3.scaleLog()
-      .range([this.size.height, 0])
+      .range([height, 0])
       .domain(XYDomain)
       .clamp(true)
 
-    this.ordinalScale = d3.scaleOrdinal()
-      .range(this.colorRange)
-      .domain(colorDomain)
+    this.ordinalScale = modalidadeLicitacaoScale()
 
-    const legend = ordinalLegend({ scale: this.ordinalScale })
-
-    const ticksValuesArray = [1, 100, 1000, 10000, 100000, 10000, 100000, 1000000, 1000000, 10000000]
+    const ticksValuesArray = tickValuesByPow(XYDomain)
 
     const xAxis = d3.axisBottom()
       .scale(this.xScale)
-      .tickFormat(localeFormat.format('$,.2f'))
+      .tickFormat(localeFormat.format('$.0s'))
       .tickValues(ticksValuesArray)
 
     const yAxis = d3.axisLeft()
@@ -95,82 +72,48 @@ export default class DiferencaEntreValorEditalAdjudicado {
       .tickFormat(localeFormat.format('$,.2f'))
       .tickValues(ticksValuesArray)
 
-    const { width, height } = this.size
+    this.SVG = defineSVGAreaChart({
+      selector: this.IDcontainer,
+      size: this.size,
+      margin: this.margin,
+    })
 
-    this.setTitle('Diferença entre Valor Adjudicado* e o Valor do Edital')
-    this.scatterplot
-      .setSize([width, height])
-      .defineSVG(this.container)
-      .defineCoordX(this.X)
-      .defineCoordY(this.Y)
-      .defineColorAccessor(this.color)
-      .defineColorScale(this.ordinalScale)
-      .setData(data)
-      .drawXAxis(xAxis)
-      .setXLabelAxis('Valor do Edital')
-      .drawYAxis(yAxis)
-      .setYLabelAxis('Valor Adjudicado*')
-      .drawMarks()
+    drawPoints({
+      data,
+      container: this.SVG,
+      cy: d => this.yScale(this.Y(d)),
+      cx: d => this.xScale(this.X(d)),
+      fill: d => this.ordinalScale(this.color(d)),
+      radius: 3,
+      opacity: 0.5,
+    })
+    drawAxis({
+      axis: yAxis,
+      container: this.SVG,
+      position: [0, 0],
+      classname: 'axis axis--y',
+    })
 
-    // this.svg = d3.select('#chart svg')
-    // const action = this.voronoiActionOnMouseMove()
-    // this.svg.on('mousemove', action)
-    d3.select('#legend-display')
-      .append('svg')
-      .attr('class', 'legend')
-      .call(legend)
-  }
+    drawAxis({
+      axis: xAxis,
+      container: this.SVG,
+      position: [0, this.size.height + 2],
+      classname: 'axis axis-x',
+    })
 
-  voronoiActionOnMouseMove () {
-    let voronoi = null
-    let tooltipped = null
-    const { svg } = this
-    const marginLeft = this.margin.left
-    const marginTop = this.margin.top
-    const X = d => this.xScale(this.X(d))
-    const Y = d => this.yScale(this.Y(d))
-    const DATA = this.data
+    drawLegend({
+      container: this.SVG,
+      legend: ordinalLegend({ scale: this.ordinalScale }),
+      position: [
+        (this.size.width + this.margin.left + 20),
+        (this.margin.top + 20)],
+    })
 
-    function removeTooltip (data) {
-      console.log('remove tooltip')
-    }
-
-    function showTooltip (data) {
-      console.log(data)
-    }
-
-    function redrawPolygon (polygon) {
-      polygon.attr('d', d => (d ? `M${d.join('L')}Z` : null))
-    }
-
-    return function action () {
-      if (!voronoi) {
-        console.log('computing the voronoi…')
-        voronoi = d3.voronoi().x(X).y(Y)(DATA)
-        svg.append('g')
-          .attr('class', 'polygons')
-          .attr('transform', `translate(${[marginLeft, marginTop]})`)
-          .selectAll('path')
-          .data(voronoi.polygons())
-          .enter()
-          .append('path')
-          .call(redrawPolygon)
-      }
-
-      const p = d3.mouse(this)
-      let site = null
-      p[0] -= marginLeft
-      p[1] -= marginTop
-      if (p[0] < 0 || p[1] < 0) {
-        site = null
-      } else {
-        site = voronoi.find(p[0], p[1], 50)
-      }
-      if (site !== tooltipped) {
-        if (tooltipped) removeTooltip(tooltipped.data)
-        if (site) showTooltip(site.data)
-        tooltipped = site
-      }
-    }
+    drawTitle({
+      container: this.SVG,
+      text: 'Diferença Entre Valor do Edital e Valor Adjudicado',
+      position: [
+        (this.margin.left), 20],
+    })
   }
 }

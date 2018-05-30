@@ -1,9 +1,17 @@
-// import DistribuicaoLicitacaoAno from './charts/DistribuicaoLicitacaoAno'
+import DistribuicaoLicitacaoAno from './charts/DistribuicaoLicitacaoAno'
 import DiferencaEntreValorEditalAdjudicado from './charts/DiferencaEntreValorEditalAdjudicado'
-import { validateParams } from './utils/validators'
+import QuantidadeLicitacoes from './charts/QuantidadeLicitacoes'
+import TreemapProcedimentosLicitacao from './charts/TreemapProcedimentosLicitacao'
+import LineChartQuantidadeLicitacao from './charts/LineChartQuantidadeLicitacao'
+import { validateParams } from './viz/utils/validators'
 
-// const grafico = new DistribuicaoLicitacaoAno()
-const grafico = new DiferencaEntreValorEditalAdjudicado()
+const graficos = [
+  new DistribuicaoLicitacaoAno(),
+  new DiferencaEntreValorEditalAdjudicado(),
+  new QuantidadeLicitacoes(),
+  new TreemapProcedimentosLicitacao(),
+  new LineChartQuantidadeLicitacao(),
+]
 
 const submitForm = function submitForm (params) {
   const { cdIBGE, nrAno, ...dataReq } = params
@@ -14,9 +22,8 @@ const submitForm = function submitForm (params) {
     (response, status) => {
       if (status === 'success') {
         if (response.success) {
-          grafico.build(response.data)
-        } else {
-          console.log(response)
+          const { data } = response
+          graficos.forEach(grafico => grafico.build(data))
         }
       }
     }
@@ -180,14 +187,6 @@ const eventOnChangeInputAno = function eventOnChangeInputAno (event) {
   }
 }
 
-const eventActionDrawTable = function eventActionDrawTable () {
-
-}
-
-const eventActionDrawChart = function eventActionDrawChart () {
-
-}
-
 window.onload = function onload () {
   // $('#fullpage').fullpage({
   //   scrollBar: true,
@@ -198,4 +197,8 @@ window.onload = function onload () {
   $('#_btnSearch').click(eventClickBtnSearch)
   $('#_btnClean').click(eventClickBtnClean)
   $('#_inputAno').change(eventOnChangeInputAno)
+  // submitForm({
+  //   cdIBGE: '412410',
+  //   nrAno: '2017',
+  // })
 }
