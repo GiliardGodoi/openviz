@@ -12,7 +12,6 @@
     "babelify": "^7.3.0",
     "browser-request": "^0.3.3",
     "browserify": "^14.4.0",
-    "d3": "^4.10.2",
     "express": "^4.15.3",
     "tiny-emitter": "^2.0.2",
     "uglify": "^0.1.5"
@@ -27,7 +26,6 @@
     "gulp-connect": "^5.0.0",
     "gulp-express": "^0.3.5",
     "gulp-sourcemaps": "^2.6.1",
-    "popper.js": "^1.12.5",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   },
