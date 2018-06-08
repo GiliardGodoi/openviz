@@ -28,7 +28,7 @@
         <link rel="stylesheet" href="./css/style.css">
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-azul">
+        <nav class="navbar navbar-expand-lg navbar-dark viz-bg-azul">
             <a class="navbar-brand" href="#">Transparência Pública</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#meuNavBar" aria-controls="meuNavBar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -39,134 +39,157 @@
                 </div>
             </div> -->
         </nav>
-        <div id="fullpage" class="container-fluid">
-            <div id="pesquisa" class="section container">
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2>Visualize <span class="badge badge-secondary">Licitações</span></h2>
+        <div class="container-fluid">
+            <div class="section">
+                <div class="justify-content-center">
+                    <form action="" class="container">
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <input type="text" name="nmMunicipio" id="_inputMunicipio" class="form-control" placeholder="Município" required>
+                                <input type="hidden" name="cdIBGE" id="_inputCodIBGE" value="" class="form-control">
+                                <input type="hidden" name="dsModalidade" id="_inputDescricaoModalidade" value="blank">
+                                <div class="invalid-feedback">
+                                    Informe uma cidade válida!
+                                </div>
                             </div>
-                            <div class="card-body">
-                            <form id="pesquisa">
-                                <div class="form-row">
-                                    <div class="form-group col-md-4">
-                                        <label for="inputAno">Ano da Licitação</label>
-                                        <select name="nrAno" id="_inputAno" class="form-control custom-select">
-                                            <option value="blank"></option>
-                                            <option value="2013">2013</option>
-                                            <option value="2014">2014</option>
-                                            <option value="2015">2015</option>
-                                            <option value="2016">2016</option>
-                                            <option value="2017">2017</option>
-                                        </select>
-                                    </div>
+                            <div class="col-md-3 mb-3">
+                                <!-- <input type="text" class="form-control" name="nrAno" id="_inputAno" placeholder="Ano" value="2017">
+                                <div class="invalid-feedback">
+                                    Informe um valor para ano entre: 2013 a 2017
+                                </div> -->
+                                <select name="nrAno" id="_inputAno" class="form-control custom-select">
+                                    <option value="2017">2017</option>
+                                    <option value="2016">2016</option>
+                                    <option value="2015">2015</option>
+                                    <option value="2014">2014</option>
+                                    <option value="2013">2013</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <input type="button" value="VER" class="form-control btn btn-outline-success" id="">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="">
+                <div class="justify-content-center">
+                    <div class="container">
+                        <div id="chart-carousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <div style="width: 1100px;height: 600px; background-color: lightcoral;"></div>
                                 </div>
-                                <div class="form-row">
-                                    <div id='rowInputMunicipio' class="form-group col-md-12">
-                                        <label for="inputMunicipio">Municipio</label>
-                                        <input type="text" name="nmMunicipio" id="_inputMunicipio" class="form-control" placeholder="Pesquise por Municípios" readonly required>
-                                        <input type="hidden" name="cdIBGE" id="_inputCodIBGE" value="" class="form-control">
-                                        <div id="autocompleteMunicipio" class="list-group"></div>
-                                    </div>
+                                <div class="carousel-item">
+                                        <div style="width: 1100px;height: 600px; background-color: greenyellow;"></div>
                                 </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-8">
-                                        <label for="inputDescricaoObjeto">Descrição do Objeto</label>
-                                        <input type="text" name="dsObjeto" id="_inputDescricaoObjeto" class="form-control" placeholder="Digite palavras chaves..." readonly>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label for="inputDescricaoModalidade">Modalidade de Licitação</label>
-                                        <select name="dsModalidade" id="_inputDescricaoModalidade" class="form-control custom-select" disabled>
-                                            <option value="blank"></option>
-                                            <option value="Processo Dispensa">Dispensa de Licitação</option>
-                                            <option value="Processo Inexigibilidade">Inexigibilidade</option>
-                                            <option value="Pregão">Pregão</option>
-                                            <option value="Tomada de Preços">Tomada de Preços</option>
-                                            <option value="Convite">Convite</option>
-                                            <option value="Concorrência">Concorrência</option>
-                                            <option value="Leilão">Leilão</option>
-                                            <option value="Concurso">Concurso</option>
-                                            <option value="Regime Diferenciado de Contratações - RDC">Regime Diferenciado de Contratações - RDC</option>
-                                        </select>
-                                    </div>
+                                <div class="carousel-item">
+                                        <div style="width: 1100px;height: 600px; background-color: lightsalmon;"></div>
                                 </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputDataEdital">Data do Edital</label>
-                                        <div class="input-group">
-                                            <input type="text" name="dtEditalMin" id="_inputDataEditalMin" class="form-control" placeholder="Min." readonly>
-                                            <div class="input-group-text">
-                                                <span>até</span>
+                            </div>
+                            <a id="carousel-prev" class="carousel-control-prev" href="#chart-carousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a id="carousel-next" class="carousel-control-next" href="#chart-carousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="justify-content-center">
+                    <div class="container">
+                        <div id="accordion">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h7>
+                                        <a href="#" class="" data-toggle="collapse" data-target="#accordion-pesquisa-avancada" aria-expanded="true" aria-controls="formPesquisaAvancada">
+                                            Pesquisa Avançada
+                                        </a>
+                                    </h7>
+                                </div>
+                                <div id="accordion-pesquisa-avancada" class="collapse" data-parent="#accordion">
+                                    <div class="card-body">
+                                        <form id="form-pesquisa-avancada">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-8">
+                                                    <label for="inputDescricaoObjeto">Descrição do Objeto</label>
+                                                    <input type="text" name="dsObjeto" id="_inputDescricaoObjeto" class="form-control" placeholder="Digite palavras chaves..." readonly>
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="inputDescricaoModalidade">Modalidade de Licitação</label>
+                                                    <select name="dsModalidade" id="_inputDescricaoModalidade" class="form-control custom-select" disabled>
+                                                        <option value="blank"></option>
+                                                        <option value="Processo Dispensa">Dispensa de Licitação</option>
+                                                        <option value="Processo Inexigibilidade">Inexigibilidade</option>
+                                                        <option value="Pregão">Pregão</option>
+                                                        <option value="Tomada de Preços">Tomada de Preços</option>
+                                                        <option value="Convite">Convite</option>
+                                                        <option value="Concorrência">Concorrência</option>
+                                                        <option value="Leilão">Leilão</option>
+                                                        <option value="Concurso">Concurso</option>
+                                                        <option value="Regime Diferenciado de Contratações - RDC">Regime Diferenciado de Contratações - RDC</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                            <input type="text" name="dtEditalMax" id="_inputDataEditalMax" class="form-control" placeholder="Max." readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputDataAbertura">Data de Abertura</label>
-                                        <div class="input-group">
-                                            <input type="text" name="dtAberturaMin" id="_inputDataAberturaMin" class="form-control" placeholder="Min." readonly>
-                                            <div class="input-group-text">
-                                                <span>até</span>
+                                            <div class="form-row">
+                                                <div class="form-group col-md-6">
+                                                    <label for="inputDataEdital">Data do Edital</label>
+                                                    <div class="input-group">
+                                                        <input type="text" name="dtEditalMin" id="_inputDataEditalMin" class="form-control" placeholder="Min." readonly>
+                                                        <div class="input-group-text">
+                                                            <span>até</span>
+                                                        </div>
+                                                        <input type="text" name="dtEditalMax" id="_inputDataEditalMax" class="form-control" placeholder="Max." readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="inputDataAbertura">Data de Abertura</label>
+                                                    <div class="input-group">
+                                                        <input type="text" name="dtAberturaMin" id="_inputDataAberturaMin" class="form-control" placeholder="Min." readonly>
+                                                        <div class="input-group-text">
+                                                            <span>até</span>
+                                                        </div>
+                                                        <input type="text" name="dtAberturaMax" id="_inputDataAberturaMax" class="form-control" placeholder="Max." readonly>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <input type="text" name="dtAberturaMax" id="_inputDataAberturaMax" class="form-control" placeholder="Max." readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputValorLicitacao">Valor da Licitação</label>
-                                        <div class="input-group">
-                                            <input type="text" name="vlLicitacaoMin" id="_inputValorLicitacaoMin" class="form-control" placeholder='R$ (Min.)' readonly>
-                                            <div class="input-group-text">
-                                                <span>até</span>
+                                            <div class="form-row">
+                                                <div class="form-group col-md-6">
+                                                    <label for="inputValorLicitacao">Valor da Licitação</label>
+                                                    <div class="input-group">
+                                                        <input type="text" name="vlLicitacaoMin" id="_inputValorLicitacaoMin" class="form-control" placeholder='R$ (Min.)' readonly>
+                                                        <div class="input-group-text">
+                                                            <span>até</span>
+                                                        </div>
+                                                        <input type="text" name="vlLicitacaoMax" id="_inputValorLicitacaoMax" class="form-control" placeholder='R$ (Max.)' readonly>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <input type="text" name="vlLicitacaoMax" id="_inputValorLicitacaoMax" class="form-control" placeholder='R$ (Max.)' readonly>
-                                        </div>
+                                            <div class="form-row">
+                                                <div class="">
+                                                    <button type="button" class="btn btn-outline-primary btn-md" id="_btnSearch" align="right">Pesquisar</button>
+                                                </div>
+                                                <div class="">
+                                                    <button type="button" class="btn btn-outline-warning btn-md" id="_btnClean" align="right">Limpar</button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                                <div class="form-row">
-                                    <div class="">
-                                        <button type="button" class="btn btn-outline-primary btn-lg" id="_btnSearch" align="right">Pesquisar</button>
-                                        <button type="button" class="btn btn-outline-warning btn-lg" id="_btnClean" align="right">Limpar</button>
-                                    </div>
-                                </div>
-                            </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- <div id='table_container' class="section container" style="display:none">
-                <div id="table_div"></div>
-            </div> -->
-           <div id="viz-layout" class="container section">
-               <div class="nav nav-pills nav-justified" id="pills-tab" role="tablist">
-                    <a href="#chart-one" id="nav-chart-one" class="nav-item nav-link active" role="tab" data-toggle="tab">Comparação Valor Edital E Adjudicado</a>
-                    <a href="#chart-two" id="nav-chart-two" class="nav-item nav-link" role="tab" data-toggle="tab">Distribuição Licitação</a>
-                    <a href="#chart-three" id="nav-chart-three" class="nav-item nav-link" role="tab" data-toggle="tab">Quantidade Licitação</a>
-                    <a href="#chart-four" id="nav-chart-four" class="nav-item nav-link" role="tab" data-toggle="tab">Quantidade Licitação</a>
-                    <a href="#chart-five" id="nav-chart-five" class="nav-item nav-link" role="tab" data-toggle="tab">Gráfico de Linha</a>
-                </div>
-
-                <div class="tab-content" id="pills-tab-content">
-                    <div id="chart-one" class="tab-pane fade show active" role="tabpanel" >
-                        <div id="DiferencaEntreValorEditalAdjudicado"></div>
-                    </div>
-                    <div id="chart-two" class="tab-pane fade" role="tabpanel" >
-                        <div id="DistribuicaoLicitacaoAno"></div>
-                    </div>
-                    <div id="chart-three" class="tab-pane fade" role="tabpanel" >
-                        <div id="quantidadeLicitacaoChart"></div>
-                    </div>
-                    <div id="chart-four" class="tab-pane fade" role="tabpanel" >
-                        <div id="treemapProcedimentosLicitacao"></div>
-                    </div>
-                    <div id="chart-five" class="tab-pane fade" role="tabpanel" >
-                        <div id="lineChartQuantidadeLicitacao"></div>
-                    </div>
-                </div>
-            </div>
+        </div>
+        <div class="section">
+            <footer>
+                <div style="width: 100%; height: 100px;"></div>
+            </footer>
         </div>
         <script type="text/javascript" src="./js/app.js"></script>
     </body>
